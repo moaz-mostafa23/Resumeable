@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { useResumeStore } from "@/store/useResumeStore";
 import { useEditorStore } from "@/store/useEditorStore";
@@ -9,7 +9,7 @@ import { usePDFDownload } from "@/hooks/usePDFDownload";
 import { EditorSidebar } from "./EditorSidebar";
 import { EditorPanel } from "./EditorPanel";
 import { ResumePreview } from "@/components/preview/ResumePreview";
-import { Loader2, Menu, Download, ArrowLeft } from "lucide-react";
+import { Loader2, Menu, Download, ArrowLeft, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -19,14 +19,79 @@ interface EditorLayoutProps {
 
 export function EditorLayout({ resumeId }: EditorLayoutProps) {
   const { resume, loading, saving, loadResume, setResumeName } = useResumeStore();
-  const { sidebarOpen, toggleSidebar, previewZoom, setPreviewZoom } = useEditorStore();
+  const { sidebarOpen, toggleSidebar } = useEditorStore();
   const { downloadPDF, isGenerating } = usePDFDownload();
+
+  // Draggable divider: editorWidth is percentage of the content area (excluding sidebar)
+  const [editorWidthPct, setEditorWidthPct] = useState(25);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+
+  // Preview auto-fit
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+  const [previewScale, setPreviewScale] = useState(1);
+
+  // Preview modal
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
 
   useAutoSave(2000);
 
   useEffect(() => {
     loadResume(resumeId);
   }, [resumeId, loadResume]);
+
+  const calculateScale = useCallback(() => {
+    const container = previewContainerRef.current;
+    if (!container) return;
+    const padding = 32;
+    const availableWidth = container.clientWidth - padding * 2;
+    const availableHeight = container.clientHeight - padding * 2;
+    const scaleX = availableWidth / 816;
+    const scaleY = availableHeight / 1056;
+    setPreviewScale(Math.min(scaleX, scaleY, 1));
+  }, []);
+
+  useEffect(() => {
+    calculateScale();
+    const observer = new ResizeObserver(calculateScale);
+    if (previewContainerRef.current) {
+      observer.observe(previewContainerRef.current);
+    }
+    return () => observer.disconnect();
+  }, [calculateScale]);
+
+  const handleMouseDown = useCallback(() => {
+    isDragging.current = true;
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current || !contentRef.current) return;
+      const contentRect = contentRef.current.getBoundingClientRect();
+      const sidebarWidth = sidebarOpen ? 256 : 0;
+      const availableWidth = contentRect.width - sidebarWidth;
+      const relativeX = e.clientX - contentRect.left - sidebarWidth;
+      const pct = (relativeX / availableWidth) * 100;
+      setEditorWidthPct(Math.min(Math.max(pct, 20), 70));
+    };
+
+    const handleMouseUp = () => {
+      if (isDragging.current) {
+        isDragging.current = false;
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      }
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [sidebarOpen]);
 
   if (loading || !resume) {
     return (
@@ -62,20 +127,6 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
           )}
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 mr-4">
-            <span className="text-sm text-muted-foreground">Zoom:</span>
-            <select
-              value={previewZoom}
-              onChange={(e) => setPreviewZoom(Number(e.target.value))}
-              className="text-sm border rounded px-2 py-1"
-            >
-              <option value={50}>50%</option>
-              <option value={75}>75%</option>
-              <option value={100}>100%</option>
-              <option value={125}>125%</option>
-              <option value={150}>150%</option>
-            </select>
-          </div>
           <Button
             variant="outline"
             size="sm"
@@ -93,25 +144,37 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex overflow-hidden">
+      <div ref={contentRef} className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
         {sidebarOpen && (
-          <div className="w-64 border-r bg-gray-50 overflow-y-auto">
+          <div className="w-64 border-r bg-gray-50 overflow-y-auto flex-shrink-0">
             <EditorSidebar />
           </div>
         )}
 
         {/* Editor panel */}
-        <div className="flex-1 overflow-y-auto bg-white">
+        <div className="overflow-y-auto bg-white" style={{ width: `${editorWidthPct}%` }}>
           <EditorPanel />
         </div>
 
+        {/* Draggable divider */}
+        <div
+          className="w-2 flex-shrink-0 bg-gray-200 hover:bg-gray-300 cursor-col-resize flex items-center justify-center transition-colors"
+          onMouseDown={handleMouseDown}
+        >
+          <GripVertical className="w-3 h-3 text-gray-400" />
+        </div>
+
         {/* Preview panel */}
-        <div className="flex-1 overflow-auto bg-gray-100 p-8">
+        <div
+          ref={previewContainerRef}
+          className="flex-1 flex items-start justify-center overflow-y-auto bg-gray-100 p-4 cursor-pointer"
+          onClick={() => setPreviewModalOpen(true)}
+        >
           <div
-            className="mx-auto bg-white shadow-lg"
+            className="bg-white shadow-lg"
             style={{
-              transform: `scale(${previewZoom / 100})`,
+              transform: `scale(${previewScale})`,
               transformOrigin: "top center",
             }}
           >
@@ -119,6 +182,21 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
           </div>
         </div>
       </div>
+
+      {/* Preview modal overlay */}
+      {previewModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-[2px]"
+          onClick={() => setPreviewModalOpen(false)}
+        >
+          <div
+            className="overflow-y-auto max-h-[95vh] bg-white shadow-2xl rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ResumePreview />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

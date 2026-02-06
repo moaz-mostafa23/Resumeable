@@ -44,21 +44,41 @@ export function ResumePreview() {
     },
   };
 
+  const alignClass = theme.textAlign === 'center' ? 'text-center' : theme.textAlign === 'right' ? 'text-right' : 'text-left';
+
+  const isCentered = theme.textAlign === 'center';
+
   const renderHeader = () => {
     const data = sectionData.header as HeaderData;
     return (
-      <div className="text-center mb-4">
-        <h1
-          className="font-bold mb-1"
-          style={{ fontSize: theme.nameFontSize, color: theme.primaryColor }}
-        >
-          {data.fullName}
-        </h1>
-        <p className="text-gray-600 mb-2" style={{ fontSize: theme.titleFontSize }}>
-          {data.title}
-        </p>
+      <div className={`${alignClass} mb-4`}>
+        {isCentered ? (
+          <>
+            <h1
+              className="font-bold mb-1 text-center"
+              style={{ fontSize: theme.nameFontSize, color: theme.primaryColor }}
+            >
+              {data.fullName}
+            </h1>
+            <p className="text-gray-600 mb-2 text-center" style={{ fontSize: theme.titleFontSize }}>
+              {data.title}
+            </p>
+          </>
+        ) : (
+          <div className={`flex items-baseline gap-3 mb-2 ${theme.textAlign === 'right' ? 'justify-end' : 'justify-start'}`}>
+            <h1
+              className="font-bold"
+              style={{ fontSize: theme.nameFontSize, color: theme.primaryColor }}
+            >
+              {data.fullName}
+            </h1>
+            <p className="text-gray-600" style={{ fontSize: theme.titleFontSize }}>
+              {data.title}
+            </p>
+          </div>
+        )}
         <div
-          className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-gray-600"
+          className={`flex flex-wrap ${isCentered ? 'justify-center' : theme.textAlign === 'right' ? 'justify-end' : 'justify-start'} gap-x-4 gap-y-1 text-gray-600`}
           style={{ fontSize: theme.fontSize - 1 }}
         >
           {data.email && (

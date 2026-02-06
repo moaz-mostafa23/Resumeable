@@ -152,6 +152,7 @@ export interface ThemeConfig {
   pageMargins: number;
   nameFontSize: number;
   titleFontSize: number;
+  textAlign: 'left' | 'center' | 'right';
 }
 
 // Complete resume document
@@ -170,12 +171,13 @@ export interface ResumeDocument {
 export const defaultTheme: ThemeConfig = {
   primaryColor: "#000000",
   fontFamily: "Inter",
-  fontSize: 11,
+  fontSize: 13,
   lineHeight: 1.4,
   sectionSpacing: 16,
   pageMargins: 40,
   nameFontSize: 28,
-  titleFontSize: 14,
+  titleFontSize: 18,
+  textAlign: 'center',
 };
 
 // Default header data

@@ -80,7 +80,7 @@ export function EditorSidebar() {
           onClick={() => setActiveSection("theme")}
         >
           <Palette className="h-4 w-4 mr-2" />
-          Theme Settings
+          Customize & tinker
         </Button>
       </div>
     </div>

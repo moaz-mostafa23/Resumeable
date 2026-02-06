@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 
 const FONT_OPTIONS = [
   { value: "Inter", label: "Inter" },
@@ -101,6 +102,31 @@ export function ThemeEditor() {
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Text Alignment */}
+      <div className="space-y-3">
+        <Label>Name & Title Text Alignment</Label>
+        <div className="flex gap-1">
+          {([
+            { value: 'left' as const, icon: AlignLeft, label: 'Left' },
+            { value: 'center' as const, icon: AlignCenter, label: 'Center' },
+            { value: 'right' as const, icon: AlignRight, label: 'Right' },
+          ]).map(({ value, icon: Icon, label }) => (
+            <button
+              key={value}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md border text-sm transition-colors ${
+                theme.textAlign === value
+                  ? "bg-gray-900 text-white border-gray-900"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+              }`}
+              onClick={() => updateTheme({ textAlign: value })}
+            >
+              <Icon className="w-4 h-4" />
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Font Size */}

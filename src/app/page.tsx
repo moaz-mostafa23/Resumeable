@@ -603,6 +603,15 @@ export default function HomePage() {
           custom={0}
           className="max-w-7xl mx-auto px-4 text-center text-muted-foreground"
         >
+          <div className="flex items-center justify-center gap-4 mb-3">
+            <Link href="/privacy" className="hover:text-foreground transition-colors">
+              Privacy Policy
+            </Link>
+            <span>&middot;</span>
+            <Link href="/terms" className="hover:text-foreground transition-colors">
+              Terms of Service
+            </Link>
+          </div>
           <p>&copy; {new Date().getFullYear()} Resumeable. All rights reserved.</p>
         </motion.div>
       </RevealSection>

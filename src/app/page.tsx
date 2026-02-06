@@ -192,10 +192,20 @@ export default function HomePage() {
             </motion.div>
 
             <div className="flex items-center gap-4">
+              <motion.div
+                custom={1}
+                variants={navItemVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                <Link href="/privacy">
+                  <Button variant="ghost">Privacy Policy</Button>
+                </Link>
+              </motion.div>
               {user ? (
                 <>
                   <motion.div
-                    custom={1}
+                    custom={2}
                     variants={navItemVariants}
                     initial="hidden"
                     animate="visible"
@@ -205,7 +215,7 @@ export default function HomePage() {
                     </Link>
                   </motion.div>
                   <motion.div
-                    custom={2}
+                    custom={3}
                     variants={navItemVariants}
                     initial="hidden"
                     animate="visible"
@@ -219,7 +229,7 @@ export default function HomePage() {
               ) : (
                 <>
                   <motion.div
-                    custom={1}
+                    custom={2}
                     variants={navItemVariants}
                     initial="hidden"
                     animate="visible"
@@ -229,7 +239,7 @@ export default function HomePage() {
                     </Link>
                   </motion.div>
                   <motion.div
-                    custom={2}
+                    custom={3}
                     variants={navItemVariants}
                     initial="hidden"
                     animate="visible"

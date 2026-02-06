@@ -168,7 +168,7 @@ export interface ResumeDocument {
 
 // Default theme
 export const defaultTheme: ThemeConfig = {
-  primaryColor: "#2563eb",
+  primaryColor: "#000000",
   fontFamily: "Inter",
   fontSize: 11,
   lineHeight: 1.4,

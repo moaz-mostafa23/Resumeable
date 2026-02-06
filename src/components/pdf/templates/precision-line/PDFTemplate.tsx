@@ -64,13 +64,13 @@ export function PDFTemplate({ resume }: PDFTemplateProps) {
       marginBottom: 16,
     },
     name: {
-      fontSize: theme.fontSize * 2,
+      fontSize: theme.nameFontSize,
       fontWeight: 700,
       color: theme.primaryColor,
       marginBottom: 4,
     },
     title: {
-      fontSize: theme.fontSize + 1,
+      fontSize: theme.titleFontSize,
       color: "#6B7280",
       marginBottom: 8,
     },

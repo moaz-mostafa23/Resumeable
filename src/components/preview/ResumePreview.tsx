@@ -50,11 +50,11 @@ export function ResumePreview() {
       <div className="text-center mb-4">
         <h1
           className="font-bold mb-1"
-          style={{ fontSize: theme.fontSize * 2, color: theme.primaryColor }}
+          style={{ fontSize: theme.nameFontSize, color: theme.primaryColor }}
         >
           {data.fullName}
         </h1>
-        <p className="text-gray-600 mb-2" style={{ fontSize: theme.fontSize + 1 }}>
+        <p className="text-gray-600 mb-2" style={{ fontSize: theme.titleFontSize }}>
           {data.title}
         </p>
         <div

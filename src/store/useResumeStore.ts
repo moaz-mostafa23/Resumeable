@@ -126,7 +126,12 @@ export const useResumeStore = create<ResumeState>()(
             userId: data.user_id,
             sections: data.sections,
             sectionData: data.section_data,
-            theme: data.theme,
+            theme: {
+              ...data.theme,
+              // Ensure new theme properties exist with defaults
+              nameFontSize: data.theme.nameFontSize ?? 28,
+              titleFontSize: data.theme.titleFontSize ?? 14,
+            },
             createdAt: data.created_at,
             updatedAt: data.updated_at,
           };

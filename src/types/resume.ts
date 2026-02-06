@@ -150,6 +150,8 @@ export interface ThemeConfig {
   lineHeight: number;
   sectionSpacing: number;
   pageMargins: number;
+  nameFontSize: number;
+  titleFontSize: number;
 }
 
 // Complete resume document
@@ -172,6 +174,8 @@ export const defaultTheme: ThemeConfig = {
   lineHeight: 1.4,
   sectionSpacing: 16,
   pageMargins: 40,
+  nameFontSize: 28,
+  titleFontSize: 14,
 };
 
 // Default header data

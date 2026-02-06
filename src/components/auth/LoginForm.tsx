@@ -1,22 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
 
 export function LoginForm() {
-  const [error, setError] = useState<string | null>(null);
-  const searchParams = useSearchParams();
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const urlError = searchParams.get("error");
-    if (urlError) {
-      setError(urlError);
-    }
-  }, [searchParams]);
+  const handleGoogleSignIn = () => {
+    setLoading(true);
+    const supabase = createClient();
+    
+    supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/callback`,
+      },
+    });
+  };
 
   return (
     <Card className="w-full max-w-md">
@@ -25,13 +28,9 @@ export function LoginForm() {
         <CardDescription>Sign in to create and manage your resumes</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {error && (
-          <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">
-            {error}
-          </div>
-        )}
-        <Link
-          href="/auth/google"
+        <button
+          onClick={handleGoogleSignIn}
+          disabled={loading}
           className={cn(
             buttonVariants({ variant: "outline" }),
             "w-full flex items-center justify-center gap-2"
@@ -55,8 +54,8 @@ export function LoginForm() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          Continue with Google
-        </Link>
+          {loading ? "Signing in..." : "Continue with Google"}
+        </button>
       </CardContent>
     </Card>
   );

@@ -154,6 +154,32 @@ export function ThemeEditor() {
           className="w-64"
         />
       </div>
+
+      {/* Name Font Size */}
+      <div className="space-y-3">
+        <Label>Name Font Size: {theme.nameFontSize}pt</Label>
+        <Slider
+          value={[theme.nameFontSize]}
+          onValueChange={([value]) => updateTheme({ nameFontSize: value })}
+          min={18}
+          max={40}
+          step={1}
+          className="w-64"
+        />
+      </div>
+
+      {/* Title Font Size */}
+      <div className="space-y-3">
+        <Label>Professional Title Font Size: {theme.titleFontSize}pt</Label>
+        <Slider
+          value={[theme.titleFontSize]}
+          onValueChange={([value]) => updateTheme({ titleFontSize: value })}
+          min={10}
+          max={24}
+          step={1}
+          className="w-64"
+        />
+      </div>
     </div>
   );
 }

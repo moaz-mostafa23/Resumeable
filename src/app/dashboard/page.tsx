@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuthContext } from "@/components/auth/AuthProvider";
 import { createClient } from "@/lib/supabase/client";
 import { useResumeStore } from "@/store/useResumeStore";
+import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, FileText, Trash2, Loader2, LogOut } from "lucide-react";
@@ -93,8 +94,8 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-2">
-              <FileText className="h-8 w-8 text-primary" />
-              <span className="font-bold text-xl">ResumeBuilder</span>
+              <Logo className="h-8 w-8 text-primary" />
+              <span className="font-bold text-xl">Resumeable</span>
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600">{user?.email}</span>

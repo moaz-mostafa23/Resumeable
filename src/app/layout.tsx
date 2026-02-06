@@ -6,7 +6,7 @@ import { AuthProvider } from "@/components/auth/AuthProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Resume Builder - Create Professional Resumes",
+  title: "Resumeable - Create Professional Resumes",
   description: "Build beautiful, ATS-friendly resumes with our drag-and-drop builder",
 };
 

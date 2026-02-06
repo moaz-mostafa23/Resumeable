@@ -2,17 +2,20 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/Logo";
 import {
-  FileText,
   Palette,
   Download,
   Zap,
   Users,
   Star,
   CheckCircle,
+  LogOut,
 } from "lucide-react";
 import { motion, useInView, useMotionValue, useTransform } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
+import { useAuthContext } from "@/components/auth/AuthProvider";
+import { useRouter } from "next/navigation";
 
 // ── Animation variants ──────────────────────────────────────────────────
 
@@ -151,6 +154,8 @@ function RevealSection({
 // ── Main page ───────────────────────────────────────────────────────────
 
 export default function HomePage() {
+  const { user, signOut } = useAuthContext();
+  const router = useRouter();
   const heroWords = "Build a resume that".split(" ");
   const statsRef = useRef(null);
   const statsInView = useInView(statsRef, { once: true, margin: "-100px" });
@@ -158,6 +163,11 @@ export default function HomePage() {
   const resumeCount = useAnimatedCounter(10000, 2000, statsInView);
   const templateCount = useAnimatedCounter(25, 1500, statsInView);
   const satisfactionRate = useAnimatedCounter(98, 1800, statsInView);
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.refresh();
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -177,31 +187,59 @@ export default function HomePage() {
               animate="visible"
               className="flex items-center gap-2"
             >
-              <FileText className="h-8 w-8 text-primary" />
-              <span className="font-bold text-xl">ResumeBuilder</span>
+              <Logo className="h-8 w-8 text-primary" />
+              <span className="font-bold text-xl">Resumeable</span>
             </motion.div>
 
             <div className="flex items-center gap-4">
-              <motion.div
-                custom={1}
-                variants={navItemVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                <Link href="/login">
-                  <Button variant="ghost">Sign in</Button>
-                </Link>
-              </motion.div>
-              <motion.div
-                custom={2}
-                variants={navItemVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                <Link href="/signup">
-                  <Button>Get Started</Button>
-                </Link>
-              </motion.div>
+              {user ? (
+                <>
+                  <motion.div
+                    custom={1}
+                    variants={navItemVariants}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    <Link href="/dashboard">
+                      <Button variant="ghost">Dashboard</Button>
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    custom={2}
+                    variants={navItemVariants}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    <Button variant="ghost" onClick={handleSignOut}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign out
+                    </Button>
+                  </motion.div>
+                </>
+              ) : (
+                <>
+                  <motion.div
+                    custom={1}
+                    variants={navItemVariants}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    <Link href="/login">
+                      <Button variant="ghost">Sign in</Button>
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    custom={2}
+                    variants={navItemVariants}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    <Link href="/signup">
+                      <Button>Get Started</Button>
+                    </Link>
+                  </motion.div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -274,33 +312,51 @@ export default function HomePage() {
               animate="visible"
               className="flex gap-4 justify-center lg:justify-start"
             >
-              <Link href="/signup">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <Button
-                    size="lg"
-                    className="text-lg px-8 glow-primary glow-primary-hover transition-shadow duration-300"
+              {user ? (
+                <Link href="/dashboard">
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.97 }}
                   >
-                    Create Your Resume
-                  </Button>
-                </motion.div>
-              </Link>
-              <Link href="/login">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="text-lg px-8"
-                  >
-                    Sign In
-                  </Button>
-                </motion.div>
-              </Link>
+                    <Button
+                      size="lg"
+                      className="text-lg px-8 glow-primary glow-primary-hover transition-shadow duration-300"
+                    >
+                      Go to Dashboard
+                    </Button>
+                  </motion.div>
+                </Link>
+              ) : (
+                <>
+                  <Link href="/signup">
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      <Button
+                        size="lg"
+                        className="text-lg px-8 glow-primary glow-primary-hover transition-shadow duration-300"
+                      >
+                        Create Your Resume
+                      </Button>
+                    </motion.div>
+                  </Link>
+                  <Link href="/login">
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        className="text-lg px-8"
+                      >
+                        Sign In
+                      </Button>
+                    </motion.div>
+                  </Link>
+                </>
+              )}
             </motion.div>
           </div>
 
@@ -503,21 +559,39 @@ export default function HomePage() {
             variants={fadeSlideUp}
             custom={0.3}
           >
-            <Link href="/signup">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.97 }}
-                className="inline-block"
-              >
-                <Button
-                  size="lg"
-                  variant="secondary"
-                  className="text-lg px-10 pulse-glow"
+            {user ? (
+              <Link href="/dashboard">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-block"
                 >
-                  Get Started for Free
-                </Button>
-              </motion.div>
-            </Link>
+                  <Button
+                    size="lg"
+                    variant="secondary"
+                    className="text-lg px-10 pulse-glow"
+                  >
+                    Go to Dashboard
+                  </Button>
+                </motion.div>
+              </Link>
+            ) : (
+              <Link href="/signup">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-block"
+                >
+                  <Button
+                    size="lg"
+                    variant="secondary"
+                    className="text-lg px-10 pulse-glow"
+                  >
+                    Get Started for Free
+                  </Button>
+                </motion.div>
+              </Link>
+            )}
           </motion.div>
         </div>
       </RevealSection>
@@ -529,7 +603,7 @@ export default function HomePage() {
           custom={0}
           className="max-w-7xl mx-auto px-4 text-center text-muted-foreground"
         >
-          <p>&copy; {new Date().getFullYear()} ResumeBuilder. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Resumeable. All rights reserved.</p>
         </motion.div>
       </RevealSection>
     </div>

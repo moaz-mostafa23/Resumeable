@@ -9,7 +9,7 @@ import { useResumeStore } from "@/store/useResumeStore";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, FileText, Trash2, Loader2, LogOut } from "lucide-react";
+import { Plus, FileText, Trash2, Loader2, LogOut, AlertTriangle } from "lucide-react";
 
 interface ResumeListItem {
   id: string;
@@ -23,6 +23,7 @@ export default function DashboardPage() {
   const [resumes, setResumes] = useState<ResumeListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -63,15 +64,16 @@ export default function DashboardPage() {
     setCreating(false);
   };
 
-  const handleDeleteResume = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this resume?")) return;
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
 
     const supabase = createClient();
-    const { error } = await supabase.from("resumes").delete().eq("id", id);
+    const { error } = await supabase.from("resumes").delete().eq("id", deleteTarget);
 
     if (!error) {
-      setResumes(resumes.filter((r) => r.id !== id));
+      setResumes(resumes.filter((r) => r.id !== deleteTarget));
     }
+    setDeleteTarget(null);
   };
 
   const handleSignOut = async () => {
@@ -163,7 +165,7 @@ export default function DashboardPage() {
                       className="opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => {
                         e.preventDefault();
-                        handleDeleteResume(resume.id);
+                        setDeleteTarget(resume.id);
                       }}
                     >
                       <Trash2 className="h-4 w-4 text-red-500" />
@@ -182,6 +184,41 @@ export default function DashboardPage() {
           </div>
         )}
       </main>
+
+      {/* Delete confirmation modal */}
+      {deleteTarget && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={() => setDeleteTarget(null)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-red-100 rounded-full">
+                <AlertTriangle className="h-5 w-5 text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold">Delete Resume</h3>
+            </div>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this resume? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" size="sm" onClick={() => setDeleteTarget(null)}>
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                className="bg-red-600 hover:bg-red-700 text-white"
+                onClick={handleConfirmDelete}
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

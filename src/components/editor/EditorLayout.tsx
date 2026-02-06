@@ -18,7 +18,7 @@ interface EditorLayoutProps {
 }
 
 export function EditorLayout({ resumeId }: EditorLayoutProps) {
-  const { resume, loading, saving, loadResume, setResumeName } = useResumeStore();
+  const { resume, loading, loadResume, setResumeName } = useResumeStore();
   const { sidebarOpen, toggleSidebar } = useEditorStore();
   const { downloadPDF, isGenerating } = usePDFDownload();
 
@@ -119,12 +119,6 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
             onChange={(e) => setResumeName(e.target.value)}
             className="w-64 font-medium"
           />
-          {saving && (
-            <span className="text-sm text-muted-foreground flex items-center gap-1">
-              <Loader2 className="h-3 w-3 animate-spin" />
-              Saving...
-            </span>
-          )}
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -153,7 +147,7 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
         )}
 
         {/* Editor panel */}
-        <div className="overflow-y-auto bg-white" style={{ width: `${editorWidthPct}%` }}>
+        <div className="bg-white" style={{ width: `${editorWidthPct}%` }}>
           <EditorPanel />
         </div>
 

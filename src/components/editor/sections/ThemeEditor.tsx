@@ -42,7 +42,7 @@ export function ThemeEditor() {
 
   return (
     <div className="p-6 space-y-8">
-      <h2 className="text-xl font-semibold">Theme Settings</h2>
+      <h2 className="text-xl font-semibold">Customize & tinker</h2>
 
       {/* Primary Color */}
       <div className="space-y-3">

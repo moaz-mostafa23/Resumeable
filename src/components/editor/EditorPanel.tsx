@@ -2,6 +2,7 @@
 
 import { useResumeStore } from "@/store/useResumeStore";
 import { useEditorStore } from "@/store/useEditorStore";
+import { usePDFDownload } from "@/hooks/usePDFDownload";
 import { HeaderEditor } from "./sections/HeaderEditor";
 import { SummaryEditor } from "./sections/SummaryEditor";
 import { ExperienceEditor } from "./sections/ExperienceEditor";
@@ -11,27 +12,61 @@ import { ProjectsEditor } from "./sections/ProjectsEditor";
 import { CertificationsEditor } from "./sections/CertificationsEditor";
 import { CustomSectionEditor } from "./sections/CustomSectionEditor";
 import { ThemeEditor } from "./sections/ThemeEditor";
+import { Button } from "@/components/ui/button";
+import { Loader2, ArrowRight, Download } from "lucide-react";
 
 export function EditorPanel() {
   const { resume } = useResumeStore();
-  const { activeSection } = useEditorStore();
+  const { activeSection, setActiveSection } = useEditorStore();
+  const { downloadPDF, isGenerating } = usePDFDownload();
 
   if (!resume || !activeSection) {
     return (
-      <div className="p-8 text-center text-muted-foreground">
+      <div className="h-full flex items-center justify-center p-8 text-center text-muted-foreground">
         Select a section to edit
       </div>
     );
   }
 
+  // Build ordered list of section IDs: visible sections by order, then "theme"
+  const orderedSectionIds = [
+    ...resume.sections
+      .filter((s) => s.visible)
+      .sort((a, b) => a.order - b.order)
+      .map((s) => s.id),
+    "theme",
+  ];
+
+  const currentIndex = orderedSectionIds.indexOf(activeSection);
+  const isLastSection = currentIndex === orderedSectionIds.length - 1;
+
+  const handleNextSection = () => {
+    if (isLastSection) {
+      downloadPDF();
+    } else {
+      setActiveSection(orderedSectionIds[currentIndex + 1]);
+    }
+  };
+
   if (activeSection === "theme") {
-    return <ThemeEditor />;
+    return (
+      <div className="h-full flex flex-col">
+        <div className="flex-1 overflow-y-auto">
+          <ThemeEditor />
+        </div>
+        <BottomButton
+          isLastSection={isLastSection}
+          isGenerating={isGenerating}
+          onClick={handleNextSection}
+        />
+      </div>
+    );
   }
 
   const section = resume.sections.find((s) => s.id === activeSection);
   if (!section) {
     return (
-      <div className="p-8 text-center text-muted-foreground">
+      <div className="h-full flex items-center justify-center p-8 text-center text-muted-foreground">
         Section not found
       </div>
     );
@@ -61,9 +96,52 @@ export function EditorPanel() {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-semibold mb-6">{section.label}</h2>
-      {renderEditor()}
+    <div className="h-full flex flex-col">
+      <div className="flex-1 overflow-y-auto p-6">
+        <h2 className="text-xl font-semibold mb-6">{section.label}</h2>
+        {renderEditor()}
+      </div>
+      <BottomButton
+        isLastSection={isLastSection}
+        isGenerating={isGenerating}
+        onClick={handleNextSection}
+      />
+    </div>
+  );
+}
+
+function BottomButton({
+  isLastSection,
+  isGenerating,
+  onClick,
+}: {
+  isLastSection: boolean;
+  isGenerating: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <div className="flex-shrink-0 border-t bg-white p-4">
+      <Button
+        className="w-full"
+        size="lg"
+        onClick={onClick}
+        disabled={isLastSection && isGenerating}
+      >
+        {isLastSection
+          ? isGenerating
+            ? "Generating..."
+            : "Download PDF"
+          : "On to the next!"}
+        {isLastSection ? (
+          isGenerating ? (
+            <Loader2 className="h-4 w-4 ml-2 animate-spin" />
+          ) : (
+            <Download className="h-4 w-4 ml-2" />
+          )
+        ) : (
+          <ArrowRight className="h-4 w-4 ml-2" />
+        )}
+      </Button>
     </div>
   );
 }

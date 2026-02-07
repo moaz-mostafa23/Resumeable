@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
@@ -9,8 +10,10 @@ import {
   ArrowLeft,
   Sparkles,
   Zap,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSubscription } from "@/hooks/useSubscription";
 
 // ── Plan data ───────────────────────────────────────────────────────────
 
@@ -20,60 +23,28 @@ interface PlanFeature {
   highlight?: boolean;
 }
 
-interface Plan {
-  name: string;
-  price: string;
-  period: string;
-  description: string;
-  cta: string;
-  ctaHref: string;
-  highlighted: boolean;
-  badge?: string;
-  features: PlanFeature[];
-}
+const freePlanFeatures: PlanFeature[] = [
+  { text: "Drag-and-drop editor", included: true },
+  { text: "Real-time preview", included: true },
+  { text: "2 professional templates", included: true },
+  { text: "PDF export", included: true },
+  { text: "15+ section types", included: true },
+  { text: "1 saved resume (with account)", included: true },
+  { text: "All premium templates", included: false },
+  { text: "AI bullet-point suggestions", included: false },
+  { text: "Watermark-free PDF export", included: false },
+  { text: "Unlimited saved resumes", included: false },
+];
 
-const plans: Plan[] = [
-  {
-    name: "Free",
-    price: "$0",
-    period: "forever",
-    description: "Everything you need to build a great resume. No strings attached.",
-    cta: "Start Building",
-    ctaHref: "/builder/new",
-    highlighted: false,
-    features: [
-      { text: "Drag-and-drop editor", included: true },
-      { text: "Real-time preview", included: true },
-      { text: "2 professional templates", included: true },
-      { text: "PDF export", included: true },
-      { text: "15+ section types", included: true },
-      { text: "1 saved resume (with account)", included: true },
-      { text: "All premium templates", included: false },
-      { text: "AI bullet-point suggestions", included: false },
-      { text: "Watermark-free PDF export", included: false },
-      { text: "Unlimited saved resumes", included: false },
-    ],
-  },
-  {
-    name: "Pro",
-    price: "$5",
-    period: "/month",
-    description: "Premium templates, AI writing help, and unlimited everything.",
-    cta: "Upgrade to Pro",
-    ctaHref: "/builder/new", // Will be replaced with Lemon Squeezy link
-    highlighted: true,
-    badge: "Most Popular",
-    features: [
-      { text: "Everything in Free", included: true },
-      { text: "All premium templates", included: true, highlight: true },
-      { text: "AI bullet-point suggestions", included: true, highlight: true },
-      { text: "Watermark-free PDF export", included: true, highlight: true },
-      { text: "Unlimited saved resumes", included: true },
-      { text: "Custom colour themes", included: true },
-      { text: "Priority new templates", included: true },
-      { text: "Cover letter builder (coming soon)", included: true },
-    ],
-  },
+const proPlanFeatures: PlanFeature[] = [
+  { text: "Everything in Free", included: true },
+  { text: "All premium templates", included: true, highlight: true },
+  { text: "AI bullet-point suggestions", included: true, highlight: true },
+  { text: "Watermark-free PDF export", included: true, highlight: true },
+  { text: "Unlimited saved resumes", included: true },
+  { text: "Custom colour themes", included: true },
+  { text: "Priority new templates", included: true },
+  { text: "Cover letter builder (coming soon)", included: true },
 ];
 
 // ── FAQ data ────────────────────────────────────────────────────────────
@@ -104,6 +75,18 @@ const faqs = [
 // ── Component ───────────────────────────────────────────────────────────
 
 export function PricingPage() {
+  const { isPro, startCheckout, loading: subLoading } = useSubscription();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  const handleUpgrade = async () => {
+    setCheckoutLoading(true);
+    try {
+      await startCheckout();
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -141,83 +124,106 @@ export function PricingPage() {
       {/* Plans */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-          {plans.map((plan) => (
-            <div
-              key={plan.name}
-              className={cn(
-                "relative rounded-2xl border-2 bg-white p-8 flex flex-col",
-                plan.highlighted
-                  ? "border-primary shadow-xl shadow-primary/10"
-                  : "border-gray-200"
-              )}
-            >
-              {plan.badge && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="inline-flex items-center gap-1 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
-                    <Sparkles className="h-3 w-3" />
-                    {plan.badge}
-                  </span>
-                </div>
-              )}
-
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-1">
-                  {plan.name}
-                </h2>
-                <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-4xl font-bold text-gray-900">
-                    {plan.price}
-                  </span>
-                  <span className="text-gray-500">{plan.period}</span>
-                </div>
-                <p className="text-gray-600 text-sm">{plan.description}</p>
+          {/* Free Plan */}
+          <div className="relative rounded-2xl border-2 border-gray-200 bg-white p-8 flex flex-col">
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-1">Free</h2>
+              <div className="flex items-baseline gap-1 mb-2">
+                <span className="text-4xl font-bold text-gray-900">$0</span>
+                <span className="text-gray-500">forever</span>
               </div>
+              <p className="text-gray-600 text-sm">
+                Everything you need to build a great resume. No strings attached.
+              </p>
+            </div>
 
-              <ul className="space-y-3 mb-8 flex-1">
-                {plan.features.map((feature) => (
-                  <li key={feature.text} className="flex items-start gap-3">
-                    {feature.included ? (
-                      <Check
-                        className={cn(
-                          "h-5 w-5 mt-0.5 shrink-0",
-                          feature.highlight
-                            ? "text-primary"
-                            : "text-green-500"
-                        )}
-                      />
-                    ) : (
-                      <X className="h-5 w-5 mt-0.5 shrink-0 text-gray-300" />
-                    )}
-                    <span
-                      className={cn(
-                        "text-sm",
-                        feature.included
-                          ? "text-gray-700"
-                          : "text-gray-400"
-                      )}
-                    >
-                      {feature.text}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <Link href={plan.ctaHref}>
-                <Button
-                  className={cn(
-                    "w-full",
-                    plan.highlighted
-                      ? ""
-                      : "bg-white text-gray-900 border border-gray-300 hover:bg-gray-50"
+            <ul className="space-y-3 mb-8 flex-1">
+              {freePlanFeatures.map((feature) => (
+                <li key={feature.text} className="flex items-start gap-3">
+                  {feature.included ? (
+                    <Check className="h-5 w-5 mt-0.5 shrink-0 text-green-500" />
+                  ) : (
+                    <X className="h-5 w-5 mt-0.5 shrink-0 text-gray-300" />
                   )}
-                  size="lg"
-                >
-                  {plan.highlighted && <Zap className="h-4 w-4 mr-2" />}
-                  {plan.cta}
+                  <span
+                    className={cn(
+                      "text-sm",
+                      feature.included ? "text-gray-700" : "text-gray-400"
+                    )}
+                  >
+                    {feature.text}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <Link href="/builder/new">
+              <Button
+                className="w-full bg-white text-gray-900 border border-gray-300 hover:bg-gray-50"
+                size="lg"
+              >
+                Start Building
+              </Button>
+            </Link>
+          </div>
+
+          {/* Pro Plan */}
+          <div className="relative rounded-2xl border-2 border-primary shadow-xl shadow-primary/10 bg-white p-8 flex flex-col">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+              <span className="inline-flex items-center gap-1 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
+                <Sparkles className="h-3 w-3" />
+                Most Popular
+              </span>
+            </div>
+
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-1">Pro</h2>
+              <div className="flex items-baseline gap-1 mb-2">
+                <span className="text-4xl font-bold text-gray-900">$5</span>
+                <span className="text-gray-500">/month</span>
+              </div>
+              <p className="text-gray-600 text-sm">
+                Premium templates, AI writing help, and unlimited everything.
+              </p>
+            </div>
+
+            <ul className="space-y-3 mb-8 flex-1">
+              {proPlanFeatures.map((feature) => (
+                <li key={feature.text} className="flex items-start gap-3">
+                  <Check
+                    className={cn(
+                      "h-5 w-5 mt-0.5 shrink-0",
+                      feature.highlight ? "text-primary" : "text-green-500"
+                    )}
+                  />
+                  <span className="text-sm text-gray-700">{feature.text}</span>
+                </li>
+              ))}
+            </ul>
+
+            {isPro ? (
+              <Link href="/dashboard">
+                <Button className="w-full" size="lg">
+                  <Check className="h-4 w-4 mr-2" />
+                  You&apos;re on Pro
                 </Button>
               </Link>
-            </div>
-          ))}
+            ) : (
+              <Button
+                className="w-full"
+                size="lg"
+                onClick={handleUpgrade}
+                disabled={checkoutLoading || subLoading}
+              >
+                {checkoutLoading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Zap className="h-4 w-4 mr-2" />
+                )}
+                {checkoutLoading ? "Redirecting…" : "Upgrade to Pro"}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 

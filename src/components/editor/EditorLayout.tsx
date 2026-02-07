@@ -10,7 +10,7 @@ import { usePDFDownload } from "@/hooks/usePDFDownload";
 import { EditorSidebar } from "./EditorSidebar";
 import { EditorPanel } from "./EditorPanel";
 import { TemplatePreview } from "@/components/preview/TemplatePreview";
-import { Loader2, Menu, Download, ArrowLeft, GripVertical, LogIn } from "lucide-react";
+import { Loader2, Menu, Download, ArrowLeft, GripVertical, LogIn, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -107,6 +107,15 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
 
   return (
     <div className="h-screen flex flex-col">
+      {/* Mobile warning — editor needs a real screen */}
+      <div className="lg:hidden bg-amber-50 border-b border-amber-200 px-4 py-3 flex items-center gap-3 text-sm text-amber-800">
+        <Monitor className="h-4 w-4 shrink-0" />
+        <span>
+          The resume editor works best on a desktop or laptop. Some features may
+          not display correctly on smaller screens.
+        </span>
+      </div>
+
       {/* Top bar */}
       <div className="h-14 border-b flex items-center justify-between px-4 bg-white">
         <div className="flex items-center gap-4">

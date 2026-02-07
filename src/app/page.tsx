@@ -178,6 +178,16 @@ export default function HomePage() {
                   <Button variant="ghost">Templates</Button>
                 </Link>
               </motion.div>
+              <motion.div
+                custom={1}
+                variants={navItemVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                <Link href="/pricing">
+                  <Button variant="ghost">Pricing</Button>
+                </Link>
+              </motion.div>
               {user ? (
                 <>
                   <motion.div
@@ -676,6 +686,13 @@ export default function HomePage() {
               className="hover:text-foreground transition-colors"
             >
               Templates
+            </Link>
+            <span>&middot;</span>
+            <Link
+              href="/pricing"
+              className="hover:text-foreground transition-colors"
+            >
+              Pricing
             </Link>
             <span>&middot;</span>
             <Link

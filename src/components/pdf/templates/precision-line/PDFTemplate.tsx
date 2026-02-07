@@ -48,7 +48,10 @@ export function PDFTemplate({ resume }: PDFTemplateProps) {
 
   const styles = StyleSheet.create({
     page: {
-      padding: theme.pageMargins,
+      paddingTop: theme.marginVertical,
+      paddingBottom: theme.marginVertical,
+      paddingLeft: theme.marginHorizontal,
+      paddingRight: theme.marginHorizontal,
       fontFamily: "Inter",
       fontSize: theme.fontSize,
       lineHeight: theme.lineHeight,

@@ -169,16 +169,34 @@ export function ThemeEditor() {
       </div>
 
       {/* Page Margins */}
-      <div className="space-y-3">
-        <Label>Page Margins: {theme.pageMargins}px</Label>
-        <Slider
-          value={[theme.pageMargins]}
-          onValueChange={([value]) => updateTheme({ pageMargins: value })}
-          min={20}
-          max={60}
-          step={5}
-          className="w-64"
-        />
+      <div className="space-y-4">
+        <Label className="text-base font-medium">Page Margins</Label>
+        
+        <div className="space-y-3 pl-2">
+          <div className="space-y-2">
+            <Label className="text-sm text-gray-600">Top & Bottom: {theme.marginVertical}px</Label>
+            <Slider
+              value={[theme.marginVertical]}
+              onValueChange={([value]) => updateTheme({ marginVertical: value })}
+              min={10}
+              max={80}
+              step={5}
+              className="w-64"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label className="text-sm text-gray-600">Left & Right: {theme.marginHorizontal}px</Label>
+            <Slider
+              value={[theme.marginHorizontal]}
+              onValueChange={([value]) => updateTheme({ marginHorizontal: value })}
+              min={10}
+              max={80}
+              step={5}
+              className="w-64"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Name Font Size */}

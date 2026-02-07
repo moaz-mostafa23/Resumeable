@@ -258,7 +258,8 @@ export interface ThemeConfig {
   fontSize: number;
   lineHeight: number;
   sectionSpacing: number;
-  pageMargins: number;
+  marginVertical: number;
+  marginHorizontal: number;
   nameFontSize: number;
   titleFontSize: number;
   textAlign: 'left' | 'center' | 'right';
@@ -283,7 +284,8 @@ export const defaultTheme: ThemeConfig = {
   fontSize: 13,
   lineHeight: 1.4,
   sectionSpacing: 16,
-  pageMargins: 40,
+  marginVertical: 40,
+  marginHorizontal: 40,
   nameFontSize: 28,
   titleFontSize: 18,
   textAlign: 'center',

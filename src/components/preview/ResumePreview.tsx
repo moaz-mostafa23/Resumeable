@@ -32,7 +32,10 @@ export function ResumePreview() {
     page: {
       width: "8.5in",
       minHeight: "11in",
-      padding: theme.pageMargins,
+      paddingTop: theme.marginVertical,
+      paddingBottom: theme.marginVertical,
+      paddingLeft: theme.marginHorizontal,
+      paddingRight: theme.marginHorizontal,
       fontFamily: theme.fontFamily,
       fontSize: theme.fontSize,
       lineHeight: theme.lineHeight,

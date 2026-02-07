@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthContext } from "@/components/auth/AuthProvider";
 import { createClient } from "@/lib/supabase/client";
-import { useResumeStore } from "@/store/useResumeStore";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,10 +18,8 @@ interface ResumeListItem {
 
 export default function DashboardPage() {
   const { user, loading: authLoading, signOut } = useAuthContext();
-  const { createResume } = useResumeStore();
   const [resumes, setResumes] = useState<ResumeListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [creating, setCreating] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const router = useRouter();
 
@@ -53,17 +50,6 @@ export default function DashboardPage() {
       fetchResumes();
     }
   }, [user]);
-
-  const handleCreateResume = async () => {
-    if (!user) return;
-    setCreating(true);
-    const name = `Resume ${resumes.length + 1}`;
-    const id = await createResume(user.id, name);
-    if (id) {
-      router.push(`/builder/${id}`);
-    }
-    setCreating(false);
-  };
 
   const handleConfirmDelete = async () => {
     if (!deleteTarget) return;
@@ -117,14 +103,12 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-bold">My Resumes</h1>
             <p className="text-gray-600">Create and manage your resumes</p>
           </div>
-          <Button onClick={handleCreateResume} disabled={creating}>
-            {creating ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
+          <Link href="/builder/new">
+            <Button>
               <Plus className="h-4 w-4 mr-2" />
-            )}
-            New Resume
-          </Button>
+              New Resume
+            </Button>
+          </Link>
         </div>
 
         {resumes.length === 0 ? (
@@ -135,14 +119,12 @@ export default function DashboardPage() {
               <p className="text-gray-500 mb-6">
                 Create your first resume to get started
               </p>
-              <Button onClick={handleCreateResume} disabled={creating}>
-                {creating ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
+              <Link href="/builder/new">
+                <Button>
                   <Plus className="h-4 w-4 mr-2" />
-                )}
-                Create Resume
-              </Button>
+                  Create Resume
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         ) : (

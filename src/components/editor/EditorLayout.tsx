@@ -9,7 +9,7 @@ import { useAutoSave } from "@/hooks/useAutoSave";
 import { usePDFDownload } from "@/hooks/usePDFDownload";
 import { EditorSidebar } from "./EditorSidebar";
 import { EditorPanel } from "./EditorPanel";
-import { ResumePreview } from "@/components/preview/ResumePreview";
+import { TemplatePreview } from "@/components/preview/TemplatePreview";
 import { Loader2, Menu, Download, ArrowLeft, GripVertical, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -185,7 +185,7 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
               transformOrigin: "top center",
             }}
           >
-            <ResumePreview />
+            <TemplatePreview />
           </div>
         </div>
       </div>
@@ -200,7 +200,7 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
             className="overflow-y-auto max-h-[95vh] bg-white shadow-2xl rounded-lg"
             onClick={(e) => e.stopPropagation()}
           >
-            <ResumePreview />
+            <TemplatePreview />
           </div>
         </div>
       )}

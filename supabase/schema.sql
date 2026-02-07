@@ -6,12 +6,21 @@ create table if not exists resumes (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users(id) on delete cascade not null,
   name text not null default 'Untitled Resume',
+  template_id text not null default 'ats-minimal',
   sections jsonb not null default '[]',
   section_data jsonb not null default '{}',
   theme jsonb not null default '{}',
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
+
+-- Migration for existing tables: Add template_id column if it doesn't exist
+do $$
+begin
+  if not exists (select 1 from information_schema.columns where table_name = 'resumes' and column_name = 'template_id') then
+    alter table resumes add column template_id text not null default 'ats-minimal';
+  end if;
+end $$;
 
 -- Row Level Security
 alter table resumes enable row level security;

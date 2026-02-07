@@ -7,6 +7,8 @@ import {
   SectionType,
   SectionData,
   ThemeConfig,
+  TemplateId,
+  DEFAULT_TEMPLATE_ID,
   ExperienceData,
   EducationData,
   SkillsData,
@@ -46,12 +48,12 @@ interface ResumeState {
 
   // Resume actions
   loadResume: (id: string) => Promise<void>;
-  createResume: (userId: string, name?: string) => Promise<string | null>;
+  createResume: (userId: string, name?: string, templateId?: TemplateId) => Promise<string | null>;
   saveResume: () => Promise<void>;
   setResumeName: (name: string) => void;
 
   // Draft actions (for anonymous users)
-  createDraftResume: () => string;
+  createDraftResume: (templateId?: TemplateId) => string;
   loadDraftResume: (draftId: string) => void;
   publishDraftToAccount: (userId: string) => Promise<string | null>;
   clearResume: () => void;
@@ -201,6 +203,7 @@ export const useResumeStore = create<ResumeState>()(
             id: data.id,
             name: data.name,
             userId: data.user_id,
+            templateId: data.template_id ?? DEFAULT_TEMPLATE_ID,
             sections: data.sections,
             sectionData: data.section_data,
             theme: {
@@ -223,7 +226,7 @@ export const useResumeStore = create<ResumeState>()(
       }
     },
 
-    createResume: async (userId: string, name?: string) => {
+    createResume: async (userId: string, name?: string, templateId?: TemplateId) => {
       set((state) => {
         state.loading = true;
         state.error = null;
@@ -231,13 +234,14 @@ export const useResumeStore = create<ResumeState>()(
 
       try {
         const supabase = createClient();
-        const newResume = createDefaultResume(userId);
+        const newResume = createDefaultResume(userId, templateId);
 
         const { data, error } = await supabase
           .from("resumes")
           .insert({
             user_id: userId,
             name: name ?? newResume.name,
+            template_id: newResume.templateId,
             sections: newResume.sections,
             section_data: newResume.sectionData,
             theme: newResume.theme,
@@ -252,6 +256,7 @@ export const useResumeStore = create<ResumeState>()(
             id: data.id,
             name: data.name,
             userId: data.user_id,
+            templateId: data.template_id ?? DEFAULT_TEMPLATE_ID,
             sections: data.sections,
             sectionData: data.section_data,
             theme: data.theme,
@@ -300,6 +305,7 @@ export const useResumeStore = create<ResumeState>()(
           .from("resumes")
           .update({
             name: resume.name,
+            template_id: resume.templateId,
             sections: resume.sections,
             section_data: resume.sectionData,
             theme: resume.theme,
@@ -328,10 +334,10 @@ export const useResumeStore = create<ResumeState>()(
     },
 
     // Draft actions for anonymous users
-    createDraftResume: () => {
+    createDraftResume: (templateId?: TemplateId) => {
       const draftId = `draft-${generateId()}`;
       const now = new Date().toISOString();
-      const newResume = createDefaultResume("");
+      const newResume = createDefaultResume("", templateId);
       newResume.id = draftId;
       newResume.userId = "";
       newResume.createdAt = now;
@@ -410,6 +416,7 @@ export const useResumeStore = create<ResumeState>()(
           .insert({
             user_id: userId,
             name: resume.name,
+            template_id: resume.templateId,
             sections: resume.sections,
             section_data: resume.sectionData,
             theme: resume.theme,
@@ -431,6 +438,7 @@ export const useResumeStore = create<ResumeState>()(
             id: data.id,
             name: data.name,
             userId: data.user_id,
+            templateId: data.template_id ?? DEFAULT_TEMPLATE_ID,
             sections: data.sections,
             sectionData: data.section_data,
             theme: data.theme,

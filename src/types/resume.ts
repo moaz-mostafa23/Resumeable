@@ -265,11 +265,22 @@ export interface ThemeConfig {
   textAlign: 'left' | 'center' | 'right';
 }
 
+// Template IDs
+export type TemplateId = 
+  | 'ats-minimal'
+  | 'modern-minimal'
+  | 'two-column-sidebar'
+  | 'corporate-timeline'
+  | 'creative-infographic';
+
+export const DEFAULT_TEMPLATE_ID: TemplateId = 'ats-minimal';
+
 // Complete resume document
 export interface ResumeDocument {
   id: string;
   name: string;
   userId: string;
+  templateId: TemplateId;
   sections: SectionConfig[];
   sectionData: Record<string, SectionData>;
   theme: ThemeConfig;
@@ -506,12 +517,13 @@ export const defaultSectionData: Record<string, SectionData> = {
 };
 
 // Create default resume
-export function createDefaultResume(userId: string): ResumeDocument {
+export function createDefaultResume(userId: string, templateId: TemplateId = DEFAULT_TEMPLATE_ID): ResumeDocument {
   const now = new Date().toISOString();
   return {
     id: "",
     name: "Untitled Resume",
     userId,
+    templateId,
     sections: [...defaultSections],
     sectionData: { ...defaultSectionData },
     theme: { ...defaultTheme },

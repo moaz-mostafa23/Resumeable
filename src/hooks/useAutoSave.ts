@@ -13,6 +13,7 @@ export function useAutoSave(delay: number = 2000) {
 
     const currentResumeJson = JSON.stringify({
       name: resume.name,
+      templateId: resume.templateId,
       sections: resume.sections,
       sectionData: resume.sectionData,
       theme: resume.theme,

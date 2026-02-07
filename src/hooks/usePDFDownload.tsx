@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { pdf } from "@react-pdf/renderer";
-import { PDFTemplate } from "@/components/pdf/templates/precision-line/PDFTemplate";
+import { PDFTemplateRenderer } from "@/components/pdf/PDFTemplateRenderer";
 import { useResumeStore } from "@/store/useResumeStore";
 
 export function usePDFDownload() {
@@ -15,7 +15,7 @@ export function usePDFDownload() {
     setIsGenerating(true);
 
     try {
-      const doc = <PDFTemplate resume={resume} />;
+      const doc = <PDFTemplateRenderer resume={resume} />;
       const blob = await pdf(doc).toBlob();
 
       const url = URL.createObjectURL(blob);

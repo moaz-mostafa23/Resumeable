@@ -31,7 +31,7 @@ interface ResumeState {
 
   // Resume actions
   loadResume: (id: string) => Promise<void>;
-  createResume: (userId: string) => Promise<string | null>;
+  createResume: (userId: string, name?: string) => Promise<string | null>;
   saveResume: () => Promise<void>;
   setResumeName: (name: string) => void;
 
@@ -145,7 +145,7 @@ export const useResumeStore = create<ResumeState>()(
       }
     },
 
-    createResume: async (userId: string) => {
+    createResume: async (userId: string, name?: string) => {
       set((state) => {
         state.loading = true;
         state.error = null;
@@ -159,7 +159,7 @@ export const useResumeStore = create<ResumeState>()(
           .from("resumes")
           .insert({
             user_id: userId,
-            name: newResume.name,
+            name: name ?? newResume.name,
             sections: newResume.sections,
             section_data: newResume.sectionData,
             theme: newResume.theme,

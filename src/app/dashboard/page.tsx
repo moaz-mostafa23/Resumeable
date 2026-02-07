@@ -57,7 +57,8 @@ export default function DashboardPage() {
   const handleCreateResume = async () => {
     if (!user) return;
     setCreating(true);
-    const id = await createResume(user.id);
+    const name = `Resume ${resumes.length + 1}`;
+    const id = await createResume(user.id, name);
     if (id) {
       router.push(`/builder/${id}`);
     }

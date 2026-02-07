@@ -6,7 +6,7 @@ import { ArrowLeft, ArrowRight, FileText } from "lucide-react";
 import { resumeExamples, categories } from "@/data/resume-examples";
 
 export const metadata: Metadata = {
-  title: "Resume Examples for Every Job Title (2026) — Resumeable",
+  title: "Resume Examples for Every Job Title (2026)",
   description:
     "Browse 30+ free resume examples organized by industry. Each includes a full sample resume, writing tips, and key skills to help you build a job-winning resume.",
   alternates: {

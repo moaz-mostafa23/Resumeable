@@ -40,7 +40,7 @@ export async function generateMetadata({
   const url = `https://www.resumeable.cv/resume-examples/${slug}`;
 
   return {
-    title: `${title} — Resumeable`,
+    title,
     description: example.metaDescription,
     alternates: { canonical: url },
     openGraph: {

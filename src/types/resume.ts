@@ -35,6 +35,7 @@ export interface HeaderData {
   linkedin: string;
   github: string;
   website: string;
+  photoUrl?: string;  // base64 data URL or empty
 }
 
 // Summary section data
@@ -271,7 +272,9 @@ export type TemplateId =
   | 'modern-minimal'
   | 'two-column-sidebar'
   | 'corporate-timeline'
-  | 'creative-infographic';
+  | 'creative-infographic'
+  | 'elegant-photo'
+  | 'bold-header';
 
 export const DEFAULT_TEMPLATE_ID: TemplateId = 'ats-minimal';
 

@@ -71,6 +71,26 @@ export const templateDefinitions: TemplateDefinition[] = [
     category: 'creative',
     features: ['Visual design', 'Icons', 'Color blocks', 'Infographic style'],
   },
+  {
+    id: 'elegant-photo',
+    name: 'Elegant Photo',
+    description: 'Sophisticated layout with a professional headshot, perfect for client-facing roles and creative professionals.',
+    thumbnail: '/templates/elegant-photo.png',
+    atsFriendly: false,
+    isEnabled: true,
+    category: 'professional',
+    features: ['Profile photo', 'Two-column', 'Elegant typography', 'Contact sidebar'],
+  },
+  {
+    id: 'bold-header',
+    name: 'Bold Header',
+    description: 'Eye-catching design with a large photo header and modern typography. Great for standing out.',
+    thumbnail: '/templates/bold-header.png',
+    atsFriendly: false,
+    isEnabled: true,
+    category: 'creative',
+    features: ['Large photo', 'Bold design', 'Color accents', 'Modern layout'],
+  },
 ];
 
 // Get template definition by ID

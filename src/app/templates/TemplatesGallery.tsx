@@ -15,6 +15,8 @@ import {
   StaticTwoColumnSidebar,
   StaticCorporateTimeline,
   StaticCreativeInfographic,
+  StaticElegantPhoto,
+  StaticBoldHeader,
 } from "@/components/templates/previews";
 
 /**
@@ -46,6 +48,10 @@ function TemplatePreviewRenderer({ id }: { id: TemplateId }) {
       return <StaticCorporateTimeline />;
     case "creative-infographic":
       return <StaticCreativeInfographic />;
+    case "elegant-photo":
+      return <StaticElegantPhoto />;
+    case "bold-header":
+      return <StaticBoldHeader />;
     default:
       return null;
   }

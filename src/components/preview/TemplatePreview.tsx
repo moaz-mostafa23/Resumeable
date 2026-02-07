@@ -7,6 +7,8 @@ import { ModernMinimalPreview } from "./templates/modern-minimal/Preview";
 import { TwoColumnSidebarPreview } from "./templates/two-column-sidebar/Preview";
 import { CorporateTimelinePreview } from "./templates/corporate-timeline/Preview";
 import { CreativeInfographicPreview } from "./templates/creative-infographic/Preview";
+import { ElegantPhotoPreview } from "./templates/elegant-photo/Preview";
+import { BoldHeaderPreview } from "./templates/bold-header/Preview";
 
 // Map template IDs to their preview components
 const templatePreviewMap: Record<TemplateId, React.ComponentType> = {
@@ -15,6 +17,8 @@ const templatePreviewMap: Record<TemplateId, React.ComponentType> = {
   'two-column-sidebar': TwoColumnSidebarPreview,
   'corporate-timeline': CorporateTimelinePreview,
   'creative-infographic': CreativeInfographicPreview,
+  'elegant-photo': ElegantPhotoPreview,
+  'bold-header': BoldHeaderPreview,
 };
 
 export function TemplatePreview() {

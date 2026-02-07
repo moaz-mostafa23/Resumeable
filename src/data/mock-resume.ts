@@ -260,6 +260,12 @@ export const templateThemeOverrides: Record<string, Partial<ThemeConfig>> = {
   "creative-infographic": {
     primaryColor: "#7c3aed",
   },
+  "elegant-photo": {
+    primaryColor: "#334155",
+  },
+  "bold-header": {
+    primaryColor: "#0d9488",
+  },
 };
 
 // Get a complete mock theme for a specific template

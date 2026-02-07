@@ -9,6 +9,8 @@ import { PDFTemplate as ModernMinimalPDF } from "./templates/modern-minimal/PDFT
 import { PDFTemplate as TwoColumnSidebarPDF } from "./templates/two-column-sidebar/PDFTemplate";
 import { PDFTemplate as CorporateTimelinePDF } from "./templates/corporate-timeline/PDFTemplate";
 import { PDFTemplate as CreativeInfographicPDF } from "./templates/creative-infographic/PDFTemplate";
+import { PDFTemplate as ElegantPhotoPDF } from "./templates/elegant-photo/PDFTemplate";
+import { PDFTemplate as BoldHeaderPDF } from "./templates/bold-header/PDFTemplate";
 
 interface PDFTemplateProps {
   resume: ResumeDocument;
@@ -21,6 +23,8 @@ const templatePDFMap: Record<TemplateId, ComponentType<PDFTemplateProps>> = {
   'two-column-sidebar': TwoColumnSidebarPDF,
   'corporate-timeline': CorporateTimelinePDF,
   'creative-infographic': CreativeInfographicPDF,
+  'elegant-photo': ElegantPhotoPDF,
+  'bold-header': BoldHeaderPDF,
 };
 
 export function getPDFTemplate(templateId: TemplateId): ComponentType<PDFTemplateProps> {

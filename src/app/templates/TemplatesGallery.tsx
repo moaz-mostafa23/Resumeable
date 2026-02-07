@@ -66,8 +66,10 @@ function TemplateCard({ template }: { template: TemplateDefinition }) {
       className="group relative bg-white rounded-2xl border border-gray-200 overflow-hidden transition-all duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 text-left focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2"
     >
       {/* Preview area — renders at card size directly, no transform scaling */}
-      <div className="relative overflow-hidden bg-white" style={{ aspectRatio: "8.5 / 11" }}>
-        <TemplatePreviewRenderer id={template.id} />
+      <div className="relative overflow-hidden bg-white" style={{ aspectRatio: "8.5 / 11", position: "relative" }}>
+        <div style={{ position: "absolute", inset: 0 }}>
+          <TemplatePreviewRenderer id={template.id} />
+        </div>
 
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-8">

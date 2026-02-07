@@ -45,6 +45,27 @@ export const categories = [
   "Entry Level & Students",
 ] as const;
 
+// ── Helpers ────────────────────────────────────────────────────────────
+
+export function getExampleBySlug(slug: string) {
+  return resumeExamples.find((e) => e.slug === slug) ?? null;
+}
+
+/** Get related examples: same category first, then random others. Max `count`. */
+export function getRelatedExamples(slug: string, count = 3): ResumeExample[] {
+  const current = getExampleBySlug(slug);
+  if (!current) return [];
+
+  const sameCategory = resumeExamples.filter(
+    (e) => e.category === current.category && e.slug !== slug
+  );
+  const otherCategory = resumeExamples.filter(
+    (e) => e.category !== current.category
+  );
+
+  return [...sameCategory, ...otherCategory].slice(0, count);
+}
+
 // ── Data ───────────────────────────────────────────────────────────────
 
 export const resumeExamples: ResumeExample[] = [
@@ -1856,13 +1877,3 @@ export const resumeExamples: ResumeExample[] = [
       "Not showing any new-field experience (projects, certifications, or volunteer work)", "Using the same resume format as if you had linear career progression"],
   },
 ];
-
-// ── Helpers ────────────────────────────────────────────────────────────
-
-export function getExampleBySlug(slug: string): ResumeExample | undefined {
-  return resumeExamples.find((e) => e.slug === slug);
-}
-
-export function getExamplesByCategory(category: string): ResumeExample[] {
-  return resumeExamples.filter((e) => e.category === category);
-}

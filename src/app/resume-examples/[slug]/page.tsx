@@ -15,7 +15,11 @@ import {
   Briefcase,
   GraduationCap,
 } from "lucide-react";
-import { resumeExamples, getExampleBySlug } from "@/data/resume-examples";
+import {
+  resumeExamples,
+  getExampleBySlug,
+  getRelatedExamples,
+} from "@/data/resume-examples";
 
 // ── Static params ──────────────────────────────────────────────────────
 
@@ -337,6 +341,35 @@ export default async function ResumeExamplePage({
             </ul>
           </div>
         </section>
+
+        {/* ── Related Examples ──────────────────────────────────────── */}
+        {(() => {
+          const related = getRelatedExamples(slug, 3);
+          if (related.length === 0) return null;
+          return (
+            <section className="mb-12">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Related Resume Examples
+              </h2>
+              <div className="grid sm:grid-cols-3 gap-4">
+                {related.map((rel) => (
+                  <Link
+                    key={rel.slug}
+                    href={`/resume-examples/${rel.slug}`}
+                    className="group bg-white rounded-xl border border-gray-200 p-5 hover:border-primary hover:shadow-md transition-all"
+                  >
+                    <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
+                      {rel.jobTitle}
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                      {rel.metaDescription}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          );
+        })()}
 
         {/* ── CTA ───────────────────────────────────────────────────── */}
         <section className="bg-primary/5 rounded-2xl border border-primary/10 p-8 text-center">

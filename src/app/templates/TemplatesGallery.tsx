@@ -59,19 +59,9 @@ function TemplateCard({ template }: { template: TemplateDefinition }) {
       onClick={() => router.push("/builder/new")}
       className="group relative bg-white rounded-2xl border border-gray-200 overflow-hidden transition-all duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 text-left focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2"
     >
-      {/* Preview area — renders full 612×792 then scales down */}
-      <div className="relative bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden" style={{ aspectRatio: "8.5 / 11" }}>
-        <div
-          className="origin-top-left"
-          style={{
-            width: 612,
-            height: 792,
-            transform: "scale(var(--preview-scale, 0.47))",
-            transformOrigin: "top left",
-          }}
-        >
-          <TemplatePreviewRenderer id={template.id} />
-        </div>
+      {/* Preview area — renders at card size directly, no transform scaling */}
+      <div className="relative overflow-hidden bg-white" style={{ aspectRatio: "8.5 / 11" }}>
+        <TemplatePreviewRenderer id={template.id} />
 
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-8">
@@ -198,14 +188,7 @@ export function TemplatesGallery() {
 
       {/* Template grid */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-          style={{
-            // Set the CSS variable for preview scale based on card width
-            // Cards are ~1/3 of 1280px max ≈ 400px, preview is 612px → ~0.47
-            ["--preview-scale" as string]: "0.47",
-          }}
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filtered.map((template) => (
             <TemplateCard key={template.id} template={template} />
           ))}

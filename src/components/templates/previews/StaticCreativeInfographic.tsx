@@ -1,161 +1,116 @@
 "use client";
 
-import {
-  mockSectionData,
-  getMockTheme,
-} from "@/data/mock-resume";
-import {
-  HeaderData,
-  SummaryData,
-  ExperienceData,
-  EducationData,
-  SkillsData,
-  ProjectsData,
-  CertificationsData,
-} from "@/types/resume";
-
 /**
- * Static Creative Infographic preview for gallery — no store dependency.
- * Mirrors the real CreativeInfographicPreview: bold header banner,
- * numbered experience, rounded skill chips, icon boxes.
+ * Static Creative Infographic preview — thumbnail-optimized.
+ * Renders directly at card size with readable micro-typography.
+ * Purple (#7c3aed) header banner with name. Rounded skill pills.
+ * Icon-style section markers. Most visually distinct template.
  */
 export function StaticCreativeInfographic() {
-  const theme = getMockTheme("creative-infographic");
-  const sd = mockSectionData;
-
-  const header = sd.header as HeaderData;
-  const summary = sd.summary as SummaryData;
-  const experience = sd.experience as ExperienceData;
-  const education = sd.education as EducationData;
-  const skills = sd.skills as SkillsData;
-  const projects = sd.projects as ProjectsData;
-  const certifications = sd.certifications as CertificationsData;
-
-  const contactItems = [
-    header.email,
-    header.phone,
-    header.location,
-    header.linkedin,
-    header.website,
-  ].filter(Boolean);
-
-  const sectionTitleStyle: React.CSSProperties = {
-    color: theme.primaryColor,
-    fontSize: theme.fontSize + 2,
-    fontWeight: 700,
-    marginBottom: theme.sectionSpacing / 2,
-    marginTop: theme.sectionSpacing,
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-  };
-
-  const iconBox: React.CSSProperties = {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: `${theme.primaryColor}15`,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-    fontSize: 14,
-    color: theme.primaryColor,
-    fontWeight: 700,
-  };
+  const purple = "#7c3aed";
 
   return (
     <div
       style={{
-        width: 612,
-        height: 792,
-        fontFamily: theme.fontFamily,
-        fontSize: theme.fontSize,
-        lineHeight: theme.lineHeight,
+        width: "100%",
+        height: "100%",
+        fontFamily: "Inter, system-ui, sans-serif",
+        fontSize: 7,
+        lineHeight: 1.25,
         backgroundColor: "white",
         overflow: "hidden",
+        color: "#374151",
       }}
     >
       {/* Header Banner */}
       <div
         style={{
-          backgroundColor: theme.primaryColor,
-          padding: `${theme.marginVertical}px ${theme.marginHorizontal}px`,
+          backgroundColor: purple,
+          padding: "14px 14px 12px",
           position: "relative",
           overflow: "hidden",
         }}
       >
-        {/* Decorative circles */}
+        {/* Decorative circle */}
         <div
           style={{
             position: "absolute",
-            top: 0,
-            right: 0,
-            width: 200,
-            height: 200,
+            top: -20,
+            right: -20,
+            width: 70,
+            height: 70,
             borderRadius: "50%",
             backgroundColor: "rgba(255,255,255,0.1)",
-            transform: "translate(30%, -30%)",
           }}
         />
         <div
           style={{
             position: "absolute",
-            bottom: 0,
-            left: 0,
-            width: 150,
-            height: 150,
+            bottom: -15,
+            left: -15,
+            width: 50,
+            height: 50,
             borderRadius: "50%",
-            backgroundColor: "rgba(255,255,255,0.1)",
-            transform: "translate(-30%, 30%)",
+            backgroundColor: "rgba(255,255,255,0.08)",
           }}
         />
         <div style={{ position: "relative", zIndex: 1 }}>
           <h1
             style={{
-              fontSize: theme.nameFontSize + 4,
+              fontSize: 14,
               color: "white",
               fontWeight: 700,
-              marginBottom: 6,
+              marginBottom: 2,
             }}
           >
-            {header.fullName}
+            Sarah Chen
           </h1>
           <p
             style={{
               color: "rgba(255,255,255,0.9)",
-              fontSize: theme.titleFontSize + 2,
+              fontSize: 9,
               fontWeight: 500,
-              marginBottom: 14,
+              marginBottom: 5,
             }}
           >
-            {header.title}
+            Senior UX Designer
           </p>
           <div
             style={{
               display: "flex",
               flexWrap: "wrap",
-              gap: "6px 18px",
-              color: "rgba(255,255,255,0.9)",
-              fontSize: theme.fontSize,
+              gap: "2px 10px",
+              color: "rgba(255,255,255,0.85)",
+              fontSize: 6.5,
             }}
           >
-            {contactItems.map((item, i) => (
-              <span key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {[
+              "sarah.chen@email.com",
+              "(415) 555-0142",
+              "San Francisco, CA",
+            ].map((item, i) => (
+              <span
+                key={i}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 3,
+                }}
+              >
                 <span
                   style={{
-                    width: 28,
-                    height: 28,
+                    width: 10,
+                    height: 10,
                     borderRadius: "50%",
                     backgroundColor: "rgba(255,255,255,0.2)",
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: 11,
+                    fontSize: 5,
                     flexShrink: 0,
                   }}
                 >
-                  ✉
+                  ✦
                 </span>
                 {item}
               </span>
@@ -167,239 +122,280 @@ export function StaticCreativeInfographic() {
       {/* Summary callout */}
       <div
         style={{
-          backgroundColor: `${theme.primaryColor}08`,
-          padding: theme.marginHorizontal / 2,
-          margin: `${theme.marginVertical / 2}px ${theme.marginHorizontal}px`,
-          borderRadius: 12,
-          borderLeft: `4px solid ${theme.primaryColor}`,
+          backgroundColor: `${purple}08`,
+          padding: "6px 10px",
+          margin: "8px 14px 0",
+          borderRadius: 6,
+          borderLeft: `3px solid ${purple}`,
         }}
       >
-        <p style={{ color: "#374151", lineHeight: 1.6 }}>{summary.content}</p>
+        <p style={{ fontSize: 6.5 }}>
+          Award-winning UX designer with 6+ years crafting intuitive digital
+          experiences for enterprise SaaS and consumer products.
+        </p>
       </div>
 
-      {/* Experience */}
-      <div style={{ padding: `0 ${theme.marginHorizontal}px` }}>
-        <div style={sectionTitleStyle}>
-          <div style={iconBox}>💼</div>
-          Work Experience
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {experience.items.map((item, index) => (
-            <div key={item.id} style={{ display: "flex", gap: 12 }}>
-              {/* Number circle */}
+      <div style={{ padding: "0 14px" }}>
+        {/* Experience */}
+        <div style={{ marginTop: 7, marginBottom: 6 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+              marginBottom: 4,
+            }}
+          >
+            <div
+              style={{
+                width: 16,
+                height: 16,
+                borderRadius: 4,
+                backgroundColor: `${purple}15`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 8,
+                flexShrink: 0,
+              }}
+            >
+              💼
+            </div>
+            <span
+              style={{
+                fontSize: 8.5,
+                fontWeight: 700,
+                color: purple,
+              }}
+            >
+              Experience
+            </span>
+          </div>
+
+          <div style={{ display: "flex", gap: 6 }}>
+            {/* Number circle */}
+            <div
+              style={{
+                width: 14,
+                height: 14,
+                borderRadius: "50%",
+                backgroundColor: purple,
+                color: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: 700,
+                fontSize: 7,
+                flexShrink: 0,
+                marginTop: 1,
+              }}
+            >
+              1
+            </div>
+            <div style={{ flexGrow: 1 }}>
               <div
                 style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: "50%",
-                  backgroundColor: theme.primaryColor,
-                  color: "white",
                   display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: 700,
-                  fontSize: 13,
-                  flexShrink: 0,
+                  justifyContent: "space-between",
+                  alignItems: "baseline",
                 }}
               >
-                {index + 1}
-              </div>
-              <div style={{ flexGrow: 1 }}>
-                <div
+                <div>
+                  <span style={{ fontWeight: 700, color: "#111827" }}>
+                    Senior UX Designer
+                  </span>
+                  <p style={{ color: purple, fontWeight: 500 }}>Stripe</p>
+                </div>
+                <span
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
+                    padding: "1px 5px",
+                    borderRadius: 10,
+                    fontSize: 6,
+                    fontWeight: 500,
+                    backgroundColor: `${purple}15`,
+                    color: purple,
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
                   }}
                 >
-                  <div>
-                    <h3 style={{ fontWeight: 700, color: "#111827" }}>{item.title}</h3>
-                    <p style={{ color: theme.primaryColor, fontWeight: 500 }}>
-                      {item.company}
-                    </p>
-                    <p style={{ color: "#6b7280", fontSize: theme.fontSize - 1 }}>
-                      {item.location}
-                    </p>
-                  </div>
-                  <span
+                  2022 – Present
+                </span>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1,
+                  marginTop: 2,
+                }}
+              >
+                {[
+                  "Led dashboard redesign, +34% task completion for 2M+ users",
+                  "Built 120+ component library, 40% faster handoff",
+                ].map((text, i) => (
+                  <div
+                    key={i}
                     style={{
-                      padding: "3px 10px",
-                      borderRadius: 20,
-                      fontSize: theme.fontSize - 1,
-                      fontWeight: 500,
-                      backgroundColor: `${theme.primaryColor}15`,
-                      color: theme.primaryColor,
-                      whiteSpace: "nowrap",
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 3,
                     }}
                   >
-                    {item.startDate} - {item.current ? "Present" : item.endDate}
-                  </span>
-                </div>
-                <ul
-                  style={{
-                    marginTop: 8,
-                    color: "#374151",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                  }}
-                >
-                  {item.bullets.map((b) => (
-                    <li
-                      key={b.id}
-                      style={{ display: "flex", alignItems: "flex-start", gap: 8 }}
-                    >
-                      <span
-                        style={{
-                          width: 7,
-                          height: 7,
-                          borderRadius: "50%",
-                          backgroundColor: theme.primaryColor,
-                          marginTop: 6,
-                          flexShrink: 0,
-                        }}
-                      />
-                      {b.content}
-                    </li>
-                  ))}
-                </ul>
+                    <span
+                      style={{
+                        width: 3.5,
+                        height: 3.5,
+                        borderRadius: "50%",
+                        backgroundColor: purple,
+                        marginTop: 3,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span>{text}</span>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
+          </div>
         </div>
-      </div>
 
-      {/* Education */}
-      <div style={{ padding: `0 ${theme.marginHorizontal}px` }}>
-        <div style={sectionTitleStyle}>
-          <div style={iconBox}>🎓</div>
-          Education
-        </div>
-        {education.items.map((item) => (
+        {/* Education */}
+        <div style={{ marginBottom: 6 }}>
           <div
-            key={item.id}
             style={{
-              padding: 12,
-              borderRadius: 8,
-              borderLeft: `4px solid ${theme.primaryColor}`,
-              backgroundColor: `${theme.primaryColor}05`,
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+              marginBottom: 3,
+            }}
+          >
+            <div
+              style={{
+                width: 16,
+                height: 16,
+                borderRadius: 4,
+                backgroundColor: `${purple}15`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 8,
+                flexShrink: 0,
+              }}
+            >
+              🎓
+            </div>
+            <span
+              style={{
+                fontSize: 8.5,
+                fontWeight: 700,
+                color: purple,
+              }}
+            >
+              Education
+            </span>
+          </div>
+          <div
+            style={{
+              padding: "4px 8px",
+              borderRadius: 5,
+              borderLeft: `3px solid ${purple}`,
+              backgroundColor: `${purple}05`,
             }}
           >
             <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: "flex-start",
+                alignItems: "baseline",
               }}
             >
               <div>
-                <h3 style={{ fontWeight: 700, color: "#111827" }}>
-                  {item.degree} in {item.field}
-                </h3>
-                <p style={{ color: theme.primaryColor, fontWeight: 500 }}>
-                  {item.institution}
-                </p>
-                <p style={{ color: "#6b7280", fontSize: theme.fontSize - 1 }}>
-                  {item.location}
+                <span style={{ fontWeight: 700, color: "#111827" }}>
+                  MS Human-Computer Interaction
+                </span>
+                <p style={{ color: purple, fontWeight: 500 }}>
+                  Stanford University
                 </p>
               </div>
               <span
                 style={{
-                  padding: "3px 10px",
-                  borderRadius: 20,
-                  fontSize: theme.fontSize - 1,
+                  padding: "1px 5px",
+                  borderRadius: 10,
+                  fontSize: 6,
                   fontWeight: 500,
-                  backgroundColor: `${theme.primaryColor}15`,
-                  color: theme.primaryColor,
+                  backgroundColor: `${purple}15`,
+                  color: purple,
                   whiteSpace: "nowrap",
+                  flexShrink: 0,
                 }}
               >
-                {item.startDate} - {item.endDate}
+                2017 – 2019
               </span>
             </div>
-            {item.gpa && (
-              <p style={{ color: "#4b5563", fontSize: theme.fontSize - 1, marginTop: 4 }}>
-                GPA: {item.gpa}
-              </p>
-            )}
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* Skills */}
-      <div style={{ padding: `0 ${theme.marginHorizontal}px` }}>
-        <div style={sectionTitleStyle}>
-          <div style={iconBox}>⚡</div>
-          Skills
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {skills.categories.map((cat) => (
-            <div key={cat.id}>
-              <h4
-                style={{
-                  fontWeight: 600,
-                  color: theme.primaryColor,
-                  marginBottom: 6,
-                }}
-              >
-                {cat.name}
-              </h4>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {cat.skills.map((skill, idx) => (
-                  <span
-                    key={idx}
-                    style={{
-                      padding: "4px 12px",
-                      borderRadius: 20,
-                      fontSize: theme.fontSize - 1,
-                      fontWeight: 500,
-                      backgroundColor: theme.primaryColor,
-                      color: "white",
-                    }}
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Certifications */}
-      <div style={{ padding: `0 ${theme.marginHorizontal}px` }}>
-        <div style={sectionTitleStyle}>
-          <div style={iconBox}>🏅</div>
-          Certifications
-        </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          {certifications.items.map((item) => (
+        {/* Skills */}
+        <div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+              marginBottom: 4,
+            }}
+          >
             <div
-              key={item.id}
               style={{
-                padding: "6px 14px",
-                borderRadius: 8,
-                backgroundColor: `${theme.primaryColor}10`,
+                width: 16,
+                height: 16,
+                borderRadius: 4,
+                backgroundColor: `${purple}15`,
                 display: "flex",
                 alignItems: "center",
-                gap: 8,
+                justifyContent: "center",
+                fontSize: 8,
+                flexShrink: 0,
               }}
             >
-              <span style={{ fontSize: 14 }}>🏅</span>
-              <div>
-                <span style={{ fontWeight: 500 }}>{item.name}</span>
-                <span
-                  style={{
-                    color: "#6b7280",
-                    fontSize: theme.fontSize - 1,
-                    marginLeft: 8,
-                  }}
-                >
-                  {item.date}
-                </span>
-              </div>
+              ⚡
             </div>
-          ))}
+            <span
+              style={{
+                fontSize: 8.5,
+                fontWeight: 700,
+                color: purple,
+              }}
+            >
+              Skills
+            </span>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+            {[
+              "Figma",
+              "Sketch",
+              "Adobe XD",
+              "User Interviews",
+              "A/B Testing",
+              "HTML/CSS",
+              "React",
+              "Design Systems",
+            ].map((skill, i) => (
+              <span
+                key={i}
+                style={{
+                  padding: "2px 6px",
+                  borderRadius: 10,
+                  fontSize: 6.5,
+                  fontWeight: 500,
+                  backgroundColor: purple,
+                  color: "white",
+                }}
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -1,67 +1,23 @@
 "use client";
 
-import {
-  mockSections,
-  mockSectionData,
-  getMockTheme,
-} from "@/data/mock-resume";
-import {
-  HeaderData,
-  SummaryData,
-  ExperienceData,
-  EducationData,
-  SkillsData,
-  ProjectsData,
-  CertificationsData,
-} from "@/types/resume";
-
 /**
- * Static Two-Column Sidebar preview for gallery — no store dependency.
- * Mirrors the real TwoColumnSidebarPreview: dark sidebar with name/contact/skills,
- * white main area with experience/education/projects.
+ * Static Two-Column Sidebar preview — thumbnail-optimized.
+ * Renders directly at card size with readable micro-typography.
+ * Dark navy sidebar (~33%) with white text for name/contact/skills.
+ * White main area for experience/education.
  */
 export function StaticTwoColumnSidebar() {
-  const theme = getMockTheme("two-column-sidebar");
-  const sd = mockSectionData;
-
-  const header = sd.header as HeaderData;
-  const summary = sd.summary as SummaryData;
-  const experience = sd.experience as ExperienceData;
-  const education = sd.education as EducationData;
-  const skills = sd.skills as SkillsData;
-  const projects = sd.projects as ProjectsData;
-  const certifications = sd.certifications as CertificationsData;
-
-  const sidebarSectionTitle: React.CSSProperties = {
-    fontSize: theme.fontSize + 1,
-    fontWeight: 600,
-    marginBottom: 8,
-    paddingBottom: 4,
-    borderBottom: "1px solid rgba(255,255,255,0.3)",
-    color: "white",
-  };
-
-  const mainSectionTitle: React.CSSProperties = {
-    color: theme.primaryColor,
-    fontSize: theme.fontSize + 2,
-    fontWeight: 600,
-    marginBottom: theme.sectionSpacing / 2,
-    marginTop: theme.sectionSpacing,
-    borderBottom: `2px solid ${theme.primaryColor}`,
-    paddingBottom: 4,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-  };
+  const navy = "#1e293b";
 
   return (
     <div
       style={{
-        width: 612,
-        height: 792,
+        width: "100%",
+        height: "100%",
         display: "flex",
-        fontFamily: theme.fontFamily,
-        fontSize: theme.fontSize,
-        lineHeight: theme.lineHeight,
+        fontFamily: "Inter, system-ui, sans-serif",
+        fontSize: 7,
+        lineHeight: 1.25,
         backgroundColor: "white",
         overflow: "hidden",
       }}
@@ -69,53 +25,70 @@ export function StaticTwoColumnSidebar() {
       {/* Sidebar */}
       <div
         style={{
-          width: "35%",
-          backgroundColor: theme.primaryColor,
-          padding: theme.marginVertical,
-          paddingRight: theme.marginHorizontal * 0.6,
-          paddingLeft: theme.marginHorizontal * 0.8,
+          width: "33%",
+          backgroundColor: navy,
+          padding: "14px 10px",
           flexShrink: 0,
           overflow: "hidden",
+          color: "rgba(255,255,255,0.9)",
         }}
       >
-        {/* Name & Contact */}
-        <div style={{ marginBottom: 20 }}>
-          <h1
+        {/* Name */}
+        <h1
+          style={{
+            fontSize: 11,
+            color: "white",
+            fontWeight: 700,
+            marginBottom: 2,
+            lineHeight: 1.2,
+          }}
+        >
+          Sarah Chen
+        </h1>
+        <p
+          style={{
+            fontSize: 7.5,
+            color: "rgba(255,255,255,0.75)",
+            marginBottom: 10,
+          }}
+        >
+          Senior UX Designer
+        </p>
+
+        {/* Contact */}
+        <div style={{ marginBottom: 10 }}>
+          <h3
             style={{
-              fontSize: theme.nameFontSize - 4,
+              fontSize: 7.5,
+              fontWeight: 600,
               color: "white",
-              fontWeight: 700,
-              marginBottom: 6,
+              borderBottom: "1px solid rgba(255,255,255,0.3)",
+              paddingBottom: 2,
+              marginBottom: 4,
+              textTransform: "uppercase",
+              letterSpacing: 0.5,
             }}
           >
-            {header.fullName}
-          </h1>
-          <p
-            style={{
-              color: "rgba(255,255,255,0.8)",
-              fontSize: theme.titleFontSize - 2,
-              marginBottom: 14,
-            }}
-          >
-            {header.title}
-          </p>
+            Contact
+          </h3>
           <div
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: 7,
-              color: "rgba(255,255,255,0.9)",
-              fontSize: theme.fontSize - 1,
+              gap: 3,
+              fontSize: 6.5,
             }}
           >
-            {[header.email, header.phone, header.location, header.linkedin, header.website]
-              .filter(Boolean)
-              .map((item, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {["sarah.chen@email.com", "(415) 555-0142", "San Francisco, CA"].map(
+              (item, i) => (
+                <div
+                  key={i}
+                  style={{ display: "flex", alignItems: "center", gap: 4 }}
+                >
                   <span
                     style={{
-                      width: 16,
-                      height: 16,
+                      width: 8,
+                      height: 8,
                       borderRadius: "50%",
                       backgroundColor: "rgba(255,255,255,0.2)",
                       display: "inline-block",
@@ -124,64 +97,116 @@ export function StaticTwoColumnSidebar() {
                   />
                   <span style={{ wordBreak: "break-all" }}>{item}</span>
                 </div>
-              ))}
+              ),
+            )}
           </div>
         </div>
 
         {/* Skills */}
-        <div style={{ marginBottom: 18 }}>
-          <h3 style={sidebarSectionTitle}>Skills</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {skills.categories.map((cat) => (
-              <div key={cat.id}>
-                <p
-                  style={{
-                    color: "rgba(255,255,255,0.8)",
-                    fontWeight: 500,
-                    fontSize: theme.fontSize - 1,
-                    marginBottom: 4,
-                  }}
-                >
-                  {cat.name}
-                </p>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                  {cat.skills.map((skill, idx) => (
-                    <span
-                      key={idx}
-                      style={{
-                        padding: "2px 8px",
-                        fontSize: theme.fontSize - 2,
-                        borderRadius: 4,
-                        backgroundColor: "rgba(255,255,255,0.2)",
-                        color: "white",
-                      }}
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
+        <div>
+          <h3
+            style={{
+              fontSize: 7.5,
+              fontWeight: 600,
+              color: "white",
+              borderBottom: "1px solid rgba(255,255,255,0.3)",
+              paddingBottom: 2,
+              marginBottom: 4,
+              textTransform: "uppercase",
+              letterSpacing: 0.5,
+            }}
+          >
+            Skills
+          </h3>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 5,
+              fontSize: 6.5,
+            }}
+          >
+            <div>
+              <p
+                style={{
+                  fontWeight: 500,
+                  color: "rgba(255,255,255,0.7)",
+                  marginBottom: 2,
+                }}
+              >
+                Design Tools
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                {["Figma", "Sketch", "Adobe XD"].map((s, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      padding: "1px 4px",
+                      fontSize: 6,
+                      borderRadius: 2,
+                      backgroundColor: "rgba(255,255,255,0.15)",
+                      color: "white",
+                    }}
+                  >
+                    {s}
+                  </span>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Certifications */}
-        <div style={{ marginBottom: 18 }}>
-          <h3 style={sidebarSectionTitle}>Certifications</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: theme.fontSize - 1 }}>
-            {certifications.items.map((item) => (
-              <div key={item.id} style={{ color: "rgba(255,255,255,0.9)" }}>
-                <p style={{ fontWeight: 500 }}>{item.name}</p>
-                {item.issuer && (
-                  <p style={{ color: "rgba(255,255,255,0.7)", fontSize: theme.fontSize - 2 }}>
-                    {item.issuer}
-                  </p>
-                )}
-                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: theme.fontSize - 2 }}>
-                  {item.date}
-                </p>
+            </div>
+            <div>
+              <p
+                style={{
+                  fontWeight: 500,
+                  color: "rgba(255,255,255,0.7)",
+                  marginBottom: 2,
+                }}
+              >
+                Research
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                {["User Interviews", "A/B Testing"].map((s, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      padding: "1px 4px",
+                      fontSize: 6,
+                      borderRadius: 2,
+                      backgroundColor: "rgba(255,255,255,0.15)",
+                      color: "white",
+                    }}
+                  >
+                    {s}
+                  </span>
+                ))}
               </div>
-            ))}
+            </div>
+            <div>
+              <p
+                style={{
+                  fontWeight: 500,
+                  color: "rgba(255,255,255,0.7)",
+                  marginBottom: 2,
+                }}
+              >
+                Technical
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                {["HTML/CSS", "React", "Design Systems"].map((s, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      padding: "1px 4px",
+                      fontSize: 6,
+                      borderRadius: 2,
+                      backgroundColor: "rgba(255,255,255,0.15)",
+                      color: "white",
+                    }}
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -190,141 +215,115 @@ export function StaticTwoColumnSidebar() {
       <div
         style={{
           flexGrow: 1,
-          padding: theme.marginVertical,
-          paddingLeft: theme.marginHorizontal * 0.8,
-          paddingRight: theme.marginHorizontal,
+          padding: 14,
           overflow: "hidden",
+          color: "#374151",
         }}
       >
         {/* Summary */}
-        <div>
-          <h2 style={{ ...mainSectionTitle, marginTop: 0 }}>Professional Summary</h2>
-          <p style={{ color: "#374151" }}>{summary.content}</p>
+        <div style={{ marginBottom: 6 }}>
+          <h2
+            style={{
+              fontSize: 8,
+              fontWeight: 600,
+              color: navy,
+              textTransform: "uppercase",
+              letterSpacing: 0.8,
+              borderBottom: `1.5px solid ${navy}`,
+              paddingBottom: 2,
+              marginBottom: 4,
+            }}
+          >
+            Summary
+          </h2>
+          <p>
+            Award-winning UX designer with 6+ years crafting intuitive digital
+            experiences for enterprise SaaS products.
+          </p>
         </div>
 
         {/* Experience */}
-        <div>
-          <h2 style={mainSectionTitle}>Work Experience</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {experience.items.map((item) => (
-              <div key={item.id}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                  }}
-                >
-                  <div>
-                    <h3 style={{ fontWeight: 600 }}>{item.title}</h3>
-                    <p style={{ color: "#4b5563" }}>
-                      {item.company} | {item.location}
-                    </p>
-                  </div>
-                  <p
-                    style={{
-                      color: "#6b7280",
-                      fontSize: theme.fontSize - 1,
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {item.startDate} - {item.current ? "Present" : item.endDate}
-                  </p>
-                </div>
-                <ul
-                  style={{
-                    listStyleType: "disc",
-                    listStylePosition: "inside",
-                    marginTop: 6,
-                    color: "#374151",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 3,
-                  }}
-                >
-                  {item.bullets.map((b) => (
-                    <li key={b.id}>{b.content}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+        <div style={{ marginBottom: 6 }}>
+          <h2
+            style={{
+              fontSize: 8,
+              fontWeight: 600,
+              color: navy,
+              textTransform: "uppercase",
+              letterSpacing: 0.8,
+              borderBottom: `1.5px solid ${navy}`,
+              paddingBottom: 2,
+              marginBottom: 4,
+            }}
+          >
+            Experience
+          </h2>
+          <div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "baseline",
+              }}
+            >
+              <span style={{ fontWeight: 600, color: "#111827" }}>
+                Senior UX Designer
+              </span>
+              <span style={{ color: "#6b7280", fontSize: 6.5, flexShrink: 0 }}>
+                2022 – Present
+              </span>
+            </div>
+            <p style={{ color: "#4b5563", marginBottom: 2 }}>Stripe</p>
+            <ul
+              style={{
+                listStyleType: "disc",
+                paddingLeft: 10,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+              }}
+            >
+              <li>
+                Led dashboard redesign, +34% task completion across 2M+ users
+              </li>
+              <li>Built 120+ component library, 40% faster handoff</li>
+            </ul>
           </div>
         </div>
 
         {/* Education */}
         <div>
-          <h2 style={mainSectionTitle}>Education</h2>
-          {education.items.map((item) => (
-            <div key={item.id}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                }}
-              >
-                <div>
-                  <h3 style={{ fontWeight: 600 }}>
-                    {item.degree} in {item.field}
-                  </h3>
-                  <p style={{ color: "#4b5563" }}>
-                    {item.institution} | {item.location}
-                  </p>
-                </div>
-                <p
-                  style={{
-                    color: "#6b7280",
-                    fontSize: theme.fontSize - 1,
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {item.startDate} - {item.endDate}
-                </p>
-              </div>
-              {item.gpa && (
-                <p style={{ color: "#4b5563", fontSize: theme.fontSize - 1 }}>
-                  GPA: {item.gpa}
-                </p>
-              )}
+          <h2
+            style={{
+              fontSize: 8,
+              fontWeight: 600,
+              color: navy,
+              textTransform: "uppercase",
+              letterSpacing: 0.8,
+              borderBottom: `1.5px solid ${navy}`,
+              paddingBottom: 2,
+              marginBottom: 4,
+            }}
+          >
+            Education
+          </h2>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "baseline",
+            }}
+          >
+            <div>
+              <span style={{ fontWeight: 600, color: "#111827" }}>
+                MS Human-Computer Interaction
+              </span>
+              <p style={{ color: "#4b5563" }}>Stanford University</p>
             </div>
-          ))}
-        </div>
-
-        {/* Projects */}
-        <div>
-          <h2 style={mainSectionTitle}>Projects</h2>
-          {projects.items.map((item) => (
-            <div key={item.id}>
-              <h3 style={{ fontWeight: 600 }}>
-                {item.name}
-                {item.link && (
-                  <span style={{ fontWeight: 400, color: "#6b7280", marginLeft: 8 }}>
-                    | {item.link}
-                  </span>
-                )}
-              </h3>
-              {item.technologies.length > 0 && (
-                <p style={{ color: "#4b5563", fontSize: theme.fontSize - 1 }}>
-                  {item.technologies.join(" • ")}
-                </p>
-              )}
-              <ul
-                style={{
-                  listStyleType: "disc",
-                  listStylePosition: "inside",
-                  marginTop: 6,
-                  color: "#374151",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 3,
-                }}
-              >
-                {item.bullets.map((b) => (
-                  <li key={b.id}>{b.content}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
+            <span style={{ color: "#6b7280", fontSize: 6.5, flexShrink: 0 }}>
+              2017 – 2019
+            </span>
+          </div>
         </div>
       </div>
     </div>

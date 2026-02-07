@@ -10,7 +10,7 @@ import { usePDFDownload } from "@/hooks/usePDFDownload";
 import { EditorSidebar } from "./EditorSidebar";
 import { EditorPanel } from "./EditorPanel";
 import { TemplatePreview } from "@/components/preview/TemplatePreview";
-import { Loader2, Menu, Download, ArrowLeft, GripVertical, LogIn, Monitor } from "lucide-react";
+import { Loader2, Menu, Download, ArrowLeft, GripVertical, LogIn, Monitor, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -19,7 +19,7 @@ interface EditorLayoutProps {
 }
 
 export function EditorLayout({ resumeId }: EditorLayoutProps) {
-  const { resume, loading, loadResume, setResumeName, resumeSource } = useResumeStore();
+  const { resume, loading, error, loadResume, setResumeName, resumeSource } = useResumeStore();
   const { sidebarOpen, toggleSidebar } = useEditorStore();
   const { user } = useAuthContext();
   const { downloadPDF, isGenerating } = usePDFDownload();
@@ -97,10 +97,40 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
     };
   }, [sidebarOpen]);
 
-  if (loading || !resume) {
+  if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error || !resume) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center max-w-md px-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-red-100 mb-4">
+            <AlertTriangle className="h-7 w-7 text-red-600" />
+          </div>
+          <h2 className="text-xl font-semibold mb-2">
+            {error ? "Something went wrong" : "Resume not found"}
+          </h2>
+          <p className="text-muted-foreground mb-6">
+            {error
+              ? "We couldn\u2019t load this resume. It might have been deleted, or there\u2019s a connection issue."
+              : "This resume doesn\u2019t exist or you don\u2019t have access to it."}
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Button variant="outline" onClick={() => loadResume(resumeId)}>
+              Try again
+            </Button>
+            <Link href={user ? "/dashboard" : "/"}>
+              <Button>
+                {user ? "Back to Dashboard" : "Go Home"}
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }

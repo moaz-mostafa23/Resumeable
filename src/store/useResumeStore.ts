@@ -39,6 +39,7 @@ import { generateId } from "@/lib/utils";
 
 interface ResumeState {
   resume: ResumeDocument | null;
+  resumeSource: "local" | "remote" | null;
   loading: boolean;
   saving: boolean;
   error: string | null;
@@ -48,6 +49,12 @@ interface ResumeState {
   createResume: (userId: string, name?: string) => Promise<string | null>;
   saveResume: () => Promise<void>;
   setResumeName: (name: string) => void;
+
+  // Draft actions (for anonymous users)
+  createDraftResume: () => string;
+  loadDraftResume: (draftId: string) => void;
+  publishDraftToAccount: (userId: string) => Promise<string | null>;
+  clearResume: () => void;
 
   // Section actions
   setSections: (sections: SectionConfig[]) => void;
@@ -156,14 +163,24 @@ interface ResumeState {
   updateTheme: (theme: Partial<ThemeConfig>) => void;
 }
 
+// localStorage key prefix for drafts
+const DRAFT_STORAGE_KEY = "resumeable_draft_";
+
 export const useResumeStore = create<ResumeState>()(
   immer((set, get) => ({
     resume: null,
+    resumeSource: null,
     loading: false,
     saving: false,
     error: null,
 
     loadResume: async (id: string) => {
+      // Check if this is a local draft
+      if (id.startsWith("draft-")) {
+        get().loadDraftResume(id);
+        return;
+      }
+
       set((state) => {
         state.loading = true;
         state.error = null;
@@ -195,6 +212,7 @@ export const useResumeStore = create<ResumeState>()(
             createdAt: data.created_at,
             updatedAt: data.updated_at,
           };
+          state.resumeSource = "remote";
           state.loading = false;
         });
       } catch (error) {
@@ -240,6 +258,7 @@ export const useResumeStore = create<ResumeState>()(
             createdAt: data.created_at,
             updatedAt: data.updated_at,
           };
+          state.resumeSource = "remote";
           state.loading = false;
         });
 
@@ -254,9 +273,23 @@ export const useResumeStore = create<ResumeState>()(
     },
 
     saveResume: async () => {
-      const { resume } = get();
+      const { resume, resumeSource } = get();
       if (!resume) return;
 
+      // For local drafts, save to localStorage
+      if (resumeSource === "local") {
+        try {
+          localStorage.setItem(
+            DRAFT_STORAGE_KEY + resume.id,
+            JSON.stringify(resume)
+          );
+        } catch (error) {
+          console.error("Failed to save draft to localStorage:", error);
+        }
+        return;
+      }
+
+      // For remote resumes, save to Supabase
       set((state) => {
         state.saving = true;
       });
@@ -291,6 +324,140 @@ export const useResumeStore = create<ResumeState>()(
         if (state.resume) {
           state.resume.name = name;
         }
+      });
+    },
+
+    // Draft actions for anonymous users
+    createDraftResume: () => {
+      const draftId = `draft-${generateId()}`;
+      const now = new Date().toISOString();
+      const newResume = createDefaultResume("");
+      newResume.id = draftId;
+      newResume.userId = "";
+      newResume.createdAt = now;
+      newResume.updatedAt = now;
+
+      set((state) => {
+        state.resume = newResume;
+        state.resumeSource = "local";
+        state.loading = false;
+        state.error = null;
+      });
+
+      // Persist to localStorage
+      try {
+        localStorage.setItem(DRAFT_STORAGE_KEY + draftId, JSON.stringify(newResume));
+      } catch (error) {
+        console.error("Failed to save draft to localStorage:", error);
+      }
+
+      return draftId;
+    },
+
+    loadDraftResume: (draftId: string) => {
+      set((state) => {
+        state.loading = true;
+        state.error = null;
+      });
+
+      try {
+        const stored = localStorage.getItem(DRAFT_STORAGE_KEY + draftId);
+        if (stored) {
+          const resume = JSON.parse(stored) as ResumeDocument;
+          set((state) => {
+            state.resume = resume;
+            state.resumeSource = "local";
+            state.loading = false;
+          });
+        } else {
+          // Draft not found in localStorage, create a new one with the same id
+          const now = new Date().toISOString();
+          const newResume = createDefaultResume("");
+          newResume.id = draftId;
+          newResume.userId = "";
+          newResume.createdAt = now;
+          newResume.updatedAt = now;
+
+          set((state) => {
+            state.resume = newResume;
+            state.resumeSource = "local";
+            state.loading = false;
+          });
+
+          localStorage.setItem(DRAFT_STORAGE_KEY + draftId, JSON.stringify(newResume));
+        }
+      } catch (error) {
+        set((state) => {
+          state.error = (error as Error).message;
+          state.loading = false;
+        });
+      }
+    },
+
+    publishDraftToAccount: async (userId: string) => {
+      const { resume } = get();
+      if (!resume || !resume.id.startsWith("draft-")) return null;
+
+      set((state) => {
+        state.loading = true;
+        state.error = null;
+      });
+
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from("resumes")
+          .insert({
+            user_id: userId,
+            name: resume.name,
+            sections: resume.sections,
+            section_data: resume.sectionData,
+            theme: resume.theme,
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        // Remove from localStorage
+        try {
+          localStorage.removeItem(DRAFT_STORAGE_KEY + resume.id);
+        } catch {
+          // Ignore localStorage errors
+        }
+
+        set((state) => {
+          state.resume = {
+            id: data.id,
+            name: data.name,
+            userId: data.user_id,
+            sections: data.sections,
+            sectionData: data.section_data,
+            theme: data.theme,
+            createdAt: data.created_at,
+            updatedAt: data.updated_at,
+          };
+          state.resumeSource = "remote";
+          state.loading = false;
+        });
+
+        return data.id;
+      } catch (error) {
+        set((state) => {
+          state.error = (error as Error).message;
+          state.loading = false;
+        });
+        return null;
+      }
+    },
+
+    clearResume: () => {
+      set((state) => {
+        state.resume = null;
+        state.resumeSource = null;
+        state.loading = false;
+        state.saving = false;
+        state.error = null;
       });
     },
 

@@ -244,7 +244,7 @@ export default function HomePage() {
                     initial="hidden"
                     animate="visible"
                   >
-                    <Link href="/signup">
+                    <Link href="/builder/new">
                       <Button>Get Started</Button>
                     </Link>
                   </motion.div>
@@ -338,7 +338,7 @@ export default function HomePage() {
                 </Link>
               ) : (
                 <>
-                  <Link href="/signup">
+                  <Link href="/builder/new">
                     <motion.div
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.97 }}
@@ -586,7 +586,7 @@ export default function HomePage() {
                 </motion.div>
               </Link>
             ) : (
-              <Link href="/signup">
+              <Link href="/builder/new">
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.97 }}

@@ -4,12 +4,13 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { useResumeStore } from "@/store/useResumeStore";
 import { useEditorStore } from "@/store/useEditorStore";
+import { useAuthContext } from "@/components/auth/AuthProvider";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { usePDFDownload } from "@/hooks/usePDFDownload";
 import { EditorSidebar } from "./EditorSidebar";
 import { EditorPanel } from "./EditorPanel";
 import { ResumePreview } from "@/components/preview/ResumePreview";
-import { Loader2, Menu, Download, ArrowLeft, GripVertical } from "lucide-react";
+import { Loader2, Menu, Download, ArrowLeft, GripVertical, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -18,9 +19,12 @@ interface EditorLayoutProps {
 }
 
 export function EditorLayout({ resumeId }: EditorLayoutProps) {
-  const { resume, loading, loadResume, setResumeName } = useResumeStore();
+  const { resume, loading, loadResume, setResumeName, resumeSource } = useResumeStore();
   const { sidebarOpen, toggleSidebar } = useEditorStore();
+  const { user } = useAuthContext();
   const { downloadPDF, isGenerating } = usePDFDownload();
+
+  const isDraft = resumeSource === "local";
 
   // Draggable divider: editorWidth is percentage of the content area (excluding sidebar)
   const [editorWidthPct, setEditorWidthPct] = useState(25);
@@ -106,7 +110,7 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
       {/* Top bar */}
       <div className="h-14 border-b flex items-center justify-between px-4 bg-white">
         <div className="flex items-center gap-4">
-          <Link href="/dashboard">
+          <Link href={user ? "/dashboard" : "/"}>
             <Button variant="ghost" size="icon">
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -121,6 +125,15 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
           />
         </div>
         <div className="flex items-center gap-2">
+          {/* Sign in to save button for anonymous users */}
+          {!user && isDraft && (
+            <Link href={`/login?next=/builder/${resumeId}?publish=1`}>
+              <Button variant="default" size="sm">
+                <LogIn className="h-4 w-4 mr-2" />
+                Sign in to save
+              </Button>
+            </Link>
+          )}
           <Button
             variant="outline"
             size="sm"

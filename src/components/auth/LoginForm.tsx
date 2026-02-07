@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -8,15 +9,22 @@ import { createClient } from "@/lib/supabase/client";
 
 export function LoginForm() {
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next");
 
   const handleGoogleSignIn = () => {
     setLoading(true);
     const supabase = createClient();
     
+    // Include the next param in the callback URL if present
+    const callbackUrl = next 
+      ? `${window.location.origin}/callback?next=${encodeURIComponent(next)}`
+      : `${window.location.origin}/callback`;
+    
     supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/callback`,
+        redirectTo: callbackUrl,
       },
     });
   };

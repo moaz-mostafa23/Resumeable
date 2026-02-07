@@ -7,13 +7,15 @@ import {
   Palette,
   Download,
   Zap,
-  Users,
-  Star,
-  CheckCircle,
+  MousePointerClick,
+  Sparkles,
+  FileText,
+  Shield,
+  Clock,
   LogOut,
 } from "lucide-react";
 import { motion, useInView, useMotionValue, useTransform } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { useRef } from "react";
 import { useAuthContext } from "@/components/auth/AuthProvider";
 import { useRouter } from "next/navigation";
 
@@ -66,26 +68,6 @@ const cardVariant = {
     transition: { type: "spring" as const, damping: 20, stiffness: 100 },
   },
 };
-
-// ── Animated counter hook ───────────────────────────────────────────────
-
-function useAnimatedCounter(target: number, duration = 2000, start = false) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    if (!start) return;
-    let startTime: number | null = null;
-    let raf: number;
-    const step = (ts: number) => {
-      if (!startTime) startTime = ts;
-      const progress = Math.min((ts - startTime) / duration, 1);
-      setCount(Math.floor(progress * target));
-      if (progress < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [target, duration, start]);
-  return count;
-}
 
 // ── 3D tilt card ────────────────────────────────────────────────────────
 
@@ -157,12 +139,6 @@ export default function HomePage() {
   const { user, signOut } = useAuthContext();
   const router = useRouter();
   const heroWords = "Build a resume that".split(" ");
-  const statsRef = useRef(null);
-  const statsInView = useInView(statsRef, { once: true, margin: "-100px" });
-
-  const resumeCount = useAnimatedCounter(10000, 2000, statsInView);
-  const templateCount = useAnimatedCounter(25, 1500, statsInView);
-  const satisfactionRate = useAnimatedCounter(98, 1800, statsInView);
 
   const handleSignOut = async () => {
     await signOut();
@@ -198,8 +174,8 @@ export default function HomePage() {
                 initial="hidden"
                 animate="visible"
               >
-                <Link href="/privacy">
-                  <Button variant="ghost">Privacy Policy</Button>
+                <Link href="/templates">
+                  <Button variant="ghost">Templates</Button>
                 </Link>
               </motion.div>
               {user ? (
@@ -267,7 +243,6 @@ export default function HomePage() {
         <div className="relative z-10 max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16">
           {/* Left: text content */}
           <div className="flex-1 text-center lg:text-left">
-            {/* Animated headline */}
             <motion.h1
               variants={wordRevealVariants}
               initial="hidden"
@@ -285,7 +260,6 @@ export default function HomePage() {
               ))}
             </motion.h1>
 
-            {/* Gradient accent word */}
             <motion.h1
               initial={{ opacity: 0, y: 30, filter: "blur(4px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -302,7 +276,6 @@ export default function HomePage() {
               </span>
             </motion.h1>
 
-            {/* Subtitle */}
             <motion.p
               custom={0.6}
               variants={fadeSlideUp}
@@ -310,11 +283,11 @@ export default function HomePage() {
               animate="visible"
               className="text-xl text-muted-foreground mb-10 max-w-xl mx-auto lg:mx-0"
             >
-              Create professional, ATS-friendly resumes in minutes with our
-              intuitive drag-and-drop builder. No design skills needed.
+              Create professional, ATS-friendly resumes in minutes.
+              Drag-and-drop editor, beautiful templates, instant PDF
+              download&nbsp;&mdash; no design skills needed. And yes, it&apos;s free.
             </motion.p>
 
-            {/* CTA buttons */}
             <motion.div
               custom={0.8}
               variants={fadeSlideUp}
@@ -351,7 +324,7 @@ export default function HomePage() {
                       </Button>
                     </motion.div>
                   </Link>
-                  <Link href="/login">
+                  <Link href="/templates">
                     <motion.div
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.97 }}
@@ -361,13 +334,24 @@ export default function HomePage() {
                         variant="outline"
                         className="text-lg px-8"
                       >
-                        Sign In
+                        Browse Templates
                       </Button>
                     </motion.div>
                   </Link>
                 </>
               )}
             </motion.div>
+
+            {/* Lightweight trust signal — no fake numbers */}
+            <motion.p
+              custom={1.0}
+              variants={fadeSlideUp}
+              initial="hidden"
+              animate="visible"
+              className="mt-6 text-sm text-muted-foreground"
+            >
+              No credit card required&nbsp;&middot;&nbsp;No watermarks&nbsp;&middot;&nbsp;No catch
+            </motion.p>
           </div>
 
           {/* Right: floating resume mockup */}
@@ -415,6 +399,70 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── How It Works ────────────────────────────────────────────── */}
+      <RevealSection className="py-24 border-t border-border/40">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.h2
+            variants={fadeSlideUp}
+            custom={0}
+            className="text-3xl sm:text-4xl font-bold text-center mb-4"
+          >
+            Ready in three steps
+          </motion.h2>
+          <motion.p
+            variants={fadeSlideUp}
+            custom={0.1}
+            className="text-muted-foreground text-center mb-14 max-w-2xl mx-auto text-lg"
+          >
+            No account needed to get started. Just pick, fill, and download.
+          </motion.p>
+
+          <motion.div
+            variants={staggerContainer}
+            className="grid md:grid-cols-3 gap-10"
+          >
+            {[
+              {
+                step: "01",
+                icon: MousePointerClick,
+                title: "Pick a template",
+                description:
+                  "Choose from ATS-friendly layouts designed to pass automated screening and impress real humans.",
+              },
+              {
+                step: "02",
+                icon: Sparkles,
+                title: "Fill in your details",
+                description:
+                  "Drag-and-drop sections, reorder bullets, tweak colours and fonts — see changes in real time.",
+              },
+              {
+                step: "03",
+                icon: Download,
+                title: "Download your PDF",
+                description:
+                  "Export a clean, perfectly formatted PDF that's ready to submit to any job application.",
+              },
+            ].map((item) => (
+              <motion.div
+                key={item.step}
+                variants={cardVariant}
+                className="text-center"
+              >
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 mb-4">
+                  <item.icon className="h-6 w-6 text-primary" />
+                </div>
+                <span className="block text-xs font-semibold text-primary/60 uppercase tracking-widest mb-1">
+                  Step {item.step}
+                </span>
+                <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
+                <p className="text-muted-foreground">{item.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </RevealSection>
+
       {/* ── Features Section ────────────────────────────────────────── */}
       <RevealSection className="py-24 bg-card/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -423,14 +471,15 @@ export default function HomePage() {
             custom={0}
             className="text-3xl sm:text-4xl font-bold text-center mb-4"
           >
-            Everything you need to land your dream job
+            Everything you need to land the interview
           </motion.h2>
           <motion.p
             variants={fadeSlideUp}
             custom={0.1}
             className="text-muted-foreground text-center mb-14 max-w-2xl mx-auto text-lg"
           >
-            Powerful tools designed to make resume building effortless and effective.
+            We kept the stuff that matters and ditched everything that gets in
+            the way.
           </motion.p>
 
           <motion.div
@@ -442,19 +491,37 @@ export default function HomePage() {
                 icon: Palette,
                 title: "Professional Templates",
                 description:
-                  "Choose from beautiful, ATS-optimized templates designed by career experts.",
+                  "ATS-optimized layouts that look great on screen and survive automated resume parsers.",
               },
               {
                 icon: Zap,
                 title: "Real-time Preview",
                 description:
-                  "See changes instantly as you type. What you see is what you get.",
+                  "Every edit shows up instantly — no refreshing, no guessing. What you see is exactly what you get.",
               },
               {
                 icon: Download,
                 title: "Export to PDF",
                 description:
-                  "Download your resume as a perfectly formatted PDF, ready to submit.",
+                  "One click and your resume downloads as a clean, properly formatted PDF. Done.",
+              },
+              {
+                icon: FileText,
+                title: "15+ Section Types",
+                description:
+                  "Experience, education, skills, projects, certifications, languages, volunteer work, and more.",
+              },
+              {
+                icon: Shield,
+                title: "Your Data Stays Yours",
+                description:
+                  "We don't sell your info. Anonymous drafts live in your browser — sign up only if you want cloud saves.",
+              },
+              {
+                icon: Clock,
+                title: "No Signup Required",
+                description:
+                  "Start building immediately. Create an account later if you want to save or access from other devices.",
               },
             ].map((feature) => (
               <motion.div key={feature.title} variants={cardVariant}>
@@ -491,55 +558,48 @@ export default function HomePage() {
         </div>
       </RevealSection>
 
-      {/* ── Stats / Social Proof Section ────────────────────────────── */}
+      {/* ── Why Resumeable (replaces fake stats) ────────────────────── */}
       <RevealSection className="py-24">
-        <div
-          ref={statsRef}
-          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"
-        >
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.h2
             variants={fadeSlideUp}
             custom={0}
             className="text-3xl sm:text-4xl font-bold text-center mb-14"
           >
-            Trusted by thousands of job seekers
+            Why people pick Resumeable
           </motion.h2>
 
           <motion.div
             variants={staggerContainer}
-            className="grid sm:grid-cols-3 gap-8 text-center"
+            className="grid sm:grid-cols-2 gap-8"
           >
             {[
               {
-                icon: Users,
-                value: resumeCount,
-                suffix: "+",
-                label: "Resumes Created",
+                title: "Actually free",
+                body: "No sneaky paywall after you spend 20 minutes building your resume. Build it, download it, done.",
               },
               {
-                icon: Star,
-                value: templateCount,
-                suffix: "+",
-                label: "Pro Templates",
+                title: "ATS-tested templates",
+                body: "Our layouts are designed to pass applicant tracking systems — the robots that filter resumes before a human ever sees them.",
               },
               {
-                icon: CheckCircle,
-                value: satisfactionRate,
-                suffix: "%",
-                label: "Satisfaction Rate",
+                title: "Built for speed",
+                body: "Most people finish a resume in under 10 minutes. Drag sections around, tweak the style, export. That's it.",
               },
-            ].map((stat) => (
+              {
+                title: "No account wall",
+                body: "Start building the second you land on the page. Your draft saves locally. Sign up only when you're ready.",
+              },
+            ].map((item) => (
               <motion.div
-                key={stat.label}
+                key={item.title}
                 variants={cardVariant}
-                className="p-8 rounded-xl border border-border bg-card"
+                className="p-6 rounded-xl border border-border bg-card"
               >
-                <stat.icon className="h-8 w-8 text-primary mx-auto mb-4" />
-                <div className="text-4xl font-bold mb-1">
-                  {stat.value.toLocaleString()}
-                  {stat.suffix}
-                </div>
-                <div className="text-muted-foreground">{stat.label}</div>
+                <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  {item.body}
+                </p>
               </motion.div>
             ))}
           </motion.div>
@@ -555,20 +615,17 @@ export default function HomePage() {
             custom={0}
             className="text-3xl sm:text-4xl font-bold mb-4 text-white"
           >
-            Ready to build your resume?
+            Your resume shouldn&apos;t take all day
           </motion.h2>
           <motion.p
             variants={fadeSlideUp}
             custom={0.15}
             className="text-lg text-white/80 mb-10 max-w-2xl mx-auto"
           >
-            Join thousands of job seekers who have landed their dream jobs with
-            our resume builder. Get started in under a minute.
+            Pick a template, fill in your details, and download a polished PDF —
+            all in under 10 minutes.
           </motion.p>
-          <motion.div
-            variants={fadeSlideUp}
-            custom={0.3}
-          >
+          <motion.div variants={fadeSlideUp} custom={0.3}>
             {user ? (
               <Link href="/dashboard">
                 <motion.div
@@ -597,7 +654,7 @@ export default function HomePage() {
                     variant="secondary"
                     className="text-lg px-10 pulse-glow"
                   >
-                    Get Started for Free
+                    Start Building — It&apos;s Free
                   </Button>
                 </motion.div>
               </Link>
@@ -608,22 +665,37 @@ export default function HomePage() {
 
       {/* ── Footer ──────────────────────────────────────────────────── */}
       <RevealSection className="py-10 border-t border-border">
-        <motion.div
+        <motion.footer
           variants={fadeSlideUp}
           custom={0}
           className="max-w-7xl mx-auto px-4 text-center text-muted-foreground"
         >
           <div className="flex items-center justify-center gap-4 mb-3">
-            <Link href="/privacy" className="hover:text-foreground transition-colors">
+            <Link
+              href="/templates"
+              className="hover:text-foreground transition-colors"
+            >
+              Templates
+            </Link>
+            <span>&middot;</span>
+            <Link
+              href="/privacy"
+              className="hover:text-foreground transition-colors"
+            >
               Privacy Policy
             </Link>
             <span>&middot;</span>
-            <Link href="/terms" className="hover:text-foreground transition-colors">
+            <Link
+              href="/terms"
+              className="hover:text-foreground transition-colors"
+            >
               Terms of Service
             </Link>
           </div>
-          <p>&copy; {new Date().getFullYear()} Resumeable. All rights reserved.</p>
-        </motion.div>
+          <p>
+            &copy; {new Date().getFullYear()} Resumeable. All rights reserved.
+          </p>
+        </motion.footer>
       </RevealSection>
     </div>
   );

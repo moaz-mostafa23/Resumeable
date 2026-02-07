@@ -1,0 +1,9 @@
+# Resumeable — https://www.resumeable.cv
+User-agent: *
+Allow: /
+Disallow: /builder/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /callback
+
+Sitemap: https://www.resumeable.cv/sitemap.xml

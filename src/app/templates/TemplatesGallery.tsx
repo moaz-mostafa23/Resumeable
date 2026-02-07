@@ -2,132 +2,139 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
-import { templateDefinitions } from "@/lib/template-registry";
+import { templateDefinitions, TemplateDefinition } from "@/lib/template-registry";
 import { TemplateId } from "@/types/resume";
-import { ArrowLeft, Check, ArrowRight } from "lucide-react";
+import { ArrowLeft, Check, ArrowRight, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  StaticATSMinimal,
+  StaticModernMinimal,
+  StaticTwoColumnSidebar,
+  StaticCorporateTimeline,
+  StaticCreativeInfographic,
+} from "@/components/templates/previews";
 
 /**
- * Public-facing template gallery.
+ * Public-facing template gallery — premium design with realistic previews.
  *
- * This page is server-indexed for SEO (the server component in page.tsx
- * sets all metadata). The interactive bits live here in a client component.
+ * Server-indexed for SEO (the server component in page.tsx sets all metadata).
+ * Interactive bits (filters, hover states, navigation) live here.
  */
 
-// Reusable mini-preview matching the builder/new page style
-function TemplateThumbnail({ id }: { id: TemplateId }) {
-  const layouts: Record<TemplateId, React.ReactNode> = {
-    "ats-minimal": (
-      <>
-        <div className="w-1/2 h-3 bg-gray-300 rounded mb-1 mx-auto" />
-        <div className="w-1/3 h-2 bg-gray-200 rounded mb-3 mx-auto" />
-        <div className="w-full h-2 bg-gray-100 rounded mb-1" />
-        <div className="w-full h-2 bg-gray-100 rounded mb-1" />
-        <div className="flex-1" />
-        <div className="w-2/3 h-2 bg-gray-200 rounded mb-1" />
-        <div className="w-full h-1.5 bg-gray-100 rounded mb-1" />
-        <div className="w-full h-1.5 bg-gray-100 rounded" />
-      </>
-    ),
-    "modern-minimal": (
-      <>
-        <div className="border-b-2 border-primary/40 pb-2 mb-2">
-          <div className="w-1/2 h-3 bg-gray-300 rounded mb-1" />
-          <div className="w-1/3 h-2 bg-primary/30 rounded" />
-        </div>
-        <div className="flex gap-2 mb-2">
-          <div className="w-1 h-3 bg-primary/40 rounded" />
-          <div className="w-1/4 h-2 bg-gray-200 rounded" />
-        </div>
-        <div className="flex-1" />
-        <div className="flex gap-1 flex-wrap">
-          <div className="w-8 h-3 bg-gray-100 rounded" />
-          <div className="w-10 h-3 bg-gray-100 rounded" />
-          <div className="w-6 h-3 bg-gray-100 rounded" />
-        </div>
-      </>
-    ),
-    "two-column-sidebar": (
-      <div className="flex h-full gap-2">
-        <div className="w-1/3 bg-primary/20 rounded p-1">
-          <div className="w-full h-2 bg-white/60 rounded mb-2" />
-          <div className="w-full h-1.5 bg-white/40 rounded mb-1" />
-          <div className="w-full h-1.5 bg-white/40 rounded mb-1" />
-          <div className="w-2/3 h-1.5 bg-white/40 rounded" />
-        </div>
-        <div className="flex-1 flex flex-col">
-          <div className="w-full h-2 bg-gray-200 rounded mb-2" />
-          <div className="w-full h-1.5 bg-gray-100 rounded mb-1" />
-          <div className="w-full h-1.5 bg-gray-100 rounded mb-1" />
-          <div className="flex-1" />
-          <div className="w-2/3 h-1.5 bg-gray-100 rounded" />
-        </div>
-      </div>
-    ),
-    "corporate-timeline": (
-      <>
-        <div className="w-1/2 h-3 bg-gray-300 rounded mb-1" />
-        <div className="w-1/3 h-2 bg-primary/30 rounded mb-3" />
-        <div className="flex items-start gap-2 mb-2">
-          <div className="w-8 text-right">
-            <div className="w-full h-1.5 bg-gray-200 rounded" />
-          </div>
-          <div className="w-2 h-2 rounded-full bg-primary/40 mt-0.5" />
-          <div className="flex-1">
-            <div className="w-full h-2 bg-gray-200 rounded mb-1" />
-            <div className="w-2/3 h-1.5 bg-gray-100 rounded" />
-          </div>
-        </div>
-        <div className="flex-1" />
-      </>
-    ),
-    "creative-infographic": (
-      <>
-        <div className="bg-primary/30 -m-3 mb-2 p-2">
-          <div className="w-1/2 h-3 bg-white/80 rounded mb-1" />
-          <div className="w-1/3 h-2 bg-white/60 rounded" />
-        </div>
-        <div className="flex items-center gap-1 mb-2">
-          <div className="w-4 h-4 rounded bg-primary/20" />
-          <div className="w-1/4 h-2 bg-gray-200 rounded" />
-        </div>
-        <div className="flex-1" />
-        <div className="flex gap-1">
-          <div className="flex-1 h-8 bg-gray-50 rounded p-1">
-            <div className="w-full h-1.5 bg-primary/20 rounded mb-0.5" />
-            <div className="w-2/3 h-1 bg-gray-200 rounded" />
-          </div>
-          <div className="flex-1 h-8 bg-gray-50 rounded p-1">
-            <div className="w-full h-1.5 bg-primary/20 rounded mb-0.5" />
-            <div className="w-2/3 h-1 bg-gray-200 rounded" />
-          </div>
-        </div>
-      </>
-    ),
-  };
+type FilterCategory = "all" | "minimal" | "professional" | "creative";
+
+const filterOptions: { label: string; value: FilterCategory }[] = [
+  { label: "All Templates", value: "all" },
+  { label: "Minimal", value: "minimal" },
+  { label: "Professional", value: "professional" },
+  { label: "Creative", value: "creative" },
+];
+
+// Map template IDs to their static preview components
+function TemplatePreviewRenderer({ id }: { id: TemplateId }) {
+  switch (id) {
+    case "ats-minimal":
+      return <StaticATSMinimal />;
+    case "modern-minimal":
+      return <StaticModernMinimal />;
+    case "two-column-sidebar":
+      return <StaticTwoColumnSidebar />;
+    case "corporate-timeline":
+      return <StaticCorporateTimeline />;
+    case "creative-infographic":
+      return <StaticCreativeInfographic />;
+    default:
+      return null;
+  }
+}
+
+function TemplateCard({ template }: { template: TemplateDefinition }) {
+  const router = useRouter();
 
   return (
-    <div className="w-full h-full bg-white rounded shadow-sm border border-gray-100 p-3 flex flex-col">
-      {layouts[id]}
-    </div>
+    <button
+      onClick={() => router.push("/builder/new")}
+      className="group relative bg-white rounded-2xl border border-gray-200 overflow-hidden transition-all duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 text-left focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2"
+    >
+      {/* Preview area — renders full 612×792 then scales down */}
+      <div className="relative bg-gradient-to-br from-gray-50 to-gray-100/50 overflow-hidden" style={{ aspectRatio: "8.5 / 11" }}>
+        <div
+          className="origin-top-left"
+          style={{
+            width: 612,
+            height: 792,
+            transform: "scale(var(--preview-scale, 0.47))",
+            transformOrigin: "top left",
+          }}
+        >
+          <TemplatePreviewRenderer id={template.id} />
+        </div>
+
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-8">
+          <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+            <span className="inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-2.5 rounded-full font-semibold text-sm shadow-lg">
+              <Sparkles className="h-4 w-4" />
+              Use this template
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Card info */}
+      <div className="p-5">
+        <div className="flex items-center gap-2 mb-2">
+          <h3 className="font-semibold text-gray-900 text-lg leading-tight">
+            {template.name}
+          </h3>
+          {template.atsFriendly && (
+            <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200/60">
+              <Check className="h-3 w-3" />
+              ATS
+            </span>
+          )}
+        </div>
+        <p className="text-sm text-gray-500 leading-relaxed mb-3 line-clamp-2">
+          {template.description}
+        </p>
+        {template.features.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {template.features.map((f) => (
+              <span
+                key={f}
+                className="text-xs px-2.5 py-0.5 bg-gray-50 text-gray-500 rounded-full border border-gray-100"
+              >
+                {f}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </button>
   );
 }
 
 export function TemplatesGallery() {
-  const router = useRouter();
+  const [activeFilter, setActiveFilter] = useState<FilterCategory>("all");
+
   const enabled = templateDefinitions.filter((t) => t.isEnabled);
+  const filtered =
+    activeFilter === "all"
+      ? enabled
+      : enabled.filter((t) => t.category === activeFilter);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50/50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/">
-                <Button variant="ghost" size="sm" className="gap-2">
+                <Button variant="ghost" size="sm" className="gap-2 text-gray-600 hover:text-gray-900">
                   <ArrowLeft className="h-4 w-4" />
                   Home
                 </Button>
@@ -136,12 +143,12 @@ export function TemplatesGallery() {
               <div className="flex items-center gap-2">
                 <Logo className="h-6 w-6 text-primary" />
                 <h1 className="text-xl font-semibold text-gray-900">
-                  Resume Templates
+                  Templates
                 </h1>
               </div>
             </div>
             <Link href="/builder/new">
-              <Button className="gap-2">
+              <Button className="gap-2 shadow-sm">
                 Get Started
                 <ArrowRight className="h-4 w-4" />
               </Button>
@@ -150,74 +157,70 @@ export function TemplatesGallery() {
         </div>
       </header>
 
-      {/* Intro (good for SEO — actual content on the page) */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-4">
-        <h2 className="text-3xl font-bold text-gray-900 mb-3">
-          Free Resume Templates
-        </h2>
-        <p className="text-gray-600 max-w-2xl text-lg leading-relaxed">
-          Every template is designed to be clean, readable, and compatible with
-          applicant tracking systems. Pick the layout that fits your style, then
-          customise colours, fonts, and spacing in the editor.
-        </p>
+      {/* Hero intro */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-2">
+        <div className="max-w-2xl">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+            Professional Resume Templates
+          </h2>
+          <p className="text-gray-600 text-lg leading-relaxed">
+            Every template is designed to be clean, readable, and compatible with
+            applicant tracking systems. Pick the layout that fits your style, then
+            customise colours, fonts, and spacing in the editor.
+          </p>
+        </div>
       </div>
 
-      {/* Template grid */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {enabled.map((template) => (
+      {/* Filters */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-wrap gap-2">
+          {filterOptions.map((opt) => (
             <button
-              key={template.id}
-              onClick={() => router.push("/builder/new")}
-              className="group relative bg-white rounded-xl border-2 border-gray-200 overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg text-left"
+              key={opt.value}
+              onClick={() => setActiveFilter(opt.value)}
+              className={cn(
+                "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200",
+                activeFilter === opt.value
+                  ? "bg-gray-900 text-white shadow-sm"
+                  : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:text-gray-900"
+              )}
             >
-              {/* Thumbnail */}
-              <div className="aspect-[8.5/11] bg-gradient-to-br from-gray-100 to-gray-50 p-4 relative">
-                <TemplateThumbnail id={template.id} />
-              </div>
-
-              {/* Info */}
-              <div className="p-5">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <h3 className="font-semibold text-gray-900 text-lg">
-                    {template.name}
-                  </h3>
-                  {template.atsFriendly && (
-                    <span className="text-xs font-medium px-2 py-0.5 bg-green-100 text-green-700 rounded-full flex items-center gap-1">
-                      <Check className="h-3 w-3" />
-                      ATS Friendly
-                    </span>
-                  )}
-                </div>
-                <p className="text-sm text-gray-500 mb-3">
-                  {template.description}
-                </p>
-                {template.features.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5">
-                    {template.features.map((f) => (
-                      <span
-                        key={f}
-                        className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full"
-                      >
-                        {f}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Hover overlay */}
-              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                <span className="bg-primary text-white px-4 py-2 rounded-lg font-medium shadow-lg translate-y-2 group-hover:translate-y-0 transition-transform">
-                  Use this template
+              {opt.label}
+              {opt.value !== "all" && (
+                <span className="ml-1.5 text-xs opacity-70">
+                  ({enabled.filter((t) => t.category === opt.value).length})
                 </span>
-              </div>
+              )}
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Template grid */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+          style={{
+            // Set the CSS variable for preview scale based on card width
+            // Cards are ~1/3 of 1280px max ≈ 400px, preview is 612px → ~0.47
+            ["--preview-scale" as string]: "0.47",
+          }}
+        >
+          {filtered.map((template) => (
+            <TemplateCard key={template.id} template={template} />
+          ))}
+        </div>
+
+        {filtered.length === 0 && (
+          <div className="text-center py-20">
+            <p className="text-gray-500 text-lg">
+              No templates in this category yet. More designs are coming soon!
+            </p>
+          </div>
+        )}
 
         {/* Extra SEO content below the fold */}
-        <div className="mt-16 max-w-3xl mx-auto text-center">
+        <div className="mt-20 max-w-3xl mx-auto text-center">
           <h3 className="text-xl font-semibold text-gray-900 mb-3">
             What makes a good resume template?
           </h3>

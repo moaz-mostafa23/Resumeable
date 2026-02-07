@@ -9,6 +9,13 @@ import {
   SkillsData,
   ProjectsData,
   CertificationsData,
+  CoursesData,
+  LanguagesData,
+  AwardsData,
+  VolunteerData,
+  InterestsData,
+  PublicationsData,
+  ReferencesData,
   CustomSectionData,
 } from "@/types/resume";
 import { Mail, Phone, MapPin, Linkedin, Github, Globe } from "lucide-react";
@@ -258,6 +265,179 @@ export function ResumePreview() {
     );
   };
 
+  const renderCourses = (label: string) => {
+    const data = sectionData.courses as CoursesData;
+    if (!data) return null;
+    return (
+      <div>
+        <h2 style={styles.sectionTitle}>{label}</h2>
+        <div className="space-y-2">
+          {data.items.map((item) => (
+            <div key={item.id} className="flex justify-between">
+              <div>
+                <span className="font-medium">{item.name}</span>
+                {item.institution && (
+                  <span className="text-gray-600"> — {item.institution}</span>
+                )}
+              </div>
+              <span className="text-gray-500 text-sm">{item.date}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderLanguages = (label: string) => {
+    const data = sectionData.languages as LanguagesData;
+    if (!data) return null;
+    return (
+      <div>
+        <h2 style={styles.sectionTitle}>{label}</h2>
+        <div className="flex flex-wrap gap-x-6 gap-y-1">
+          {data.items.map((item) => (
+            <span key={item.id}>
+              <span className="font-semibold">{item.language}:</span>{" "}
+              <span className="text-gray-700 capitalize">{item.proficiency}</span>
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderAwards = (label: string) => {
+    const data = sectionData.awards as AwardsData;
+    if (!data) return null;
+    return (
+      <div>
+        <h2 style={styles.sectionTitle}>{label}</h2>
+        <div className="space-y-2">
+          {data.items.map((item) => (
+            <div key={item.id}>
+              <div className="flex justify-between">
+                <div>
+                  <span className="font-medium">{item.name}</span>
+                  {item.issuer && (
+                    <span className="text-gray-600"> — {item.issuer}</span>
+                  )}
+                </div>
+                <span className="text-gray-500 text-sm">{item.date}</span>
+              </div>
+              {item.description && (
+                <p className="text-gray-700 text-sm mt-1">{item.description}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderVolunteer = (label: string) => {
+    const data = sectionData.volunteer as VolunteerData;
+    if (!data) return null;
+    return (
+      <div>
+        <h2 style={styles.sectionTitle}>{label}</h2>
+        <div className="space-y-4">
+          {data.items.map((item) => (
+            <div key={item.id}>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold">{item.role}</h3>
+                  <p className="text-gray-600">
+                    {item.organization}
+                    {item.location && ` | ${item.location}`}
+                  </p>
+                </div>
+                <p className="text-gray-500 text-sm">
+                  {item.startDate} - {item.current ? "Present" : item.endDate}
+                </p>
+              </div>
+              {item.bullets.length > 0 && (
+                <ul className="list-disc list-inside mt-2 space-y-1 text-gray-700">
+                  {item.bullets.map((bullet) => (
+                    <li key={bullet.id}>{bullet.content}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderInterests = (label: string) => {
+    const data = sectionData.interests as InterestsData;
+    if (!data) return null;
+    return (
+      <div>
+        <h2 style={styles.sectionTitle}>{label}</h2>
+        <p className="text-gray-700">{data.items.join(" \u2022 ")}</p>
+      </div>
+    );
+  };
+
+  const renderPublications = (label: string) => {
+    const data = sectionData.publications as PublicationsData;
+    if (!data) return null;
+    return (
+      <div>
+        <h2 style={styles.sectionTitle}>{label}</h2>
+        <div className="space-y-2">
+          {data.items.map((item) => (
+            <div key={item.id}>
+              <div className="flex justify-between">
+                <div>
+                  <span className="font-semibold">{item.title}</span>
+                  {item.publisher && (
+                    <span className="text-gray-600"> — {item.publisher}</span>
+                  )}
+                </div>
+                <span className="text-gray-500 text-sm">{item.date}</span>
+              </div>
+              {item.description && (
+                <p className="text-gray-700 text-sm mt-1">{item.description}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderReferences = (label: string) => {
+    const data = sectionData.references as ReferencesData;
+    if (!data) return null;
+    return (
+      <div>
+        <h2 style={styles.sectionTitle}>{label}</h2>
+        <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+          {data.items.map((item) => (
+            <div key={item.id}>
+              <p className="font-semibold">{item.name}</p>
+              <p className="text-gray-600 text-sm">
+                {item.title}
+                {item.company && `, ${item.company}`}
+              </p>
+              {item.email && (
+                <p className="text-gray-500 text-sm">{item.email}</p>
+              )}
+              {item.phone && (
+                <p className="text-gray-500 text-sm">{item.phone}</p>
+              )}
+              {item.relationship && (
+                <p className="text-gray-500 text-sm italic">{item.relationship}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   const renderCustomSection = (sectionId: string, label: string) => {
     const data = sectionData[sectionId] as CustomSectionData;
     if (!data) return null;
@@ -306,6 +486,20 @@ export function ResumePreview() {
         return renderProjects(section.label);
       case "certifications":
         return renderCertifications(section.label);
+      case "courses":
+        return renderCourses(section.label);
+      case "languages":
+        return renderLanguages(section.label);
+      case "awards":
+        return renderAwards(section.label);
+      case "volunteer":
+        return renderVolunteer(section.label);
+      case "interests":
+        return renderInterests(section.label);
+      case "publications":
+        return renderPublications(section.label);
+      case "references":
+        return renderReferences(section.label);
       case "custom":
         return renderCustomSection(section.id, section.label);
       default:

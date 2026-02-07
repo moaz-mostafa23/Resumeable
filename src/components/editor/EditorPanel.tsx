@@ -10,6 +10,13 @@ import { EducationEditor } from "./sections/EducationEditor";
 import { SkillsEditor } from "./sections/SkillsEditor";
 import { ProjectsEditor } from "./sections/ProjectsEditor";
 import { CertificationsEditor } from "./sections/CertificationsEditor";
+import { CoursesEditor } from "./sections/CoursesEditor";
+import { LanguagesEditor } from "./sections/LanguagesEditor";
+import { AwardsEditor } from "./sections/AwardsEditor";
+import { VolunteerEditor } from "./sections/VolunteerEditor";
+import { InterestsEditor } from "./sections/InterestsEditor";
+import { PublicationsEditor } from "./sections/PublicationsEditor";
+import { ReferencesEditor } from "./sections/ReferencesEditor";
 import { CustomSectionEditor } from "./sections/CustomSectionEditor";
 import { ThemeEditor } from "./sections/ThemeEditor";
 import { Button } from "@/components/ui/button";
@@ -88,6 +95,20 @@ export function EditorPanel() {
         return <ProjectsEditor />;
       case "certifications":
         return <CertificationsEditor />;
+      case "courses":
+        return <CoursesEditor />;
+      case "languages":
+        return <LanguagesEditor />;
+      case "awards":
+        return <AwardsEditor />;
+      case "volunteer":
+        return <VolunteerEditor />;
+      case "interests":
+        return <InterestsEditor />;
+      case "publications":
+        return <PublicationsEditor />;
+      case "references":
+        return <ReferencesEditor />;
       case "custom":
         return <CustomSectionEditor sectionId={section.id} />;
       default:

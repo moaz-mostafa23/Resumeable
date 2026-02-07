@@ -1,31 +1,32 @@
 "use client";
 
 import { useResumeStore } from "@/store/useResumeStore";
-import { CertificationsData, CertificationItem } from "@/types/resume";
+import { PublicationsData, PublicationItem } from "@/types/resume";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Trash2 } from "lucide-react";
 
-export function CertificationsEditor() {
+export function PublicationsEditor() {
   const {
     resume,
-    addCertificationItem,
-    updateCertificationItem,
-    deleteCertificationItem,
+    addPublicationItem,
+    updatePublicationItem,
+    deletePublicationItem,
   } = useResumeStore();
 
   if (!resume) return null;
 
-  const data = resume.sectionData.certifications as CertificationsData;
+  const data = resume.sectionData.publications as PublicationsData;
+  if (!data) return null;
 
   const handleItemChange = (
     itemId: string,
-    field: keyof CertificationItem,
+    field: keyof PublicationItem,
     value: string
   ) => {
-    updateCertificationItem(itemId, { [field]: value });
+    updatePublicationItem(itemId, { [field]: value });
   };
 
   return (
@@ -35,33 +36,33 @@ export function CertificationsEditor() {
           <CardContent className="pt-4 space-y-3">
             <div className="flex justify-between items-start">
               <div className="flex-1">
-                <Label>Certification Name</Label>
+                <Label>Title</Label>
                 <Input
-                  value={item.name}
+                  value={item.title}
                   onChange={(e) =>
-                    handleItemChange(item.id, "name", e.target.value)
+                    handleItemChange(item.id, "title", e.target.value)
                   }
-                  placeholder="AWS Certified Developer"
+                  placeholder="Publication Title"
                 />
               </div>
               <Button
                 variant="ghost"
                 size="sm"
                 className="ml-2"
-                onClick={() => deleteCertificationItem(item.id)}
+                onClick={() => deletePublicationItem(item.id)}
               >
                 <Trash2 className="h-4 w-4 text-red-500" />
               </Button>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Issuing Organization</Label>
+                <Label>Publisher</Label>
                 <Input
-                  value={item.issuer}
+                  value={item.publisher}
                   onChange={(e) =>
-                    handleItemChange(item.id, "issuer", e.target.value)
+                    handleItemChange(item.id, "publisher", e.target.value)
                   }
-                  placeholder="Amazon Web Services"
+                  placeholder="Journal / Publisher"
                 />
               </div>
               <div>
@@ -76,13 +77,25 @@ export function CertificationsEditor() {
               </div>
             </div>
             <div>
-              <Label>Credential Link (optional)</Label>
+              <Label>Link (optional)</Label>
               <Input
                 value={item.link}
                 onChange={(e) =>
                   handleItemChange(item.id, "link", e.target.value)
                 }
                 placeholder="https://..."
+              />
+            </div>
+            <div>
+              <Label>Description (optional)</Label>
+              <textarea
+                value={item.description}
+                onChange={(e) =>
+                  handleItemChange(item.id, "description", e.target.value)
+                }
+                placeholder="Brief description..."
+                className="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                rows={2}
               />
             </div>
           </CardContent>
@@ -92,10 +105,10 @@ export function CertificationsEditor() {
       <Button
         variant="outline"
         className="w-full"
-        onClick={addCertificationItem}
+        onClick={addPublicationItem}
       >
         <Plus className="h-4 w-4 mr-2" />
-        Add Certification
+        Add Publication
       </Button>
     </div>
   );

@@ -18,6 +18,13 @@ import {
   SkillsData,
   ProjectsData,
   CertificationsData,
+  CoursesData,
+  LanguagesData,
+  AwardsData,
+  VolunteerData,
+  InterestsData,
+  PublicationsData,
+  ReferencesData,
   CustomSectionData,
 } from "@/types/resume";
 
@@ -294,6 +301,171 @@ export function PDFTemplate({ resume }: PDFTemplateProps) {
     );
   };
 
+  const renderCourses = (label: string) => {
+    const data = sectionData.courses as CoursesData;
+    if (!data) return null;
+    return (
+      <View>
+        <Text style={styles.sectionTitle}>{label}</Text>
+        {data.items.map((item) => (
+          <View key={item.id} style={[styles.itemRow, { marginBottom: 4 }]}>
+            <View>
+              <Text>
+                <Text style={{ fontWeight: 500 }}>{item.name}</Text>
+                {item.institution ? <Text style={{ color: "#6B7280" }}> — {item.institution}</Text> : null}
+              </Text>
+            </View>
+            <Text style={styles.itemDates}>{item.date}</Text>
+          </View>
+        ))}
+      </View>
+    );
+  };
+
+  const renderLanguages = (label: string) => {
+    const data = sectionData.languages as LanguagesData;
+    if (!data) return null;
+    return (
+      <View>
+        <Text style={styles.sectionTitle}>{label}</Text>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 16 }}>
+          {data.items.map((item) => (
+            <Text key={item.id}>
+              <Text style={{ fontWeight: 600 }}>{item.language}: </Text>
+              <Text>{item.proficiency.charAt(0).toUpperCase() + item.proficiency.slice(1)}</Text>
+            </Text>
+          ))}
+        </View>
+      </View>
+    );
+  };
+
+  const renderAwards = (label: string) => {
+    const data = sectionData.awards as AwardsData;
+    if (!data) return null;
+    return (
+      <View>
+        <Text style={styles.sectionTitle}>{label}</Text>
+        {data.items.map((item) => (
+          <View key={item.id} style={{ marginBottom: 4 }}>
+            <View style={styles.itemRow}>
+              <Text>
+                <Text style={{ fontWeight: 500 }}>{item.name}</Text>
+                {item.issuer ? <Text style={{ color: "#6B7280" }}> — {item.issuer}</Text> : null}
+              </Text>
+              <Text style={styles.itemDates}>{item.date}</Text>
+            </View>
+            {item.description ? (
+              <Text style={{ fontSize: theme.fontSize - 1, marginTop: 2 }}>{item.description}</Text>
+            ) : null}
+          </View>
+        ))}
+      </View>
+    );
+  };
+
+  const renderVolunteer = (label: string) => {
+    const data = sectionData.volunteer as VolunteerData;
+    if (!data) return null;
+    return (
+      <View>
+        <Text style={styles.sectionTitle}>{label}</Text>
+        {data.items.map((item) => (
+          <View key={item.id} style={{ marginBottom: 12 }}>
+            <View style={styles.itemRow}>
+              <View>
+                <Text style={styles.itemTitle}>{item.role}</Text>
+                <Text style={styles.itemSubtitle}>
+                  {item.organization}
+                  {item.location ? ` | ${item.location}` : ""}
+                </Text>
+              </View>
+              <Text style={styles.itemDates}>
+                {item.startDate} - {item.current ? "Present" : item.endDate}
+              </Text>
+            </View>
+            {item.bullets.length > 0 && (
+              <View style={styles.bulletList}>
+                {item.bullets.map((bullet) => (
+                  <Text key={bullet.id} style={styles.bulletItem}>
+                    •  {bullet.content}
+                  </Text>
+                ))}
+              </View>
+            )}
+          </View>
+        ))}
+      </View>
+    );
+  };
+
+  const renderInterests = (label: string) => {
+    const data = sectionData.interests as InterestsData;
+    if (!data) return null;
+    return (
+      <View>
+        <Text style={styles.sectionTitle}>{label}</Text>
+        <Text>{data.items.join(" \u2022 ")}</Text>
+      </View>
+    );
+  };
+
+  const renderPublications = (label: string) => {
+    const data = sectionData.publications as PublicationsData;
+    if (!data) return null;
+    return (
+      <View>
+        <Text style={styles.sectionTitle}>{label}</Text>
+        {data.items.map((item) => (
+          <View key={item.id} style={{ marginBottom: 4 }}>
+            <View style={styles.itemRow}>
+              <Text>
+                <Text style={{ fontWeight: 600 }}>{item.title}</Text>
+                {item.publisher ? <Text style={{ color: "#6B7280" }}> — {item.publisher}</Text> : null}
+              </Text>
+              <Text style={styles.itemDates}>{item.date}</Text>
+            </View>
+            {item.description ? (
+              <Text style={{ fontSize: theme.fontSize - 1, marginTop: 2 }}>{item.description}</Text>
+            ) : null}
+          </View>
+        ))}
+      </View>
+    );
+  };
+
+  const renderReferences = (label: string) => {
+    const data = sectionData.references as ReferencesData;
+    if (!data) return null;
+    return (
+      <View>
+        <Text style={styles.sectionTitle}>{label}</Text>
+        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+          {data.items.map((item) => (
+            <View key={item.id} style={{ width: "50%", paddingRight: 16, marginBottom: 8 }}>
+              <Text style={{ fontWeight: 600 }}>{item.name}</Text>
+              <Text style={{ color: "#6B7280", fontSize: theme.fontSize - 1 }}>
+                {item.title}
+                {item.company ? `, ${item.company}` : ""}
+              </Text>
+              {item.email ? (
+                <Text style={{ color: "#9CA3AF", fontSize: theme.fontSize - 1 }}>{item.email}</Text>
+              ) : null}
+              {item.phone ? (
+                <Text style={{ color: "#9CA3AF", fontSize: theme.fontSize - 1 }}>{item.phone}</Text>
+              ) : null}
+              {item.relationship ? (
+                <Text style={{ color: "#9CA3AF", fontSize: theme.fontSize - 1, fontStyle: "italic" }}>
+                  {item.relationship}
+                </Text>
+              ) : null}
+            </View>
+          ))}
+        </View>
+      </View>
+    );
+  };
+
   const renderCustomSection = (sectionId: string, label: string) => {
     const data = sectionData[sectionId] as CustomSectionData;
     if (!data) return null;
@@ -342,6 +514,20 @@ export function PDFTemplate({ resume }: PDFTemplateProps) {
         return renderProjects(section.label);
       case "certifications":
         return renderCertifications(section.label);
+      case "courses":
+        return renderCourses(section.label);
+      case "languages":
+        return renderLanguages(section.label);
+      case "awards":
+        return renderAwards(section.label);
+      case "volunteer":
+        return renderVolunteer(section.label);
+      case "interests":
+        return renderInterests(section.label);
+      case "publications":
+        return renderPublications(section.label);
+      case "references":
+        return renderReferences(section.label);
       case "custom":
         return renderCustomSection(section.id, section.label);
       default:

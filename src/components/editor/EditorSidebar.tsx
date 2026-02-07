@@ -4,25 +4,16 @@ import { useState } from "react";
 import { useResumeStore } from "@/store/useResumeStore";
 import { useEditorStore } from "@/store/useEditorStore";
 import { SortableSectionList } from "./dnd/SortableSectionList";
+import { AddSectionPicker } from "./AddSectionPicker";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Plus, Palette } from "lucide-react";
 
 export function EditorSidebar() {
-  const { resume, addCustomSection } = useResumeStore();
+  const { resume } = useResumeStore();
   const { activeSection, setActiveSection } = useEditorStore();
-  const [showAddSection, setShowAddSection] = useState(false);
-  const [newSectionName, setNewSectionName] = useState("");
+  const [showPicker, setShowPicker] = useState(false);
 
   if (!resume) return null;
-
-  const handleAddSection = () => {
-    if (newSectionName.trim()) {
-      addCustomSection(newSectionName.trim());
-      setNewSectionName("");
-      setShowAddSection(false);
-    }
-  };
 
   return (
     <div className="p-4">
@@ -36,37 +27,14 @@ export function EditorSidebar() {
         onSectionClick={setActiveSection}
       />
 
-      {showAddSection ? (
-        <div className="mt-4 space-y-2">
-          <Input
-            placeholder="Section name"
-            value={newSectionName}
-            onChange={(e) => setNewSectionName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleAddSection();
-              if (e.key === "Escape") setShowAddSection(false);
-            }}
-            autoFocus
-          />
-          <div className="flex gap-2">
-            <Button size="sm" onClick={handleAddSection}>
-              Add
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setShowAddSection(false)}
-            >
-              Cancel
-            </Button>
-          </div>
-        </div>
+      {showPicker ? (
+        <AddSectionPicker onClose={() => setShowPicker(false)} />
       ) : (
         <Button
           variant="outline"
           size="sm"
           className="w-full mt-4"
-          onClick={() => setShowAddSection(true)}
+          onClick={() => setShowPicker(true)}
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Section

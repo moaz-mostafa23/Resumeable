@@ -7,6 +7,13 @@ export type SectionType =
   | "skills"
   | "projects"
   | "certifications"
+  | "courses"
+  | "languages"
+  | "awards"
+  | "volunteer"
+  | "interests"
+  | "publications"
+  | "references"
   | "custom";
 
 // Section configuration
@@ -131,6 +138,101 @@ export interface CustomSectionData {
   items: CustomItem[];
 }
 
+// Course item
+export interface CourseItem {
+  id: string;
+  name: string;
+  institution: string;
+  date: string;
+  link: string;
+}
+
+// Courses section data
+export interface CoursesData {
+  items: CourseItem[];
+}
+
+// Language item
+export type LanguageProficiency = "native" | "fluent" | "advanced" | "intermediate" | "beginner";
+
+export interface LanguageItem {
+  id: string;
+  language: string;
+  proficiency: LanguageProficiency;
+}
+
+// Languages section data
+export interface LanguagesData {
+  items: LanguageItem[];
+}
+
+// Award item
+export interface AwardItem {
+  id: string;
+  name: string;
+  issuer: string;
+  date: string;
+  description: string;
+}
+
+// Awards section data
+export interface AwardsData {
+  items: AwardItem[];
+}
+
+// Volunteer item
+export interface VolunteerItem {
+  id: string;
+  organization: string;
+  role: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  current: boolean;
+  bullets: BulletPoint[];
+}
+
+// Volunteer section data
+export interface VolunteerData {
+  items: VolunteerItem[];
+}
+
+// Interests section data
+export interface InterestsData {
+  items: string[];
+}
+
+// Publication item
+export interface PublicationItem {
+  id: string;
+  title: string;
+  publisher: string;
+  date: string;
+  link: string;
+  description: string;
+}
+
+// Publications section data
+export interface PublicationsData {
+  items: PublicationItem[];
+}
+
+// Reference item
+export interface ReferenceItem {
+  id: string;
+  name: string;
+  title: string;
+  company: string;
+  email: string;
+  phone: string;
+  relationship: string;
+}
+
+// References section data
+export interface ReferencesData {
+  items: ReferenceItem[];
+}
+
 // Union type for all section data
 export type SectionData =
   | HeaderData
@@ -140,6 +242,13 @@ export type SectionData =
   | SkillsData
   | ProjectsData
   | CertificationsData
+  | CoursesData
+  | LanguagesData
+  | AwardsData
+  | VolunteerData
+  | InterestsData
+  | PublicationsData
+  | ReferencesData
   | CustomSectionData;
 
 // Theme configuration
@@ -282,6 +391,92 @@ export const defaultCertificationsData: CertificationsData = {
       issuer: "Amazon Web Services",
       date: "2023",
       link: "",
+    },
+  ],
+};
+
+// Default courses data
+export const defaultCoursesData: CoursesData = {
+  items: [
+    {
+      id: "course-1",
+      name: "Machine Learning Specialization",
+      institution: "Coursera",
+      date: "2023",
+      link: "",
+    },
+  ],
+};
+
+// Default languages data
+export const defaultLanguagesData: LanguagesData = {
+  items: [
+    { id: "lang-1", language: "English", proficiency: "native" },
+    { id: "lang-2", language: "Spanish", proficiency: "intermediate" },
+  ],
+};
+
+// Default awards data
+export const defaultAwardsData: AwardsData = {
+  items: [
+    {
+      id: "award-1",
+      name: "Dean's List",
+      issuer: "University Name",
+      date: "2022",
+      description: "",
+    },
+  ],
+};
+
+// Default volunteer data
+export const defaultVolunteerData: VolunteerData = {
+  items: [
+    {
+      id: "vol-1",
+      organization: "Organization Name",
+      role: "Volunteer Role",
+      location: "City, State",
+      startDate: "Jan 2023",
+      endDate: "Present",
+      current: true,
+      bullets: [
+        { id: "vbullet-1", content: "Contributed to community initiatives" },
+      ],
+    },
+  ],
+};
+
+// Default interests data
+export const defaultInterestsData: InterestsData = {
+  items: ["Reading", "Travel", "Photography"],
+};
+
+// Default publications data
+export const defaultPublicationsData: PublicationsData = {
+  items: [
+    {
+      id: "pub-1",
+      title: "Publication Title",
+      publisher: "Journal / Publisher",
+      date: "2023",
+      link: "",
+      description: "",
+    },
+  ],
+};
+
+// Default references data
+export const defaultReferencesData: ReferencesData = {
+  items: [
+    {
+      id: "ref-1",
+      name: "Reference Name",
+      title: "Job Title",
+      company: "Company Name",
+      email: "reference@email.com",
+      phone: "(123) 456-7890",
+      relationship: "Former Manager",
     },
   ],
 };

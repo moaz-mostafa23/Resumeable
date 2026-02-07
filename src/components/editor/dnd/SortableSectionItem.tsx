@@ -4,9 +4,21 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SectionConfig } from "@/types/resume";
 import { useResumeStore } from "@/store/useResumeStore";
+import { sectionIconMap } from "@/lib/section-config";
 import { Switch } from "@/components/ui/switch";
-import { GripVertical, Eye, EyeOff } from "lucide-react";
+import { GripVertical, Eye, EyeOff, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Default sections that can only be hidden, not deleted
+const defaultSectionIds = new Set([
+  "header",
+  "summary",
+  "experience",
+  "education",
+  "skills",
+  "projects",
+  "certifications",
+]);
 
 interface SortableSectionItemProps {
   section: SectionConfig;
@@ -19,7 +31,7 @@ export function SortableSectionItem({
   isActive,
   onClick,
 }: SortableSectionItemProps) {
-  const { toggleSectionVisibility } = useResumeStore();
+  const { toggleSectionVisibility, deleteSection } = useResumeStore();
 
   const {
     attributes,
@@ -39,6 +51,14 @@ export function SortableSectionItem({
     e.stopPropagation();
     toggleSectionVisibility(section.id);
   };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    deleteSection(section.id);
+  };
+
+  const Icon = sectionIconMap[section.type];
+  const isDeletable = !defaultSectionIds.has(section.id);
 
   return (
     <div
@@ -60,7 +80,19 @@ export function SortableSectionItem({
         <GripVertical className="h-4 w-4 text-gray-400" />
       </button>
 
+      {Icon && <Icon className="h-4 w-4 text-gray-500 shrink-0" />}
+
       <span className="flex-1 text-sm font-medium truncate">{section.label}</span>
+
+      {isDeletable && (
+        <button
+          className="p-1 hover:bg-red-50 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={handleDelete}
+          style={{ opacity: 1 }}
+        >
+          <Trash2 className="h-3.5 w-3.5 text-red-400 hover:text-red-600" />
+        </button>
+      )}
 
       <button
         className="p-1 hover:bg-gray-200 rounded"

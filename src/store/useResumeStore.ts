@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import {
   ResumeDocument,
   SectionConfig,
+  SectionType,
   SectionData,
   ThemeConfig,
   ExperienceData,
@@ -12,6 +13,13 @@ import {
   ProjectsData,
   CertificationsData,
   CustomSectionData,
+  CoursesData,
+  LanguagesData,
+  AwardsData,
+  VolunteerData,
+  InterestsData,
+  PublicationsData,
+  ReferencesData,
   BulletPoint,
   ExperienceItem,
   EducationItem,
@@ -19,6 +27,12 @@ import {
   ProjectItem,
   CertificationItem,
   CustomItem,
+  CourseItem,
+  LanguageItem,
+  AwardItem,
+  VolunteerItem,
+  PublicationItem,
+  ReferenceItem,
   createDefaultResume,
 } from "@/types/resume";
 import { generateId } from "@/lib/utils";
@@ -86,6 +100,52 @@ interface ResumeState {
   updateCertificationItem: (itemId: string, data: Partial<CertificationItem>) => void;
   deleteCertificationItem: (itemId: string) => void;
   reorderCertificationItems: (startIndex: number, endIndex: number) => void;
+
+  // Prebuilt section action
+  addPrebuiltSection: (type: SectionType, label: string, defaultData: SectionData) => void;
+
+  // Course actions
+  addCourseItem: () => void;
+  updateCourseItem: (itemId: string, data: Partial<CourseItem>) => void;
+  deleteCourseItem: (itemId: string) => void;
+  reorderCourseItems: (startIndex: number, endIndex: number) => void;
+
+  // Language actions
+  addLanguageItem: () => void;
+  updateLanguageItem: (itemId: string, data: Partial<LanguageItem>) => void;
+  deleteLanguageItem: (itemId: string) => void;
+
+  // Award actions
+  addAwardItem: () => void;
+  updateAwardItem: (itemId: string, data: Partial<AwardItem>) => void;
+  deleteAwardItem: (itemId: string) => void;
+  reorderAwardItems: (startIndex: number, endIndex: number) => void;
+
+  // Volunteer actions
+  addVolunteerItem: () => void;
+  updateVolunteerItem: (itemId: string, data: Partial<VolunteerItem>) => void;
+  deleteVolunteerItem: (itemId: string) => void;
+  reorderVolunteerItems: (startIndex: number, endIndex: number) => void;
+  addVolunteerBullet: (itemId: string) => void;
+  updateVolunteerBullet: (itemId: string, bulletId: string, content: string) => void;
+  deleteVolunteerBullet: (itemId: string, bulletId: string) => void;
+  reorderVolunteerBullets: (itemId: string, startIndex: number, endIndex: number) => void;
+
+  // Interest actions
+  addInterest: (interest: string) => void;
+  removeInterest: (index: number) => void;
+
+  // Publication actions
+  addPublicationItem: () => void;
+  updatePublicationItem: (itemId: string, data: Partial<PublicationItem>) => void;
+  deletePublicationItem: (itemId: string) => void;
+  reorderPublicationItems: (startIndex: number, endIndex: number) => void;
+
+  // Reference actions
+  addReferenceItem: () => void;
+  updateReferenceItem: (itemId: string, data: Partial<ReferenceItem>) => void;
+  deleteReferenceItem: (itemId: string) => void;
+  reorderReferenceItems: (startIndex: number, endIndex: number) => void;
 
   // Custom section actions
   addCustomItem: (sectionId: string) => void;
@@ -686,6 +746,395 @@ export const useResumeStore = create<ResumeState>()(
           const data = state.resume.sectionData.certifications as CertificationsData;
           const [removed] = data.items.splice(startIndex, 1);
           data.items.splice(endIndex, 0, removed);
+        }
+      });
+    },
+
+    // Prebuilt section action
+    addPrebuiltSection: (type: SectionType, label: string, defaultData: SectionData) => {
+      set((state) => {
+        if (state.resume) {
+          // Prevent duplicates — use type as section id for singletons
+          if (state.resume.sections.some((s) => s.id === type)) return;
+          state.resume.sections.push({
+            id: type,
+            type,
+            label,
+            visible: true,
+            order: state.resume.sections.length,
+          });
+          state.resume.sectionData[type] = defaultData;
+        }
+      });
+    },
+
+    // Course actions
+    addCourseItem: () => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.courses as CoursesData;
+          if (data) {
+            data.items.push({
+              id: `course-${generateId()}`,
+              name: "Course Name",
+              institution: "Platform / Institution",
+              date: "2023",
+              link: "",
+            });
+          }
+        }
+      });
+    },
+
+    updateCourseItem: (itemId: string, data: Partial<CourseItem>) => {
+      set((state) => {
+        if (state.resume) {
+          const courseData = state.resume.sectionData.courses as CoursesData;
+          if (courseData) {
+            const item = courseData.items.find((i) => i.id === itemId);
+            if (item) Object.assign(item, data);
+          }
+        }
+      });
+    },
+
+    deleteCourseItem: (itemId: string) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.courses as CoursesData;
+          if (data) data.items = data.items.filter((i) => i.id !== itemId);
+        }
+      });
+    },
+
+    reorderCourseItems: (startIndex: number, endIndex: number) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.courses as CoursesData;
+          if (data) {
+            const [removed] = data.items.splice(startIndex, 1);
+            data.items.splice(endIndex, 0, removed);
+          }
+        }
+      });
+    },
+
+    // Language actions
+    addLanguageItem: () => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.languages as LanguagesData;
+          if (data) {
+            data.items.push({
+              id: `lang-${generateId()}`,
+              language: "Language",
+              proficiency: "intermediate",
+            });
+          }
+        }
+      });
+    },
+
+    updateLanguageItem: (itemId: string, data: Partial<LanguageItem>) => {
+      set((state) => {
+        if (state.resume) {
+          const langData = state.resume.sectionData.languages as LanguagesData;
+          if (langData) {
+            const item = langData.items.find((i) => i.id === itemId);
+            if (item) Object.assign(item, data);
+          }
+        }
+      });
+    },
+
+    deleteLanguageItem: (itemId: string) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.languages as LanguagesData;
+          if (data) data.items = data.items.filter((i) => i.id !== itemId);
+        }
+      });
+    },
+
+    // Award actions
+    addAwardItem: () => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.awards as AwardsData;
+          if (data) {
+            data.items.push({
+              id: `award-${generateId()}`,
+              name: "Award Name",
+              issuer: "Issuing Organization",
+              date: "2023",
+              description: "",
+            });
+          }
+        }
+      });
+    },
+
+    updateAwardItem: (itemId: string, data: Partial<AwardItem>) => {
+      set((state) => {
+        if (state.resume) {
+          const awardData = state.resume.sectionData.awards as AwardsData;
+          if (awardData) {
+            const item = awardData.items.find((i) => i.id === itemId);
+            if (item) Object.assign(item, data);
+          }
+        }
+      });
+    },
+
+    deleteAwardItem: (itemId: string) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.awards as AwardsData;
+          if (data) data.items = data.items.filter((i) => i.id !== itemId);
+        }
+      });
+    },
+
+    reorderAwardItems: (startIndex: number, endIndex: number) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.awards as AwardsData;
+          if (data) {
+            const [removed] = data.items.splice(startIndex, 1);
+            data.items.splice(endIndex, 0, removed);
+          }
+        }
+      });
+    },
+
+    // Volunteer actions
+    addVolunteerItem: () => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.volunteer as VolunteerData;
+          if (data) {
+            data.items.push({
+              id: `vol-${generateId()}`,
+              organization: "Organization Name",
+              role: "Volunteer Role",
+              location: "City, State",
+              startDate: "Jan 2023",
+              endDate: "Present",
+              current: true,
+              bullets: [{ id: `vbullet-${generateId()}`, content: "" }],
+            });
+          }
+        }
+      });
+    },
+
+    updateVolunteerItem: (itemId: string, data: Partial<VolunteerItem>) => {
+      set((state) => {
+        if (state.resume) {
+          const volData = state.resume.sectionData.volunteer as VolunteerData;
+          if (volData) {
+            const item = volData.items.find((i) => i.id === itemId);
+            if (item) Object.assign(item, data);
+          }
+        }
+      });
+    },
+
+    deleteVolunteerItem: (itemId: string) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.volunteer as VolunteerData;
+          if (data) data.items = data.items.filter((i) => i.id !== itemId);
+        }
+      });
+    },
+
+    reorderVolunteerItems: (startIndex: number, endIndex: number) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.volunteer as VolunteerData;
+          if (data) {
+            const [removed] = data.items.splice(startIndex, 1);
+            data.items.splice(endIndex, 0, removed);
+          }
+        }
+      });
+    },
+
+    addVolunteerBullet: (itemId: string) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.volunteer as VolunteerData;
+          if (data) {
+            const item = data.items.find((i) => i.id === itemId);
+            if (item) item.bullets.push({ id: `vbullet-${generateId()}`, content: "" });
+          }
+        }
+      });
+    },
+
+    updateVolunteerBullet: (itemId: string, bulletId: string, content: string) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.volunteer as VolunteerData;
+          if (data) {
+            const item = data.items.find((i) => i.id === itemId);
+            if (item) {
+              const bullet = item.bullets.find((b) => b.id === bulletId);
+              if (bullet) bullet.content = content;
+            }
+          }
+        }
+      });
+    },
+
+    deleteVolunteerBullet: (itemId: string, bulletId: string) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.volunteer as VolunteerData;
+          if (data) {
+            const item = data.items.find((i) => i.id === itemId);
+            if (item) item.bullets = item.bullets.filter((b) => b.id !== bulletId);
+          }
+        }
+      });
+    },
+
+    reorderVolunteerBullets: (itemId: string, startIndex: number, endIndex: number) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.volunteer as VolunteerData;
+          if (data) {
+            const item = data.items.find((i) => i.id === itemId);
+            if (item) {
+              const [removed] = item.bullets.splice(startIndex, 1);
+              item.bullets.splice(endIndex, 0, removed);
+            }
+          }
+        }
+      });
+    },
+
+    // Interest actions
+    addInterest: (interest: string) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.interests as InterestsData;
+          if (data) data.items.push(interest);
+        }
+      });
+    },
+
+    removeInterest: (index: number) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.interests as InterestsData;
+          if (data) data.items.splice(index, 1);
+        }
+      });
+    },
+
+    // Publication actions
+    addPublicationItem: () => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.publications as PublicationsData;
+          if (data) {
+            data.items.push({
+              id: `pub-${generateId()}`,
+              title: "Publication Title",
+              publisher: "Publisher",
+              date: "2023",
+              link: "",
+              description: "",
+            });
+          }
+        }
+      });
+    },
+
+    updatePublicationItem: (itemId: string, data: Partial<PublicationItem>) => {
+      set((state) => {
+        if (state.resume) {
+          const pubData = state.resume.sectionData.publications as PublicationsData;
+          if (pubData) {
+            const item = pubData.items.find((i) => i.id === itemId);
+            if (item) Object.assign(item, data);
+          }
+        }
+      });
+    },
+
+    deletePublicationItem: (itemId: string) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.publications as PublicationsData;
+          if (data) data.items = data.items.filter((i) => i.id !== itemId);
+        }
+      });
+    },
+
+    reorderPublicationItems: (startIndex: number, endIndex: number) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.publications as PublicationsData;
+          if (data) {
+            const [removed] = data.items.splice(startIndex, 1);
+            data.items.splice(endIndex, 0, removed);
+          }
+        }
+      });
+    },
+
+    // Reference actions
+    addReferenceItem: () => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.references as ReferencesData;
+          if (data) {
+            data.items.push({
+              id: `ref-${generateId()}`,
+              name: "Reference Name",
+              title: "Job Title",
+              company: "Company Name",
+              email: "",
+              phone: "",
+              relationship: "",
+            });
+          }
+        }
+      });
+    },
+
+    updateReferenceItem: (itemId: string, data: Partial<ReferenceItem>) => {
+      set((state) => {
+        if (state.resume) {
+          const refData = state.resume.sectionData.references as ReferencesData;
+          if (refData) {
+            const item = refData.items.find((i) => i.id === itemId);
+            if (item) Object.assign(item, data);
+          }
+        }
+      });
+    },
+
+    deleteReferenceItem: (itemId: string) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.references as ReferencesData;
+          if (data) data.items = data.items.filter((i) => i.id !== itemId);
+        }
+      });
+    },
+
+    reorderReferenceItems: (startIndex: number, endIndex: number) => {
+      set((state) => {
+        if (state.resume) {
+          const data = state.resume.sectionData.references as ReferencesData;
+          if (data) {
+            const [removed] = data.items.splice(startIndex, 1);
+            data.items.splice(endIndex, 0, removed);
+          }
         }
       });
     },

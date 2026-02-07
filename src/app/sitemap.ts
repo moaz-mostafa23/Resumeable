@@ -1,18 +1,16 @@
 import type { MetadataRoute } from "next";
+import { resumeExamples } from "@/data/resume-examples";
 
 const SITE_URL = "https://www.resumeable.cv";
 
 /**
  * Auto-generated sitemap for search engines.
  * Next.js serves this at /sitemap.xml.
- *
- * As we add blog posts and resume-example pages, we can pull
- * those dynamically from the filesystem or a CMS.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
-  return [
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
       lastModified: now,
@@ -21,6 +19,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${SITE_URL}/templates`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/resume-examples`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.9,
@@ -44,4 +48,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.3,
     },
   ];
+
+  const examplePages: MetadataRoute.Sitemap = resumeExamples.map(
+    (example) => ({
+      url: `${SITE_URL}/resume-examples/${example.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })
+  );
+
+  return [...staticPages, ...examplePages];
 }

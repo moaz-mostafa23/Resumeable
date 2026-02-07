@@ -184,6 +184,16 @@ export default function HomePage() {
                 initial="hidden"
                 animate="visible"
               >
+                <Link href="/resume-examples">
+                  <Button variant="ghost">Examples</Button>
+                </Link>
+              </motion.div>
+              <motion.div
+                custom={1}
+                variants={navItemVariants}
+                initial="hidden"
+                animate="visible"
+              >
                 <Link href="/pricing">
                   <Button variant="ghost">Pricing</Button>
                 </Link>
@@ -686,6 +696,13 @@ export default function HomePage() {
               className="hover:text-foreground transition-colors"
             >
               Templates
+            </Link>
+            <span>&middot;</span>
+            <Link
+              href="/resume-examples"
+              className="hover:text-foreground transition-colors"
+            >
+              Examples
             </Link>
             <span>&middot;</span>
             <Link

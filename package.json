@@ -19,7 +19,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "framer-motion": "^12.33.0",
-    "html2canvas": "^1.4.1",
+    "html-to-image": "^1.11.13",
     "immer": "^10.0.0",
     "jspdf": "^4.1.0",
     "lucide-react": "^0.300.0",

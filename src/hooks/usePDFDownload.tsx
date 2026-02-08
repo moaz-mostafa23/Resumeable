@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import html2canvas from "html2canvas";
+import { toCanvas } from "html-to-image";
 import jsPDF from "jspdf";
 import { useResumeStore } from "@/store/useResumeStore";
 
@@ -20,22 +20,23 @@ export function usePDFDownload() {
     setIsGenerating(true);
 
     try {
-      // Capture the HTML preview element at 2x resolution for crisp output
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
+      // Use html-to-image which leverages the browser's own rendering engine
+      // via SVG foreignObject — guarantees pixel-perfect fidelity with the preview
+      const canvas = await toCanvas(element, {
+        pixelRatio: 2,
         backgroundColor: "#ffffff",
+        width: 816, // 8.5in at 96 DPI
+        canvasWidth: 816 * 2,
       });
 
       // Letter size in PDF points (72 points per inch)
       const pdfWidthPt = 612; // 8.5in
       const pdfHeightPt = 792; // 11in
 
-      // Preview element dimensions in CSS pixels (8.5in x 11in at 96 DPI = 816 x 1056)
+      // Preview dimensions in CSS pixels (8.5in x 11in at 96 DPI)
       const pageWidthPx = 816;
       const pageHeightPx = 1056;
-      const scaleFactor = 2; // matches html2canvas scale
+      const scaleFactor = 2; // matches pixelRatio
 
       const pdf = new jsPDF({
         orientation: "portrait",
@@ -49,7 +50,6 @@ export function usePDFDownload() {
       for (let i = 0; i < totalPages; i++) {
         if (i > 0) pdf.addPage();
 
-        // Source region from the full canvas (in canvas pixels, i.e. 2x)
         const srcY = i * pageHeightPx * scaleFactor;
         const srcH = Math.min(
           pageHeightPx * scaleFactor,

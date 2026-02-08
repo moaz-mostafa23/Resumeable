@@ -5,9 +5,19 @@ import {
   Page,
   Text,
   View,
+  Link,
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
+
+// Helper to ensure URL has protocol
+function ensureProtocol(url: string): string {
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`;
+  }
+  return url;
+}
+
 import {
   ResumeDocument,
   HeaderData,
@@ -178,9 +188,21 @@ export function PDFTemplate({ resume }: PDFTemplateProps) {
           {data.email && <Text style={styles.contactItem}>{data.email}</Text>}
           {data.phone && <Text style={styles.contactItem}>{data.phone}</Text>}
           {data.location && <Text style={styles.contactItem}>{data.location}</Text>}
-          {data.linkedin && <Text style={styles.contactItem}>{data.linkedin}</Text>}
-          {data.github && <Text style={styles.contactItem}>{data.github}</Text>}
-          {data.website && <Text style={styles.contactItem}>{data.website}</Text>}
+          {data.linkedin && (
+            <Link src={data.linkedinUrl ? ensureProtocol(data.linkedinUrl) : '#'} style={styles.contactItem}>
+              {data.linkedin}
+            </Link>
+          )}
+          {data.github && (
+            <Link src={data.githubUrl ? ensureProtocol(data.githubUrl) : '#'} style={styles.contactItem}>
+              {data.github}
+            </Link>
+          )}
+          {data.website && (
+            <Link src={data.websiteUrl ? ensureProtocol(data.websiteUrl) : '#'} style={styles.contactItem}>
+              {data.website}
+            </Link>
+          )}
         </View>
       </View>
     );

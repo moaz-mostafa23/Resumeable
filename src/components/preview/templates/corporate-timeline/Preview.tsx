@@ -20,31 +20,6 @@ import {
 } from "@/types/resume";
 import { Mail, Phone, MapPin, Linkedin, Github, Globe } from "lucide-react";
 
-// Helper to extract display text from URL
-function getLinkDisplayText(url: string, type: 'linkedin' | 'github' | 'website'): string {
-  try {
-    // Remove protocol and www
-    let cleaned = url.replace(/^(https?:\/\/)?(www\.)?/, '');
-    
-    if (type === 'linkedin') {
-      // Extract LinkedIn username: linkedin.com/in/username -> username
-      const match = cleaned.match(/linkedin\.com\/in\/([^/?]+)/);
-      return match ? match[1] : cleaned.replace(/\/$/, '');
-    }
-    
-    if (type === 'github') {
-      // Extract GitHub username: github.com/username -> username
-      const match = cleaned.match(/github\.com\/([^/?]+)/);
-      return match ? match[1] : cleaned.replace(/\/$/, '');
-    }
-    
-    // Website: just show domain without trailing slash
-    return cleaned.replace(/\/$/, '');
-  } catch {
-    return url;
-  }
-}
-
 // Helper to ensure URL has protocol
 function ensureProtocol(url: string): string {
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -133,38 +108,38 @@ export function CorporateTimelinePreview() {
           )}
           {data.linkedin && (
             <a 
-              href={ensureProtocol(data.linkedin)} 
+              href={data.linkedinUrl ? ensureProtocol(data.linkedinUrl) : '#'} 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 hover:underline"
               style={{ color: 'inherit' }}
             >
               <Linkedin className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
-              {getLinkDisplayText(data.linkedin, 'linkedin')}
+              {data.linkedin}
             </a>
           )}
           {data.github && (
             <a 
-              href={ensureProtocol(data.github)} 
+              href={data.githubUrl ? ensureProtocol(data.githubUrl) : '#'} 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 hover:underline"
               style={{ color: 'inherit' }}
             >
               <Github className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
-              {getLinkDisplayText(data.github, 'github')}
+              {data.github}
             </a>
           )}
           {data.website && (
             <a 
-              href={ensureProtocol(data.website)} 
+              href={data.websiteUrl ? ensureProtocol(data.websiteUrl) : '#'} 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 hover:underline"
               style={{ color: 'inherit' }}
             >
               <Globe className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
-              {getLinkDisplayText(data.website, 'website')}
+              {data.website}
             </a>
           )}
         </div>

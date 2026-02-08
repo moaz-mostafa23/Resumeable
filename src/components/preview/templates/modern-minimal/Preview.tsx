@@ -20,6 +20,14 @@ import {
 } from "@/types/resume";
 import { Mail, Phone, MapPin, Linkedin, Github, Globe } from "lucide-react";
 
+// Helper to ensure URL has protocol
+function ensureProtocol(url: string): string {
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`;
+  }
+  return url;
+}
+
 /**
  * Modern Minimal Template
  * Contemporary single-column design with accent colors and skill chips.
@@ -111,22 +119,40 @@ export function ModernMinimalPreview() {
             </span>
           )}
           {data.linkedin && (
-            <span className="flex items-center gap-1">
+            <a 
+              href={data.linkedinUrl ? ensureProtocol(data.linkedinUrl) : '#'}
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="flex items-center gap-1 hover:underline"
+              style={{ color: 'inherit' }}
+            >
               <Linkedin className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
               {data.linkedin}
-            </span>
+            </a>
           )}
           {data.github && (
-            <span className="flex items-center gap-1">
+            <a 
+              href={data.githubUrl ? ensureProtocol(data.githubUrl) : '#'}
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="flex items-center gap-1 hover:underline"
+              style={{ color: 'inherit' }}
+            >
               <Github className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
               {data.github}
-            </span>
+            </a>
           )}
           {data.website && (
-            <span className="flex items-center gap-1">
+            <a 
+              href={data.websiteUrl ? ensureProtocol(data.websiteUrl) : '#'}
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="flex items-center gap-1 hover:underline"
+              style={{ color: 'inherit' }}
+            >
               <Globe className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
               {data.website}
-            </span>
+            </a>
           )}
         </div>
       </div>

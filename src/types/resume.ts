@@ -33,8 +33,11 @@ export interface HeaderData {
   phone: string;
   location: string;
   linkedin: string;
+  linkedinUrl: string;
   github: string;
+  githubUrl: string;
   website: string;
+  websiteUrl: string;
   photoUrl?: string;  // base64 data URL or empty
 }
 

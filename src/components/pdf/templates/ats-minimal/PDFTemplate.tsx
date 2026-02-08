@@ -5,9 +5,19 @@ import {
   Page,
   Text,
   View,
+  Link,
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
+
+// Helper to ensure URL has protocol
+function ensureProtocol(url: string): string {
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`;
+  }
+  return url;
+}
+
 import {
   ResumeDocument,
   HeaderData,
@@ -135,20 +145,38 @@ export function PDFTemplate({ resume }: PDFTemplateProps) {
 
   const renderHeader = () => {
     const data = sectionData.header as HeaderData;
-    const contactItems = [
-      data.email,
-      data.phone,
-      data.location,
-      data.linkedin,
-      data.github,
-      data.website,
-    ].filter(Boolean);
+
+    const separator = <Text style={{ color: "#6B7280" }}> | </Text>;
 
     return (
       <View style={styles.header}>
         <Text style={styles.name}>{data.fullName}</Text>
         <Text style={styles.title}>{data.title}</Text>
-        <Text style={styles.contactRow}>{contactItems.join(" | ")}</Text>
+        <View style={styles.contactRow}>
+          {data.email && <Text>{data.email}</Text>}
+          {data.email && data.phone && separator}
+          {data.phone && <Text>{data.phone}</Text>}
+          {data.phone && data.location && separator}
+          {data.location && <Text>{data.location}</Text>}
+          {data.location && data.linkedin && separator}
+          {data.linkedin && (
+            <Link src={data.linkedinUrl ? ensureProtocol(data.linkedinUrl) : '#'}>
+              {data.linkedin}
+            </Link>
+          )}
+          {data.linkedin && data.github && separator}
+          {data.github && (
+            <Link src={data.githubUrl ? ensureProtocol(data.githubUrl) : '#'}>
+              {data.github}
+            </Link>
+          )}
+          {data.github && data.website && separator}
+          {data.website && (
+            <Link src={data.websiteUrl ? ensureProtocol(data.websiteUrl) : '#'}>
+              {data.website}
+            </Link>
+          )}
+        </View>
       </View>
     );
   };

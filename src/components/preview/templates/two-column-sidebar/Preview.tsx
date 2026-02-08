@@ -21,6 +21,14 @@ import {
 } from "@/types/resume";
 import { Mail, Phone, MapPin, Linkedin, Github, Globe } from "lucide-react";
 
+// Helper to ensure URL has protocol
+function ensureProtocol(url: string): string {
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`;
+  }
+  return url;
+}
+
 /**
  * Two-Column Sidebar Template
  * Professional layout with sidebar for skills/contact and main content area.
@@ -91,22 +99,37 @@ export function TwoColumnSidebarPreview() {
             </div>
           )}
           {data.linkedin && (
-            <div className="flex items-center gap-2">
+            <a 
+              href={data.linkedinUrl ? ensureProtocol(data.linkedinUrl) : '#'}
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="flex items-center gap-2 hover:underline"
+            >
               <Linkedin className="w-4 h-4 flex-shrink-0" />
               <span className="break-all">{data.linkedin}</span>
-            </div>
+            </a>
           )}
           {data.github && (
-            <div className="flex items-center gap-2">
+            <a 
+              href={data.githubUrl ? ensureProtocol(data.githubUrl) : '#'}
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="flex items-center gap-2 hover:underline"
+            >
               <Github className="w-4 h-4 flex-shrink-0" />
               <span className="break-all">{data.github}</span>
-            </div>
+            </a>
           )}
           {data.website && (
-            <div className="flex items-center gap-2">
+            <a 
+              href={data.websiteUrl ? ensureProtocol(data.websiteUrl) : '#'}
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="flex items-center gap-2 hover:underline"
+            >
               <Globe className="w-4 h-4 flex-shrink-0" />
               <span className="break-all">{data.website}</span>
-            </div>
+            </a>
           )}
         </div>
       </div>

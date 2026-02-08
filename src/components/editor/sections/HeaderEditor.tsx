@@ -184,34 +184,58 @@ export function HeaderEditor() {
           />
         </div>
 
-        <div>
-          <Label htmlFor="linkedin">LinkedIn</Label>
-          <Input
-            id="linkedin"
-            value={data.linkedin}
-            onChange={(e) => handleChange("linkedin", e.target.value)}
-            placeholder="linkedin.com/in/yourprofile"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="github">GitHub</Label>
-          <Input
-            id="github"
-            value={data.github}
-            onChange={(e) => handleChange("github", e.target.value)}
-            placeholder="github.com/yourusername"
-          />
+        <div className="col-span-2">
+          <Label>LinkedIn</Label>
+          <div className="grid grid-cols-2 gap-2 mt-1">
+            <Input
+              id="linkedin"
+              value={data.linkedin}
+              onChange={(e) => handleChange("linkedin", e.target.value)}
+              placeholder="Display text (e.g., yourname)"
+            />
+            <Input
+              id="linkedinUrl"
+              value={data.linkedinUrl}
+              onChange={(e) => handleChange("linkedinUrl", e.target.value)}
+              placeholder="URL (e.g., linkedin.com/in/yourname)"
+            />
+          </div>
         </div>
 
         <div className="col-span-2">
-          <Label htmlFor="website">Website (optional)</Label>
-          <Input
-            id="website"
-            value={data.website}
-            onChange={(e) => handleChange("website", e.target.value)}
-            placeholder="yourwebsite.com"
-          />
+          <Label>GitHub</Label>
+          <div className="grid grid-cols-2 gap-2 mt-1">
+            <Input
+              id="github"
+              value={data.github}
+              onChange={(e) => handleChange("github", e.target.value)}
+              placeholder="Display text (e.g., username)"
+            />
+            <Input
+              id="githubUrl"
+              value={data.githubUrl}
+              onChange={(e) => handleChange("githubUrl", e.target.value)}
+              placeholder="URL (e.g., github.com/username)"
+            />
+          </div>
+        </div>
+
+        <div className="col-span-2">
+          <Label>Website (optional)</Label>
+          <div className="grid grid-cols-2 gap-2 mt-1">
+            <Input
+              id="website"
+              value={data.website}
+              onChange={(e) => handleChange("website", e.target.value)}
+              placeholder="Display text (e.g., mysite.com)"
+            />
+            <Input
+              id="websiteUrl"
+              value={data.websiteUrl}
+              onChange={(e) => handleChange("websiteUrl", e.target.value)}
+              placeholder="URL (e.g., https://mysite.com)"
+            />
+          </div>
         </div>
       </div>
     </div>

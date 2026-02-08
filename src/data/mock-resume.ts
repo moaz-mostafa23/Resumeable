@@ -19,9 +19,12 @@ export const mockHeaderData: HeaderData = {
   email: "sarah.chen@email.com",
   phone: "(415) 555-0142",
   location: "San Francisco, CA",
-  linkedin: "linkedin.com/in/sarahchen",
+  linkedin: "sarahchen",
+  linkedinUrl: "https://linkedin.com/in/sarahchen",
   github: "",
+  githubUrl: "",
   website: "sarahchen.design",
+  websiteUrl: "https://sarahchen.design",
 };
 
 // Mock summary data

@@ -20,6 +20,14 @@ import {
 } from "@/types/resume";
 import { Mail, Phone, MapPin, Linkedin, Github, Globe, Briefcase, GraduationCap, Code, Award, Heart, Newspaper, Users } from "lucide-react";
 
+// Helper to ensure URL has protocol
+function ensureProtocol(url: string): string {
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`;
+  }
+  return url;
+}
+
 /**
  * Creative Infographic Template
  * Bold design with visual elements, icons, and color blocks.
@@ -129,28 +137,46 @@ export function CreativeInfographicPreview() {
               </span>
             )}
             {data.linkedin && (
-              <span className="flex items-center gap-2">
+              <a 
+                href={data.linkedinUrl ? ensureProtocol(data.linkedinUrl) : '#'}
+                target="_blank"
+                rel="noopener noreferrer" 
+                className="flex items-center gap-2 hover:underline"
+                style={{ color: 'inherit' }}
+              >
                 <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
                   <Linkedin className="w-4 h-4" />
                 </div>
                 {data.linkedin}
-              </span>
+              </a>
             )}
             {data.github && (
-              <span className="flex items-center gap-2">
+              <a 
+                href={data.githubUrl ? ensureProtocol(data.githubUrl) : '#'}
+                target="_blank"
+                rel="noopener noreferrer" 
+                className="flex items-center gap-2 hover:underline"
+                style={{ color: 'inherit' }}
+              >
                 <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
                   <Github className="w-4 h-4" />
                 </div>
                 {data.github}
-              </span>
+              </a>
             )}
             {data.website && (
-              <span className="flex items-center gap-2">
+              <a 
+                href={data.websiteUrl ? ensureProtocol(data.websiteUrl) : '#'}
+                target="_blank"
+                rel="noopener noreferrer" 
+                className="flex items-center gap-2 hover:underline"
+                style={{ color: 'inherit' }}
+              >
                 <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
                   <Globe className="w-4 h-4" />
                 </div>
                 {data.website}
-              </span>
+              </a>
             )}
           </div>
         </div>

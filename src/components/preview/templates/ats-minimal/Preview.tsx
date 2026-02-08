@@ -18,6 +18,7 @@ import {
   ReferencesData,
   CustomSectionData,
 } from "@/types/resume";
+import { Mail, Phone, MapPin, Linkedin, Github, Globe } from "lucide-react";
 
 /**
  * ATS Minimal Template
@@ -60,14 +61,6 @@ export function ATSMinimalPreview() {
 
   const renderHeader = () => {
     const data = sectionData.header as HeaderData;
-    const contactItems = [
-      data.email,
-      data.phone,
-      data.location,
-      data.linkedin,
-      data.github,
-      data.website,
-    ].filter(Boolean);
 
     return (
       <div className="text-center mb-4">
@@ -80,9 +73,47 @@ export function ATSMinimalPreview() {
         <p className="text-gray-600 mb-2" style={{ fontSize: theme.titleFontSize }}>
           {data.title}
         </p>
-        <p className="text-gray-600" style={{ fontSize: theme.fontSize - 1 }}>
-          {contactItems.join(" | ")}
-        </p>
+        <div
+          className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-gray-600"
+          style={{ fontSize: theme.fontSize - 1 }}
+        >
+          {data.email && (
+            <span className="flex items-center gap-1">
+              <Mail className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
+              {data.email}
+            </span>
+          )}
+          {data.phone && (
+            <span className="flex items-center gap-1">
+              <Phone className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
+              {data.phone}
+            </span>
+          )}
+          {data.location && (
+            <span className="flex items-center gap-1">
+              <MapPin className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
+              {data.location}
+            </span>
+          )}
+          {data.linkedin && (
+            <span className="flex items-center gap-1">
+              <Linkedin className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
+              {data.linkedin}
+            </span>
+          )}
+          {data.github && (
+            <span className="flex items-center gap-1">
+              <Github className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
+              {data.github}
+            </span>
+          )}
+          {data.website && (
+            <span className="flex items-center gap-1">
+              <Globe className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
+              {data.website}
+            </span>
+          )}
+        </div>
       </div>
     );
   };

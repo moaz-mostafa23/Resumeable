@@ -26,7 +26,8 @@ const templatePreviewMap: Record<TemplateId, React.ComponentType> = {
 // Letter page height: 11in at 96 DPI
 const PAGE_HEIGHT_PX = 1056;
 // Minimum content height required to show an additional page
-const MIN_OVERFLOW_FOR_NEW_PAGE = 100;
+// Reduced to ensure no content is cut off
+const MIN_OVERFLOW_FOR_NEW_PAGE = 1;
 
 export function TemplatePreview() {
   const contextResume = useResumePreview();
@@ -40,19 +41,61 @@ export function TemplatePreview() {
     if (!el) return;
 
     const measure = () => {
-      const h = el.scrollHeight;
-      const fullPages = Math.floor(h / PAGE_HEIGHT_PX);
-      const overflow = h % PAGE_HEIGHT_PX;
-      // Only add an extra page if there's substantial content on it
-      const needsExtraPage = overflow > MIN_OVERFLOW_FOR_NEW_PAGE;
-      setPageCount(Math.max(1, fullPages + (needsExtraPage ? 1 : 0)));
+      if (!el) return;
+      
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!el) return;
+          
+          const h = el.scrollHeight;
+          const fullPages = Math.floor(h / PAGE_HEIGHT_PX);
+          const overflow = h % PAGE_HEIGHT_PX;
+          const needsExtraPage = overflow > MIN_OVERFLOW_FOR_NEW_PAGE;
+          const calculatedPages = fullPages + (needsExtraPage ? 1 : 0);
+          const newPageCount = Math.max(1, Math.ceil(h / PAGE_HEIGHT_PX));
+          
+          setPageCount(newPageCount);
+        });
+      });
     };
 
     measure();
-    const observer = new ResizeObserver(measure);
+    
+    const observer = new ResizeObserver(() => {
+      setTimeout(measure, 100);
+    });
     observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+    
+    const images = el.querySelectorAll("img");
+    let loadedImages = 0;
+    const onImageLoad = () => {
+      loadedImages++;
+      if (loadedImages === images.length) {
+        setTimeout(measure, 100);
+      }
+    };
+    
+    images.forEach((img) => {
+      if (img.complete) {
+        loadedImages++;
+      } else {
+        img.addEventListener("load", onImageLoad, { once: true });
+        img.addEventListener("error", onImageLoad, { once: true });
+      }
+    });
+    
+    if (images.length === 0 || loadedImages === images.length) {
+      setTimeout(measure, 200);
+    }
+    
+    return () => {
+      observer.disconnect();
+      images.forEach((img) => {
+        img.removeEventListener("load", onImageLoad);
+        img.removeEventListener("error", onImageLoad);
+      });
+    };
+  }, [resume]);
 
   if (!resume) return null;
 
@@ -60,26 +103,44 @@ export function TemplatePreview() {
   const PreviewComponent = templatePreviewMap[templateId] || templatePreviewMap[DEFAULT_TEMPLATE_ID];
 
   return (
-    <div className="flex flex-col" style={{ gap: "24px" }}>
-      {Array.from({ length: pageCount }).map((_, i) => (
-        <div
-          key={i}
-          className="pdf-page"
-          style={{
-            width: "816px",
-            height: `${PAGE_HEIGHT_PX}px`,
-            overflow: "hidden",
-            background: "white",
-          }}
-        >
+    <>
+      <div
+        ref={measureRef}
+        style={{
+          position: "absolute",
+          visibility: "hidden",
+          width: "816px",
+          overflow: "visible",
+          pointerEvents: "none",
+          zIndex: -1,
+        }}
+      >
+        <PreviewComponent />
+      </div>
+      <div className="flex flex-col" style={{ gap: "24px" }}>
+        {Array.from({ length: pageCount }).map((_, i) => (
           <div
-            ref={i === 0 ? measureRef : undefined}
-            style={i > 0 ? { transform: `translateY(-${i * PAGE_HEIGHT_PX}px)` } : undefined}
+            key={i}
+            className="pdf-page"
+            style={{
+              width: "816px",
+              height: `${PAGE_HEIGHT_PX}px`,
+              overflow: "hidden",
+              background: "white",
+              position: "relative",
+            }}
           >
-            <PreviewComponent />
+            <div
+              style={{
+                ...(i > 0 ? { transform: `translateY(-${i * PAGE_HEIGHT_PX}px)` } : {}),
+                width: "100%",
+              }}
+            >
+              <PreviewComponent />
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </>
   );
 }

@@ -33,6 +33,15 @@ const COLOR_PRESETS = [
   "#475569", // Slate
 ];
 
+const TEXT_COLOR_PRESETS = [
+  "#000000", // Black
+  "#111827", // Gray-900
+  "#1f2937", // Gray-800
+  "#374151", // Gray-700
+  "#4b5563", // Gray-600
+  "#6b7280", // Gray-500
+];
+
 export function ThemeEditor() {
   const { resume, updateTheme } = useResumeStore();
 
@@ -80,6 +89,46 @@ export function ThemeEditor() {
           value={theme.primaryColor}
           onChange={(e) => updateTheme({ primaryColor: e.target.value })}
           placeholder="#2563eb"
+          className="w-32"
+        />
+      </div>
+
+      {/* Text Color */}
+      <div className="space-y-3">
+        <Label>Text Color</Label>
+        <div className="flex gap-2 flex-wrap">
+          {TEXT_COLOR_PRESETS.map((color) => (
+            <button
+              key={color}
+              className={`w-8 h-8 rounded-full border-2 ${
+                theme.textColor === color
+                  ? "border-gray-900 ring-2 ring-offset-2 ring-gray-400"
+                  : "border-transparent"
+              }`}
+              style={{ backgroundColor: color }}
+              onClick={() => updateTheme({ textColor: color })}
+            />
+          ))}
+          <div className="relative">
+            <input
+              type="color"
+              value={theme.textColor}
+              onChange={(e) => updateTheme({ textColor: e.target.value })}
+              className="w-8 h-8 rounded-full cursor-pointer opacity-0 absolute inset-0"
+            />
+            <div
+              className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-xs"
+              style={{
+                background: `conic-gradient(red, yellow, lime, aqua, blue, magenta, red)`,
+              }}
+            />
+          </div>
+        </div>
+        <Input
+          type="text"
+          value={theme.textColor}
+          onChange={(e) => updateTheme({ textColor: e.target.value })}
+          placeholder="#000000"
           className="w-32"
         />
       </div>

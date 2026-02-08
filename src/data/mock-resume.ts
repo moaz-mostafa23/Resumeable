@@ -235,6 +235,7 @@ export const mockSectionData: Record<string, SectionData> = {
 // Default theme for gallery previews
 export const mockTheme: ThemeConfig = {
   primaryColor: "#000000",
+  textColor: "#000000",
   fontFamily: "Inter",
   fontSize: 13,
   lineHeight: 1.4,

@@ -79,7 +79,7 @@ export function ModernMinimalPreview() {
             >
               {data.fullName}
             </h1>
-            <p className="text-gray-600 mb-3 text-center" style={{ fontSize: theme.titleFontSize }}>
+            <p className="mb-3 text-center" style={{ fontSize: theme.titleFontSize, color: theme.textColor, opacity: 0.75 }}>
               {data.title}
             </p>
           </>
@@ -91,14 +91,14 @@ export function ModernMinimalPreview() {
             >
               {data.fullName}
             </h1>
-            <p className="text-gray-600" style={{ fontSize: theme.titleFontSize }}>
+            <p style={{ fontSize: theme.titleFontSize, color: theme.textColor, opacity: 0.75 }}>
               {data.title}
             </p>
           </div>
         )}
         <div
-          className={`flex flex-wrap ${isCentered ? 'justify-center' : theme.textAlign === 'right' ? 'justify-end' : 'justify-start'} gap-x-4 gap-y-1 text-gray-600`}
-          style={{ fontSize: theme.fontSize - 1 }}
+          className={`flex flex-wrap ${isCentered ? 'justify-center' : theme.textAlign === 'right' ? 'justify-end' : 'justify-start'} gap-x-4 gap-y-1`}
+          style={{ fontSize: theme.fontSize - 1, color: theme.textColor, opacity: 0.75 }}
         >
           {data.email && (
             <span className="flex items-center gap-1">
@@ -164,7 +164,7 @@ export function ModernMinimalPreview() {
     return (
       <div>
         <h2 style={styles.sectionTitle}>{label}</h2>
-        <p className="text-gray-700 leading-relaxed">{data.content}</p>
+        <p className="leading-relaxed" style={{ color: theme.textColor }}>{data.content}</p>
       </div>
     );
   };
@@ -179,8 +179,8 @@ export function ModernMinimalPreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold text-gray-900">{item.title}</h3>
-                  <p className="text-gray-600">{item.company} • {item.location}</p>
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>{item.title}</h3>
+                  <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.company} • {item.location}</p>
                 </div>
                 <p 
                   className="text-sm font-medium px-2 py-0.5 rounded"
@@ -189,7 +189,7 @@ export function ModernMinimalPreview() {
                   {item.startDate} - {item.current ? "Present" : item.endDate}
                 </p>
               </div>
-              <ul className="mt-2 space-y-1.5 text-gray-700">
+              <ul className="mt-2 space-y-1.5" style={{ color: theme.textColor }}>
                 {item.bullets.map((bullet) => (
                   <li key={bullet.id} className="flex items-start gap-2">
                     <span 
@@ -217,10 +217,10 @@ export function ModernMinimalPreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>
                     {item.degree} in {item.field}
                   </h3>
-                  <p className="text-gray-600">{item.institution} • {item.location}</p>
+                  <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.institution} • {item.location}</p>
                 </div>
                 <p 
                   className="text-sm font-medium px-2 py-0.5 rounded"
@@ -229,8 +229,8 @@ export function ModernMinimalPreview() {
                   {item.startDate} - {item.endDate}
                 </p>
               </div>
-              {item.gpa && <p className="text-gray-600 text-sm mt-1">GPA: {item.gpa}</p>}
-              {item.details && <p className="text-gray-700 mt-1">{item.details}</p>}
+              {item.gpa && <p className="text-sm mt-1" style={{ color: theme.textColor, opacity: 0.75 }}>GPA: {item.gpa}</p>}
+              {item.details && <p className="mt-1" style={{ color: theme.textColor }}>{item.details}</p>}
             </div>
           ))}
         </div>
@@ -246,7 +246,7 @@ export function ModernMinimalPreview() {
         <div className="space-y-3">
           {data.categories.map((category) => (
             <div key={category.id}>
-              <span className="font-medium text-gray-900">{category.name}</span>
+              <span className="font-medium" style={{ color: theme.textColor }}>{category.name}</span>
               <div className="flex flex-wrap gap-2 mt-1.5">
                 {category.skills.map((skill, idx) => (
                   <span 
@@ -278,10 +278,10 @@ export function ModernMinimalPreview() {
           {data.items.map((item) => (
             <div key={item.id}>
               <div>
-                <h3 className="font-semibold text-gray-900">
+                <h3 className="font-semibold" style={{ color: theme.textColor }}>
                   {item.name}
                   {item.link && (
-                    <span className="font-normal text-gray-500 ml-2 text-sm">({item.link})</span>
+                    <span className="font-normal ml-2 text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>({item.link})</span>
                   )}
                 </h3>
                 {item.technologies.length > 0 && (
@@ -298,7 +298,7 @@ export function ModernMinimalPreview() {
                   </div>
                 )}
               </div>
-              <ul className="mt-2 space-y-1 text-gray-700">
+              <ul className="mt-2 space-y-1" style={{ color: theme.textColor }}>
                 {item.bullets.map((bullet) => (
                   <li key={bullet.id} className="flex items-start gap-2">
                     <span 
@@ -325,10 +325,10 @@ export function ModernMinimalPreview() {
           {data.items.map((item) => (
             <div key={item.id} className="flex justify-between items-center">
               <span>
-                <span className="font-medium">{item.name}</span>
-                {item.issuer && <span className="text-gray-600"> — {item.issuer}</span>}
+                <span className="font-medium" style={{ color: theme.textColor }}>{item.name}</span>
+                {item.issuer && <span style={{ color: theme.textColor, opacity: 0.75 }}> — {item.issuer}</span>}
               </span>
-              <span className="text-gray-500 text-sm">{item.date}</span>
+              <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
             </div>
           ))}
         </div>
@@ -346,10 +346,10 @@ export function ModernMinimalPreview() {
           {data.items.map((item) => (
             <div key={item.id} className="flex justify-between">
               <div>
-                <span className="font-medium">{item.name}</span>
-                {item.institution && <span className="text-gray-600"> — {item.institution}</span>}
+                <span className="font-medium" style={{ color: theme.textColor }}>{item.name}</span>
+                {item.institution && <span style={{ color: theme.textColor, opacity: 0.75 }}> — {item.institution}</span>}
               </div>
-              <span className="text-gray-500 text-sm">{item.date}</span>
+              <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
             </div>
           ))}
         </div>
@@ -371,7 +371,7 @@ export function ModernMinimalPreview() {
               style={{ backgroundColor: `${theme.primaryColor}10` }}
             >
               <span className="font-medium" style={{ color: theme.primaryColor }}>{item.language}</span>
-              <span className="text-gray-600 text-sm ml-1">({item.proficiency})</span>
+              <span className="text-sm ml-1" style={{ color: theme.textColor, opacity: 0.75 }}>({item.proficiency})</span>
             </div>
           ))}
         </div>
@@ -390,12 +390,12 @@ export function ModernMinimalPreview() {
             <div key={item.id}>
               <div className="flex justify-between">
                 <div>
-                  <span className="font-medium">{item.name}</span>
-                  {item.issuer && <span className="text-gray-600"> — {item.issuer}</span>}
+                  <span className="font-medium" style={{ color: theme.textColor }}>{item.name}</span>
+                  {item.issuer && <span style={{ color: theme.textColor, opacity: 0.75 }}> — {item.issuer}</span>}
                 </div>
-                <span className="text-gray-500 text-sm">{item.date}</span>
+                <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
               </div>
-              {item.description && <p className="text-gray-700 text-sm mt-1">{item.description}</p>}
+              {item.description && <p className="text-sm mt-1" style={{ color: theme.textColor }}>{item.description}</p>}
             </div>
           ))}
         </div>
@@ -414,8 +414,8 @@ export function ModernMinimalPreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">{item.role}</h3>
-                  <p className="text-gray-600">{item.organization}{item.location && ` • ${item.location}`}</p>
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>{item.role}</h3>
+                  <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.organization}{item.location && ` • ${item.location}`}</p>
                 </div>
                 <p 
                   className="text-sm font-medium px-2 py-0.5 rounded"
@@ -425,7 +425,7 @@ export function ModernMinimalPreview() {
                 </p>
               </div>
               {item.bullets.length > 0 && (
-                <ul className="mt-2 space-y-1 text-gray-700">
+                <ul className="mt-2 space-y-1" style={{ color: theme.textColor }}>
                   {item.bullets.map((bullet) => (
                     <li key={bullet.id} className="flex items-start gap-2">
                       <span 
@@ -476,12 +476,12 @@ export function ModernMinimalPreview() {
             <div key={item.id}>
               <div className="flex justify-between">
                 <div>
-                  <span className="font-semibold">{item.title}</span>
-                  {item.publisher && <span className="text-gray-600"> — {item.publisher}</span>}
+                  <span className="font-semibold" style={{ color: theme.textColor }}>{item.title}</span>
+                  {item.publisher && <span style={{ color: theme.textColor, opacity: 0.75 }}> — {item.publisher}</span>}
                 </div>
-                <span className="text-gray-500 text-sm">{item.date}</span>
+                <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
               </div>
-              {item.description && <p className="text-gray-700 text-sm mt-1">{item.description}</p>}
+              {item.description && <p className="text-sm mt-1" style={{ color: theme.textColor }}>{item.description}</p>}
             </div>
           ))}
         </div>
@@ -498,10 +498,10 @@ export function ModernMinimalPreview() {
         <div className="grid grid-cols-2 gap-4">
           {data.items.map((item) => (
             <div key={item.id} className="p-3 rounded-lg" style={{ backgroundColor: '#f9fafb' }}>
-              <p className="font-semibold">{item.name}</p>
-              <p className="text-gray-600 text-sm">{item.title}{item.company && `, ${item.company}`}</p>
-              {item.email && <p className="text-gray-500 text-sm">{item.email}</p>}
-              {item.phone && <p className="text-gray-500 text-sm">{item.phone}</p>}
+              <p className="font-semibold" style={{ color: theme.textColor }}>{item.name}</p>
+              <p className="text-sm" style={{ color: theme.textColor, opacity: 0.75 }}>{item.title}{item.company && `, ${item.company}`}</p>
+              {item.email && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.email}</p>}
+              {item.phone && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.phone}</p>}
             </div>
           ))}
         </div>
@@ -520,14 +520,14 @@ export function ModernMinimalPreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">{item.title}</h3>
-                  {item.subtitle && <p className="text-gray-600">{item.subtitle}</p>}
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>{item.title}</h3>
+                  {item.subtitle && <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.subtitle}</p>}
                 </div>
-                {item.date && <p className="text-gray-500 text-sm">{item.date}</p>}
+                {item.date && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</p>}
               </div>
-              {item.description && <p className="text-gray-700 mt-1">{item.description}</p>}
+              {item.description && <p className="mt-1" style={{ color: theme.textColor }}>{item.description}</p>}
               {item.bullets.length > 0 && (
-                <ul className="mt-2 space-y-1 text-gray-700">
+                <ul className="mt-2 space-y-1" style={{ color: theme.textColor }}>
                   {item.bullets.map((bullet) => (
                     <li key={bullet.id} className="flex items-start gap-2">
                       <span 

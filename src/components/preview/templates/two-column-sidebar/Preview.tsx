@@ -252,7 +252,7 @@ export function TwoColumnSidebarPreview() {
     return (
       <div>
         <h2 style={mainSectionTitleStyle}>{label}</h2>
-        <p className="text-gray-700">{data.content}</p>
+        <p style={{ color: theme.textColor }}>{data.content}</p>
       </div>
     );
   };
@@ -267,14 +267,14 @@ export function TwoColumnSidebarPreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">{item.title}</h3>
-                  <p className="text-gray-600">{item.company} | {item.location}</p>
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>{item.title}</h3>
+                  <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.company} | {item.location}</p>
                 </div>
-                <p className="text-gray-500 text-sm whitespace-nowrap">
+                <p className="text-sm whitespace-nowrap" style={{ color: theme.textColor, opacity: 0.6 }}>
                   {item.startDate} - {item.current ? "Present" : item.endDate}
                 </p>
               </div>
-              <ul className="list-disc list-inside mt-2 space-y-1 text-gray-700">
+              <ul className="list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
                 {item.bullets.map((bullet) => (
                   <li key={bullet.id}>{bullet.content}</li>
                 ))}
@@ -296,15 +296,15 @@ export function TwoColumnSidebarPreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">{item.degree} in {item.field}</h3>
-                  <p className="text-gray-600">{item.institution} | {item.location}</p>
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>{item.degree} in {item.field}</h3>
+                  <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.institution} | {item.location}</p>
                 </div>
-                <p className="text-gray-500 text-sm whitespace-nowrap">
+                <p className="text-sm whitespace-nowrap" style={{ color: theme.textColor, opacity: 0.6 }}>
                   {item.startDate} - {item.endDate}
                 </p>
               </div>
-              {item.gpa && <p className="text-gray-600 text-sm">GPA: {item.gpa}</p>}
-              {item.details && <p className="text-gray-700 mt-1">{item.details}</p>}
+              {item.gpa && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.75 }}>GPA: {item.gpa}</p>}
+              {item.details && <p className="mt-1" style={{ color: theme.textColor }}>{item.details}</p>}
             </div>
           ))}
         </div>
@@ -320,14 +320,14 @@ export function TwoColumnSidebarPreview() {
         <div className="space-y-4">
           {data.items.map((item) => (
             <div key={item.id}>
-              <h3 className="font-semibold">
+              <h3 className="font-semibold" style={{ color: theme.textColor }}>
                 {item.name}
-                {item.link && <span className="font-normal text-gray-500 ml-2">| {item.link}</span>}
+                {item.link && <span className="font-normal ml-2" style={{ color: theme.textColor, opacity: 0.6 }}>| {item.link}</span>}
               </h3>
               {item.technologies.length > 0 && (
-                <p className="text-gray-600 text-sm">{item.technologies.join(" • ")}</p>
+                <p className="text-sm" style={{ color: theme.textColor, opacity: 0.75 }}>{item.technologies.join(" • ")}</p>
               )}
-              <ul className="list-disc list-inside mt-2 space-y-1 text-gray-700">
+              <ul className="list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
                 {item.bullets.map((bullet) => (
                   <li key={bullet.id}>{bullet.content}</li>
                 ))}
@@ -349,10 +349,10 @@ export function TwoColumnSidebarPreview() {
           {data.items.map((item) => (
             <div key={item.id}>
               <div className="flex justify-between">
-                <span className="font-medium">{item.name}{item.issuer && ` — ${item.issuer}`}</span>
-                <span className="text-gray-500 text-sm">{item.date}</span>
+                <span className="font-medium" style={{ color: theme.textColor }}>{item.name}{item.issuer && ` — ${item.issuer}`}</span>
+                <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
               </div>
-              {item.description && <p className="text-gray-700 text-sm mt-1">{item.description}</p>}
+              {item.description && <p className="text-sm mt-1" style={{ color: theme.textColor }}>{item.description}</p>}
             </div>
           ))}
         </div>
@@ -371,15 +371,15 @@ export function TwoColumnSidebarPreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">{item.role}</h3>
-                  <p className="text-gray-600">{item.organization}{item.location && ` | ${item.location}`}</p>
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>{item.role}</h3>
+                  <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.organization}{item.location && ` | ${item.location}`}</p>
                 </div>
-                <p className="text-gray-500 text-sm whitespace-nowrap">
+                <p className="text-sm whitespace-nowrap" style={{ color: theme.textColor, opacity: 0.6 }}>
                   {item.startDate} - {item.current ? "Present" : item.endDate}
                 </p>
               </div>
               {item.bullets.length > 0 && (
-                <ul className="list-disc list-inside mt-2 space-y-1 text-gray-700">
+                <ul className="list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
                   {item.bullets.map((bullet) => (<li key={bullet.id}>{bullet.content}</li>))}
                 </ul>
               )}
@@ -400,10 +400,10 @@ export function TwoColumnSidebarPreview() {
           {data.items.map((item) => (
             <div key={item.id}>
               <div className="flex justify-between">
-                <span className="font-semibold">{item.title}{item.publisher && ` — ${item.publisher}`}</span>
-                <span className="text-gray-500 text-sm">{item.date}</span>
+                <span className="font-semibold" style={{ color: theme.textColor }}>{item.title}{item.publisher && ` — ${item.publisher}`}</span>
+                <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
               </div>
-              {item.description && <p className="text-gray-700 text-sm mt-1">{item.description}</p>}
+              {item.description && <p className="text-sm mt-1" style={{ color: theme.textColor }}>{item.description}</p>}
             </div>
           ))}
         </div>
@@ -420,10 +420,10 @@ export function TwoColumnSidebarPreview() {
         <div className="grid grid-cols-2 gap-4">
           {data.items.map((item) => (
             <div key={item.id}>
-              <p className="font-semibold">{item.name}</p>
-              <p className="text-gray-600 text-sm">{item.title}{item.company && `, ${item.company}`}</p>
-              {item.email && <p className="text-gray-500 text-sm">{item.email}</p>}
-              {item.phone && <p className="text-gray-500 text-sm">{item.phone}</p>}
+              <p className="font-semibold" style={{ color: theme.textColor }}>{item.name}</p>
+              <p className="text-sm" style={{ color: theme.textColor, opacity: 0.75 }}>{item.title}{item.company && `, ${item.company}`}</p>
+              {item.email && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.email}</p>}
+              {item.phone && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.phone}</p>}
             </div>
           ))}
         </div>
@@ -442,14 +442,14 @@ export function TwoColumnSidebarPreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">{item.title}</h3>
-                  {item.subtitle && <p className="text-gray-600">{item.subtitle}</p>}
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>{item.title}</h3>
+                  {item.subtitle && <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.subtitle}</p>}
                 </div>
-                {item.date && <p className="text-gray-500 text-sm">{item.date}</p>}
+                {item.date && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</p>}
               </div>
-              {item.description && <p className="text-gray-700 mt-1">{item.description}</p>}
+              {item.description && <p className="mt-1" style={{ color: theme.textColor }}>{item.description}</p>}
               {item.bullets.length > 0 && (
-                <ul className="list-disc list-inside mt-2 space-y-1 text-gray-700">
+                <ul className="list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
                   {item.bullets.map((bullet) => (<li key={bullet.id}>{bullet.content}</li>))}
                 </ul>
               )}

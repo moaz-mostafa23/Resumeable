@@ -84,10 +84,10 @@ export function CorporateTimelinePreview() {
         >
           {data.fullName}
         </h1>
-        <p className="text-gray-600 mb-3 font-medium" style={{ fontSize: theme.titleFontSize }}>
+        <p className="mb-3 font-medium" style={{ fontSize: theme.titleFontSize, color: theme.textColor, opacity: 0.75 }}>
           {data.title}
         </p>
-        <div className="flex flex-wrap gap-x-5 gap-y-1 text-gray-600" style={{ fontSize: theme.fontSize - 1 }}>
+        <div className="flex flex-wrap gap-x-5 gap-y-1" style={{ fontSize: theme.fontSize - 1, color: theme.textColor, opacity: 0.75 }}>
           {data.email && (
             <span className="flex items-center gap-1.5">
               <Mail className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
@@ -164,7 +164,7 @@ export function CorporateTimelinePreview() {
           {label}
           <SectionDivider />
         </h2>
-        <p className="text-gray-700 italic">{data.content}</p>
+        <p className="italic" style={{ color: theme.textColor }}>{data.content}</p>
       </div>
     );
   };
@@ -191,7 +191,7 @@ export function CorporateTimelinePreview() {
                 >
                   {item.startDate}
                 </p>
-                <p className="text-gray-500 text-sm">
+                <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>
                   {item.current ? "Present" : item.endDate}
                 </p>
               </div>
@@ -208,15 +208,15 @@ export function CorporateTimelinePreview() {
               </div>
               {/* Content */}
               <div className="flex-grow pb-2">
-                <h3 className="font-bold text-gray-900">{item.title}</h3>
-                <p className="text-gray-600 font-medium">
+                <h3 className="font-bold" style={{ color: theme.textColor }}>{item.title}</h3>
+                <p className="font-medium" style={{ color: theme.textColor, opacity: 0.75 }}>
                   {item.company}
-                  <span className="text-gray-400 font-normal"> — {item.location}</span>
+                  <span className="font-normal" style={{ color: theme.textColor, opacity: 0.5 }}> — {item.location}</span>
                 </p>
-                <ul className="mt-2 space-y-1 text-gray-700">
+                <ul className="mt-2 space-y-1" style={{ color: theme.textColor }}>
                   {item.bullets.map((bullet) => (
                     <li key={bullet.id} className="flex items-start gap-2">
-                      <span className="text-gray-400 mt-0.5">›</span>
+                      <span style={{ color: theme.textColor, opacity: 0.5 }} className="mt-0.5">›</span>
                       {bullet.content}
                     </li>
                   ))}
@@ -247,7 +247,7 @@ export function CorporateTimelinePreview() {
                 <p className="font-semibold text-sm" style={{ color: theme.primaryColor }}>
                   {item.startDate}
                 </p>
-                <p className="text-gray-500 text-sm">{item.endDate}</p>
+                <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.endDate}</p>
               </div>
               <div className="flex flex-col items-center mr-6">
                 <div 
@@ -260,10 +260,10 @@ export function CorporateTimelinePreview() {
                 />
               </div>
               <div className="flex-grow">
-                <h3 className="font-bold text-gray-900">{item.degree} in {item.field}</h3>
-                <p className="text-gray-600">{item.institution}, {item.location}</p>
-                {item.gpa && <p className="text-gray-600 text-sm mt-1">GPA: {item.gpa}</p>}
-                {item.details && <p className="text-gray-700 mt-1">{item.details}</p>}
+                <h3 className="font-bold" style={{ color: theme.textColor }}>{item.degree} in {item.field}</h3>
+                <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.institution}, {item.location}</p>
+                {item.gpa && <p className="text-sm mt-1" style={{ color: theme.textColor, opacity: 0.75 }}>GPA: {item.gpa}</p>}
+                {item.details && <p className="mt-1" style={{ color: theme.textColor }}>{item.details}</p>}
               </div>
             </div>
           ))}
@@ -283,8 +283,8 @@ export function CorporateTimelinePreview() {
         <div className="grid grid-cols-2 gap-4">
           {data.categories.map((category) => (
             <div key={category.id}>
-              <h4 className="font-semibold text-gray-900 mb-1">{category.name}</h4>
-              <p className="text-gray-700">{category.skills.join(", ")}</p>
+              <h4 className="font-semibold mb-1" style={{ color: theme.textColor }}>{category.name}</h4>
+              <p style={{ color: theme.textColor }}>{category.skills.join(", ")}</p>
             </div>
           ))}
         </div>
@@ -303,19 +303,19 @@ export function CorporateTimelinePreview() {
         <div className="space-y-4">
           {data.items.map((item) => (
             <div key={item.id}>
-              <h3 className="font-bold text-gray-900">
+              <h3 className="font-bold" style={{ color: theme.textColor }}>
                 {item.name}
                 {item.link && (
-                  <span className="font-normal text-gray-500 ml-2 text-sm">({item.link})</span>
+                  <span className="font-normal ml-2 text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>({item.link})</span>
                 )}
               </h3>
               {item.technologies.length > 0 && (
-                <p className="text-gray-600 text-sm italic">{item.technologies.join(", ")}</p>
+                <p className="text-sm italic" style={{ color: theme.textColor, opacity: 0.75 }}>{item.technologies.join(", ")}</p>
               )}
-              <ul className="mt-2 space-y-1 text-gray-700">
+              <ul className="mt-2 space-y-1" style={{ color: theme.textColor }}>
                 {item.bullets.map((bullet) => (
                   <li key={bullet.id} className="flex items-start gap-2">
-                    <span className="text-gray-400 mt-0.5">›</span>
+                    <span style={{ color: theme.textColor, opacity: 0.5 }} className="mt-0.5">›</span>
                     {bullet.content}
                   </li>
                 ))}
@@ -339,10 +339,10 @@ export function CorporateTimelinePreview() {
           {data.items.map((item) => (
             <div key={item.id} className="flex justify-between">
               <span>
-                <span className="font-medium">{item.name}</span>
-                {item.issuer && <span className="text-gray-600 text-sm"> — {item.issuer}</span>}
+                <span className="font-medium" style={{ color: theme.textColor }}>{item.name}</span>
+                {item.issuer && <span className="text-sm" style={{ color: theme.textColor, opacity: 0.75 }}> — {item.issuer}</span>}
               </span>
-              <span className="text-gray-500 text-sm">{item.date}</span>
+              <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
             </div>
           ))}
         </div>
@@ -363,10 +363,10 @@ export function CorporateTimelinePreview() {
           {data.items.map((item) => (
             <div key={item.id} className="flex justify-between">
               <span>
-                <span className="font-medium">{item.name}</span>
-                {item.institution && <span className="text-gray-600"> — {item.institution}</span>}
+                <span className="font-medium" style={{ color: theme.textColor }}>{item.name}</span>
+                {item.institution && <span style={{ color: theme.textColor, opacity: 0.75 }}> — {item.institution}</span>}
               </span>
-              <span className="text-gray-500 text-sm">{item.date}</span>
+              <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
             </div>
           ))}
         </div>
@@ -386,8 +386,8 @@ export function CorporateTimelinePreview() {
         <div className="flex flex-wrap gap-4">
           {data.items.map((item) => (
             <span key={item.id}>
-              <span className="font-semibold">{item.language}</span>
-              <span className="text-gray-600 text-sm ml-1">({item.proficiency})</span>
+              <span className="font-semibold" style={{ color: theme.textColor }}>{item.language}</span>
+              <span className="text-sm ml-1" style={{ color: theme.textColor, opacity: 0.75 }}>({item.proficiency})</span>
             </span>
           ))}
         </div>
@@ -408,10 +408,10 @@ export function CorporateTimelinePreview() {
           {data.items.map((item) => (
             <div key={item.id} className="flex justify-between">
               <span>
-                <span className="font-medium">{item.name}</span>
-                {item.issuer && <span className="text-gray-600"> — {item.issuer}</span>}
+                <span className="font-medium" style={{ color: theme.textColor }}>{item.name}</span>
+                {item.issuer && <span style={{ color: theme.textColor, opacity: 0.75 }}> — {item.issuer}</span>}
               </span>
-              <span className="text-gray-500 text-sm">{item.date}</span>
+              <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
             </div>
           ))}
         </div>
@@ -435,7 +435,7 @@ export function CorporateTimelinePreview() {
                 <p className="font-semibold text-sm" style={{ color: theme.primaryColor }}>
                   {item.startDate}
                 </p>
-                <p className="text-gray-500 text-sm">{item.current ? "Present" : item.endDate}</p>
+                <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.current ? "Present" : item.endDate}</p>
               </div>
               <div className="flex flex-col items-center mr-6">
                 <div 
@@ -448,13 +448,13 @@ export function CorporateTimelinePreview() {
                 />
               </div>
               <div className="flex-grow">
-                <h3 className="font-bold">{item.role}</h3>
-                <p className="text-gray-600">{item.organization}{item.location && `, ${item.location}`}</p>
+                <h3 className="font-bold" style={{ color: theme.textColor }}>{item.role}</h3>
+                <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.organization}{item.location && `, ${item.location}`}</p>
                 {item.bullets.length > 0 && (
-                  <ul className="mt-2 space-y-1 text-gray-700">
+                  <ul className="mt-2 space-y-1" style={{ color: theme.textColor }}>
                     {item.bullets.map((bullet) => (
                       <li key={bullet.id} className="flex items-start gap-2">
-                        <span className="text-gray-400 mt-0.5">›</span>
+                        <span style={{ color: theme.textColor, opacity: 0.5 }} className="mt-0.5">›</span>
                         {bullet.content}
                       </li>
                     ))}
@@ -477,7 +477,7 @@ export function CorporateTimelinePreview() {
           {label}
           <SectionDivider />
         </h2>
-        <p className="text-gray-700">{data.items.join(" • ")}</p>
+        <p style={{ color: theme.textColor }}>{data.items.join(" • ")}</p>
       </div>
     );
   };
@@ -496,12 +496,12 @@ export function CorporateTimelinePreview() {
             <div key={item.id}>
               <div className="flex justify-between">
                 <span>
-                  <span className="font-semibold">{item.title}</span>
-                  {item.publisher && <span className="text-gray-600"> — {item.publisher}</span>}
+                  <span className="font-semibold" style={{ color: theme.textColor }}>{item.title}</span>
+                  {item.publisher && <span style={{ color: theme.textColor, opacity: 0.75 }}> — {item.publisher}</span>}
                 </span>
-                <span className="text-gray-500 text-sm">{item.date}</span>
+                <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
               </div>
-              {item.description && <p className="text-gray-700 text-sm mt-1">{item.description}</p>}
+              {item.description && <p className="text-sm mt-1" style={{ color: theme.textColor }}>{item.description}</p>}
             </div>
           ))}
         </div>
@@ -521,10 +521,10 @@ export function CorporateTimelinePreview() {
         <div className="grid grid-cols-2 gap-4">
           {data.items.map((item) => (
             <div key={item.id}>
-              <p className="font-semibold">{item.name}</p>
-              <p className="text-gray-600 text-sm">{item.title}{item.company && `, ${item.company}`}</p>
-              {item.email && <p className="text-gray-500 text-sm">{item.email}</p>}
-              {item.phone && <p className="text-gray-500 text-sm">{item.phone}</p>}
+              <p className="font-semibold" style={{ color: theme.textColor }}>{item.name}</p>
+              <p className="text-sm" style={{ color: theme.textColor, opacity: 0.75 }}>{item.title}{item.company && `, ${item.company}`}</p>
+              {item.email && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.email}</p>}
+              {item.phone && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.phone}</p>}
             </div>
           ))}
         </div>
@@ -546,17 +546,17 @@ export function CorporateTimelinePreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">{item.title}</h3>
-                  {item.subtitle && <p className="text-gray-600">{item.subtitle}</p>}
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>{item.title}</h3>
+                  {item.subtitle && <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.subtitle}</p>}
                 </div>
-                {item.date && <p className="text-gray-500 text-sm">{item.date}</p>}
+                {item.date && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</p>}
               </div>
-              {item.description && <p className="text-gray-700 mt-1">{item.description}</p>}
+              {item.description && <p className="mt-1" style={{ color: theme.textColor }}>{item.description}</p>}
               {item.bullets.length > 0 && (
-                <ul className="mt-2 space-y-1 text-gray-700">
+                <ul className="mt-2 space-y-1" style={{ color: theme.textColor }}>
                   {item.bullets.map((bullet) => (
                     <li key={bullet.id} className="flex items-start gap-2">
-                      <span className="text-gray-400 mt-0.5">›</span>
+                      <span style={{ color: theme.textColor, opacity: 0.5 }} className="mt-0.5">›</span>
                       {bullet.content}
                     </li>
                   ))}

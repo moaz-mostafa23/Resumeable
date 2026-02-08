@@ -258,6 +258,7 @@ export type SectionData =
 // Theme configuration
 export interface ThemeConfig {
   primaryColor: string;
+  textColor: string;
   fontFamily: string;
   fontSize: number;
   lineHeight: number;
@@ -297,6 +298,7 @@ export interface ResumeDocument {
 // Default theme
 export const defaultTheme: ThemeConfig = {
   primaryColor: "#000000",
+  textColor: "#000000",
   fontFamily: "Inter",
   fontSize: 13,
   lineHeight: 1.4,

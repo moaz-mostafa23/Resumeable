@@ -78,12 +78,12 @@ export function ATSMinimalPreview() {
         >
           {data.fullName}
         </h1>
-        <p className="text-gray-600 mb-2" style={{ fontSize: theme.titleFontSize }}>
+        <p className="mb-2" style={{ fontSize: theme.titleFontSize, color: theme.textColor, opacity: 0.75 }}>
           {data.title}
         </p>
         <div
-          className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-gray-600"
-          style={{ fontSize: theme.fontSize - 1 }}
+          className="flex flex-wrap justify-center gap-x-4 gap-y-1"
+          style={{ fontSize: theme.fontSize - 1, color: theme.textColor, opacity: 0.75 }}
         >
           {data.email && (
             <span className="flex items-center gap-1">
@@ -149,7 +149,7 @@ export function ATSMinimalPreview() {
     return (
       <div>
         <h2 style={styles.sectionTitle}>{label}</h2>
-        <p className="text-gray-700">{data.content}</p>
+        <p style={{ color: theme.textColor }}>{data.content}</p>
       </div>
     );
   };
@@ -164,14 +164,14 @@ export function ATSMinimalPreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">{item.title}</h3>
-                  <p className="text-gray-600">{item.company} | {item.location}</p>
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>{item.title}</h3>
+                  <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.company} | {item.location}</p>
                 </div>
-                <p className="text-gray-500 text-sm">
+                <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>
                   {item.startDate} - {item.current ? "Present" : item.endDate}
                 </p>
               </div>
-              <ul className="list-disc list-inside mt-2 space-y-1 text-gray-700">
+              <ul className="list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
                 {item.bullets.map((bullet) => (
                   <li key={bullet.id}>{bullet.content}</li>
                 ))}
@@ -193,17 +193,17 @@ export function ATSMinimalPreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>
                     {item.degree} in {item.field}
                   </h3>
-                  <p className="text-gray-600">{item.institution} | {item.location}</p>
+                  <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.institution} | {item.location}</p>
                 </div>
-                <p className="text-gray-500 text-sm">
+                <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>
                   {item.startDate} - {item.endDate}
                 </p>
               </div>
-              {item.gpa && <p className="text-gray-600 text-sm">GPA: {item.gpa}</p>}
-              {item.details && <p className="text-gray-700 mt-1">{item.details}</p>}
+              {item.gpa && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.75 }}>GPA: {item.gpa}</p>}
+              {item.details && <p className="mt-1" style={{ color: theme.textColor }}>{item.details}</p>}
             </div>
           ))}
         </div>
@@ -219,8 +219,8 @@ export function ATSMinimalPreview() {
         <div className="space-y-2">
           {data.categories.map((category) => (
             <div key={category.id} className="flex">
-              <span className="font-semibold min-w-[150px]">{category.name}:</span>
-              <span className="text-gray-700">{category.skills.join(", ")}</span>
+              <span className="font-semibold min-w-[150px]" style={{ color: theme.textColor }}>{category.name}:</span>
+              <span style={{ color: theme.textColor }}>{category.skills.join(", ")}</span>
             </div>
           ))}
         </div>
@@ -238,20 +238,20 @@ export function ATSMinimalPreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>
                     {item.name}
                     {item.link && (
-                      <span className="font-normal text-gray-500 ml-2">| {item.link}</span>
+                      <span className="font-normal ml-2" style={{ color: theme.textColor, opacity: 0.6 }}>| {item.link}</span>
                     )}
                   </h3>
                   {item.technologies.length > 0 && (
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-sm" style={{ color: theme.textColor, opacity: 0.75 }}>
                       {item.technologies.join(", ")}
                     </p>
                   )}
                 </div>
               </div>
-              <ul className="list-disc list-inside mt-2 space-y-1 text-gray-700">
+              <ul className="list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
                 {item.bullets.map((bullet) => (
                   <li key={bullet.id}>{bullet.content}</li>
                 ))}
@@ -272,10 +272,10 @@ export function ATSMinimalPreview() {
           {data.items.map((item) => (
             <div key={item.id} className="flex justify-between">
               <span>
-                <span className="font-medium">{item.name}</span>
-                {item.issuer && <span className="text-gray-600"> — {item.issuer}</span>}
+                <span className="font-medium" style={{ color: theme.textColor }}>{item.name}</span>
+                {item.issuer && <span style={{ color: theme.textColor, opacity: 0.75 }}> — {item.issuer}</span>}
               </span>
-              <span className="text-gray-500 text-sm">{item.date}</span>
+              <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
             </div>
           ))}
         </div>
@@ -293,12 +293,12 @@ export function ATSMinimalPreview() {
           {data.items.map((item) => (
             <div key={item.id} className="flex justify-between">
               <div>
-                <span className="font-medium">{item.name}</span>
+                <span className="font-medium" style={{ color: theme.textColor }}>{item.name}</span>
                 {item.institution && (
-                  <span className="text-gray-600"> — {item.institution}</span>
+                  <span style={{ color: theme.textColor, opacity: 0.75 }}> — {item.institution}</span>
                 )}
               </div>
-              <span className="text-gray-500 text-sm">{item.date}</span>
+              <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
             </div>
           ))}
         </div>
@@ -312,7 +312,7 @@ export function ATSMinimalPreview() {
     return (
       <div>
         <h2 style={styles.sectionTitle}>{label}</h2>
-        <p className="text-gray-700">
+        <p style={{ color: theme.textColor }}>
           {data.items.map((item) => `${item.language} (${item.proficiency})`).join(", ")}
         </p>
       </div>
@@ -330,15 +330,15 @@ export function ATSMinimalPreview() {
             <div key={item.id}>
               <div className="flex justify-between">
                 <div>
-                  <span className="font-medium">{item.name}</span>
+                  <span className="font-medium" style={{ color: theme.textColor }}>{item.name}</span>
                   {item.issuer && (
-                    <span className="text-gray-600"> — {item.issuer}</span>
+                    <span style={{ color: theme.textColor, opacity: 0.75 }}> — {item.issuer}</span>
                   )}
                 </div>
-                <span className="text-gray-500 text-sm">{item.date}</span>
+                <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
               </div>
               {item.description && (
-                <p className="text-gray-700 text-sm mt-1">{item.description}</p>
+                <p className="text-sm mt-1" style={{ color: theme.textColor }}>{item.description}</p>
               )}
             </div>
           ))}
@@ -358,18 +358,18 @@ export function ATSMinimalPreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">{item.role}</h3>
-                  <p className="text-gray-600">
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>{item.role}</h3>
+                  <p style={{ color: theme.textColor, opacity: 0.75 }}>
                     {item.organization}
                     {item.location && ` | ${item.location}`}
                   </p>
                 </div>
-                <p className="text-gray-500 text-sm">
+                <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>
                   {item.startDate} - {item.current ? "Present" : item.endDate}
                 </p>
               </div>
               {item.bullets.length > 0 && (
-                <ul className="list-disc list-inside mt-2 space-y-1 text-gray-700">
+                <ul className="list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
                   {item.bullets.map((bullet) => (
                     <li key={bullet.id}>{bullet.content}</li>
                   ))}
@@ -388,7 +388,7 @@ export function ATSMinimalPreview() {
     return (
       <div>
         <h2 style={styles.sectionTitle}>{label}</h2>
-        <p className="text-gray-700">{data.items.join(", ")}</p>
+        <p style={{ color: theme.textColor }}>{data.items.join(", ")}</p>
       </div>
     );
   };
@@ -404,15 +404,15 @@ export function ATSMinimalPreview() {
             <div key={item.id}>
               <div className="flex justify-between">
                 <div>
-                  <span className="font-semibold">{item.title}</span>
+                  <span className="font-semibold" style={{ color: theme.textColor }}>{item.title}</span>
                   {item.publisher && (
-                    <span className="text-gray-600"> — {item.publisher}</span>
+                    <span style={{ color: theme.textColor, opacity: 0.75 }}> — {item.publisher}</span>
                   )}
                 </div>
-                <span className="text-gray-500 text-sm">{item.date}</span>
+                <span className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</span>
               </div>
               {item.description && (
-                <p className="text-gray-700 text-sm mt-1">{item.description}</p>
+                <p className="text-sm mt-1" style={{ color: theme.textColor }}>{item.description}</p>
               )}
             </div>
           ))}
@@ -430,13 +430,13 @@ export function ATSMinimalPreview() {
         <div className="space-y-3">
           {data.items.map((item) => (
             <div key={item.id}>
-              <p className="font-semibold">{item.name}</p>
-              <p className="text-gray-600 text-sm">
+              <p className="font-semibold" style={{ color: theme.textColor }}>{item.name}</p>
+              <p className="text-sm" style={{ color: theme.textColor, opacity: 0.75 }}>
                 {item.title}
                 {item.company && `, ${item.company}`}
               </p>
-              {item.email && <p className="text-gray-500 text-sm">{item.email}</p>}
-              {item.phone && <p className="text-gray-500 text-sm">{item.phone}</p>}
+              {item.email && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.email}</p>}
+              {item.phone && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.phone}</p>}
             </div>
           ))}
         </div>
@@ -456,14 +456,14 @@ export function ATSMinimalPreview() {
             <div key={item.id}>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">{item.title}</h3>
-                  {item.subtitle && <p className="text-gray-600">{item.subtitle}</p>}
+                  <h3 className="font-semibold" style={{ color: theme.textColor }}>{item.title}</h3>
+                  {item.subtitle && <p style={{ color: theme.textColor, opacity: 0.75 }}>{item.subtitle}</p>}
                 </div>
-                {item.date && <p className="text-gray-500 text-sm">{item.date}</p>}
+                {item.date && <p className="text-sm" style={{ color: theme.textColor, opacity: 0.6 }}>{item.date}</p>}
               </div>
-              {item.description && <p className="text-gray-700 mt-1">{item.description}</p>}
+              {item.description && <p className="mt-1" style={{ color: theme.textColor }}>{item.description}</p>}
               {item.bullets.length > 0 && (
-                <ul className="list-disc list-inside mt-2 space-y-1 text-gray-700">
+                <ul className="list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
                   {item.bullets.map((bullet) => (
                     <li key={bullet.id}>{bullet.content}</li>
                   ))}

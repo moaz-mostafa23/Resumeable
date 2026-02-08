@@ -243,6 +243,21 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
           </div>
         </div>
       )}
+
+      {/* Hidden off-screen preview for pixel-perfect PDF capture */}
+      <div
+        id="pdf-capture"
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          left: "-9999px",
+          top: 0,
+          width: "816px",
+          backgroundColor: "#ffffff",
+        }}
+      >
+        <TemplatePreview />
+      </div>
     </div>
   );
 }

@@ -20,6 +20,39 @@ import {
 } from "@/types/resume";
 import { Mail, Phone, MapPin, Linkedin, Github, Globe } from "lucide-react";
 
+// Helper to extract display text from URL
+function getLinkDisplayText(url: string, type: 'linkedin' | 'github' | 'website'): string {
+  try {
+    // Remove protocol and www
+    let cleaned = url.replace(/^(https?:\/\/)?(www\.)?/, '');
+    
+    if (type === 'linkedin') {
+      // Extract LinkedIn username: linkedin.com/in/username -> username
+      const match = cleaned.match(/linkedin\.com\/in\/([^/?]+)/);
+      return match ? match[1] : cleaned.replace(/\/$/, '');
+    }
+    
+    if (type === 'github') {
+      // Extract GitHub username: github.com/username -> username
+      const match = cleaned.match(/github\.com\/([^/?]+)/);
+      return match ? match[1] : cleaned.replace(/\/$/, '');
+    }
+    
+    // Website: just show domain without trailing slash
+    return cleaned.replace(/\/$/, '');
+  } catch {
+    return url;
+  }
+}
+
+// Helper to ensure URL has protocol
+function ensureProtocol(url: string): string {
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`;
+  }
+  return url;
+}
+
 /**
  * Corporate Timeline Template
  * Executive-style chronological layout with date rail alignment.
@@ -99,22 +132,40 @@ export function CorporateTimelinePreview() {
             </span>
           )}
           {data.linkedin && (
-            <span className="flex items-center gap-1.5">
+            <a 
+              href={ensureProtocol(data.linkedin)} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 hover:underline"
+              style={{ color: 'inherit' }}
+            >
               <Linkedin className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
-              {data.linkedin}
-            </span>
+              {getLinkDisplayText(data.linkedin, 'linkedin')}
+            </a>
           )}
           {data.github && (
-            <span className="flex items-center gap-1.5">
+            <a 
+              href={ensureProtocol(data.github)} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 hover:underline"
+              style={{ color: 'inherit' }}
+            >
               <Github className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
-              {data.github}
-            </span>
+              {getLinkDisplayText(data.github, 'github')}
+            </a>
           )}
           {data.website && (
-            <span className="flex items-center gap-1.5">
+            <a 
+              href={ensureProtocol(data.website)} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 hover:underline"
+              style={{ color: 'inherit' }}
+            >
               <Globe className="w-3.5 h-3.5" style={{ color: theme.primaryColor }} />
-              {data.website}
-            </span>
+              {getLinkDisplayText(data.website, 'website')}
+            </a>
           )}
         </div>
       </div>

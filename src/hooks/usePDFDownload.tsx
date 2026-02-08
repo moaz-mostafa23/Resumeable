@@ -1,11 +1,9 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { toCanvas } from "html-to-image";
+import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
 import { useResumeStore } from "@/store/useResumeStore";
-
-const PDF_CAPTURE_ID = "pdf-capture";
 
 export function usePDFDownload() {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -14,29 +12,19 @@ export function usePDFDownload() {
   const downloadPDF = useCallback(async () => {
     if (!resume) return;
 
-    const element = document.getElementById(PDF_CAPTURE_ID);
-    if (!element) return;
+    // Scope to main preview to avoid duplicates from the modal
+    const container = document.getElementById("preview-content");
+    if (!container) return;
+
+    const pages = container.querySelectorAll<HTMLElement>(".pdf-page");
+    if (pages.length === 0) return;
 
     setIsGenerating(true);
 
     try {
-      // Use html-to-image which leverages the browser's own rendering engine
-      // via SVG foreignObject — guarantees pixel-perfect fidelity with the preview
-      const canvas = await toCanvas(element, {
-        pixelRatio: 2,
-        backgroundColor: "#ffffff",
-        width: 816, // 8.5in at 96 DPI
-        canvasWidth: 816 * 2,
-      });
-
-      // Letter size in PDF points (72 points per inch)
+      // Letter size in PDF points (72 pt/in)
       const pdfWidthPt = 612; // 8.5in
       const pdfHeightPt = 792; // 11in
-
-      // Preview dimensions in CSS pixels (8.5in x 11in at 96 DPI)
-      const pageWidthPx = 816;
-      const pageHeightPx = 1056;
-      const scaleFactor = 2; // matches pixelRatio
 
       const pdf = new jsPDF({
         orientation: "portrait",
@@ -44,40 +32,35 @@ export function usePDFDownload() {
         format: "letter",
       });
 
-      const totalHeightPx = canvas.height / scaleFactor;
-      const totalPages = Math.ceil(totalHeightPx / pageHeightPx);
-
-      for (let i = 0; i < totalPages; i++) {
+      for (let i = 0; i < pages.length; i++) {
         if (i > 0) pdf.addPage();
 
-        const srcY = i * pageHeightPx * scaleFactor;
-        const srcH = Math.min(
-          pageHeightPx * scaleFactor,
-          canvas.height - srcY
-        );
+        // Clone the page so we can capture it outside the scaled parent
+        const clone = pages[i].cloneNode(true) as HTMLElement;
+        clone.style.position = "fixed";
+        clone.style.left = "0";
+        clone.style.top = "0";
+        clone.style.zIndex = "-1";
+        clone.style.pointerEvents = "none";
+        clone.className = ""; // remove classes to avoid style conflicts
+        clone.style.width = "816px";
+        clone.style.height = "1056px";
+        clone.style.overflow = "hidden";
+        clone.style.background = "#ffffff";
+        document.body.appendChild(clone);
 
-        // Create a per-page canvas slice
-        const pageCanvas = document.createElement("canvas");
-        pageCanvas.width = pageWidthPx * scaleFactor;
-        pageCanvas.height = pageHeightPx * scaleFactor;
+        await new Promise((r) => setTimeout(r, 50));
 
-        const ctx = pageCanvas.getContext("2d")!;
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-        ctx.drawImage(
-          canvas,
-          0,
-          srcY,
-          pageWidthPx * scaleFactor,
-          srcH,
-          0,
-          0,
-          pageWidthPx * scaleFactor,
-          srcH
-        );
+        const dataUrl = await toPng(clone, {
+          pixelRatio: 2,
+          backgroundColor: "#ffffff",
+          width: 816,
+          height: 1056,
+        });
 
-        const imgData = pageCanvas.toDataURL("image/png");
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidthPt, pdfHeightPt);
+        document.body.removeChild(clone);
+
+        pdf.addImage(dataUrl, "PNG", 0, 0, pdfWidthPt, pdfHeightPt);
       }
 
       pdf.save(`${resume.name.replace(/\s+/g, "_")}.pdf`);

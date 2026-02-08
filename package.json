@@ -13,7 +13,6 @@
     "@dnd-kit/sortable": "^8.0.0",
     "@dnd-kit/utilities": "^3.0.0",
     "@next/third-parties": "^16.1.6",
-    "@react-pdf/renderer": "^3.0.0",
     "@supabase/ssr": "^0.1.0",
     "@supabase/supabase-js": "^2.0.0",
     "class-variance-authority": "^0.7.0",

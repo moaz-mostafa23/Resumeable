@@ -49,10 +49,7 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
     if (!container) return;
     const padding = 32;
     const availableWidth = container.clientWidth - padding * 2;
-    const availableHeight = container.clientHeight - padding * 2;
-    const scaleX = availableWidth / 816;
-    const scaleY = availableHeight / 1056;
-    setPreviewScale(Math.min(scaleX, scaleY, 1));
+    setPreviewScale(Math.min(availableWidth / 816, 1));
   }, []);
 
   useEffect(() => {
@@ -218,7 +215,7 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
           onClick={() => setPreviewModalOpen(true)}
         >
           <div
-            className="bg-white shadow-lg"
+            id="preview-content"
             style={{
               transform: `scale(${previewScale})`,
               transformOrigin: "top center",
@@ -236,7 +233,7 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
           onClick={() => setPreviewModalOpen(false)}
         >
           <div
-            className="overflow-y-auto max-h-[95vh] bg-white shadow-2xl rounded-lg"
+            className="overflow-y-auto max-h-[95vh] shadow-2xl rounded-lg"
             onClick={(e) => e.stopPropagation()}
           >
             <TemplatePreview />
@@ -244,20 +241,6 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
         </div>
       )}
 
-      {/* Hidden off-screen preview for pixel-perfect PDF capture */}
-      <div
-        id="pdf-capture"
-        aria-hidden="true"
-        style={{
-          position: "fixed",
-          left: "-9999px",
-          top: 0,
-          width: "816px",
-          backgroundColor: "#ffffff",
-        }}
-      >
-        <TemplatePreview />
-      </div>
     </div>
   );
 }

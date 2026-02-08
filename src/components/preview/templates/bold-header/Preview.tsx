@@ -1,6 +1,6 @@
 "use client";
 
-import { useResumeStore } from "@/store/useResumeStore";
+import { useResume } from "@/hooks/useResume";
 import {
   HeaderData,
   SummaryData,
@@ -34,7 +34,7 @@ function ensureProtocol(url: string): string {
  * Full-width colored header banner with large photo, single-column body.
  */
 export function BoldHeaderPreview() {
-  const { resume } = useResumeStore();
+  const resume = useResume();
 
   if (!resume) return null;
 

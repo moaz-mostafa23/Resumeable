@@ -1,6 +1,6 @@
 "use client";
 
-import { useResumeStore } from "@/store/useResumeStore";
+import { useResume } from "@/hooks/useResume";
 import {
   HeaderData,
   SummaryData,
@@ -34,7 +34,7 @@ function ensureProtocol(url: string): string {
  * Professional look for experienced candidates.
  */
 export function CorporateTimelinePreview() {
-  const { resume } = useResumeStore();
+  const resume = useResume();
 
   if (!resume) return null;
 

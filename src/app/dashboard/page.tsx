@@ -9,6 +9,7 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { ResumePreviewThumbnail } from "@/components/preview/ResumePreviewThumbnail";
 import { Plus, FileText, Trash2, Loader2, LogOut, AlertTriangle, Copy, Edit2, Check, X } from "lucide-react";
 
 interface ResumeListItem {
@@ -334,7 +335,10 @@ export default function DashboardPage() {
                     </Button>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-3">
+                  <div className="w-full h-48 rounded-md overflow-hidden border border-gray-200">
+                    <ResumePreviewThumbnail resumeId={resume.id} className="w-full h-full" />
+                  </div>
                   <Link href={`/builder/${resume.id}`}>
                     <Button variant="outline" className="w-full">
                       Edit Resume

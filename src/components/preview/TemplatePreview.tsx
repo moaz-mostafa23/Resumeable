@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { useResumeStore } from "@/store/useResumeStore";
+import { useResumePreview } from "./ResumePreviewContext";
 import { TemplateId, DEFAULT_TEMPLATE_ID } from "@/types/resume";
 import { ATSMinimalPreview } from "./templates/ats-minimal/Preview";
 import { ModernMinimalPreview } from "./templates/modern-minimal/Preview";
@@ -28,7 +29,9 @@ const PAGE_HEIGHT_PX = 1056;
 const MIN_OVERFLOW_FOR_NEW_PAGE = 100;
 
 export function TemplatePreview() {
-  const { resume } = useResumeStore();
+  const contextResume = useResumePreview();
+  const { resume: storeResume } = useResumeStore();
+  const resume = contextResume || storeResume;
   const measureRef = useRef<HTMLDivElement>(null);
   const [pageCount, setPageCount] = useState(1);
 

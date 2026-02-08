@@ -1,6 +1,6 @@
 "use client";
 
-import { useResumeStore } from "@/store/useResumeStore";
+import { useResume } from "@/hooks/useResume";
 import {
   HeaderData,
   SummaryData,
@@ -33,7 +33,7 @@ function ensureProtocol(url: string): string {
  * Contemporary single-column design with accent colors and skill chips.
  */
 export function ModernMinimalPreview() {
-  const { resume } = useResumeStore();
+  const resume = useResume();
 
   if (!resume) return null;
 

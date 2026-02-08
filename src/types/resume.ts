@@ -315,9 +315,12 @@ export const defaultHeaderData: HeaderData = {
   email: "email@example.com",
   phone: "(123) 456-7890",
   location: "City, State",
-  linkedin: "linkedin.com/in/yourprofile",
-  github: "github.com/yourusername",
+  linkedin: "yourprofile",
+  linkedinUrl: "https://linkedin.com/in/yourprofile",
+  github: "yourusername",
+  githubUrl: "https://github.com/yourusername",
   website: "",
+  websiteUrl: "",
 };
 
 // Default summary data

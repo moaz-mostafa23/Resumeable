@@ -208,6 +208,7 @@ export function PDFTemplate({ resume }: PDFTemplateProps) {
     return (
       <View style={{ alignItems: "center", width: "100%" }}>
         {data.photoUrl ? (
+          // eslint-disable-next-line jsx-a11y/alt-text
           <Image src={data.photoUrl} style={styles.photo} />
         ) : (
           <View style={styles.initialsCircle}>

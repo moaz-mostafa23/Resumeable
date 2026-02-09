@@ -2,40 +2,32 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { ArrowRight, Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/Logo";
+import { cn } from "@/lib/utils";
 import { templateDefinitions, TemplateDefinition } from "@/lib/template-registry";
 import { TemplateId } from "@/types/resume";
-import { ArrowLeft, Check, ArrowRight, Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
 import {
   StaticATSMinimal,
-  StaticModernMinimal,
-  StaticTwoColumnSidebar,
+  StaticBoldHeader,
   StaticCorporateTimeline,
   StaticCreativeInfographic,
   StaticElegantPhoto,
-  StaticBoldHeader,
+  StaticModernMinimal,
+  StaticTwoColumnSidebar,
 } from "@/components/templates/previews";
-
-/**
- * Public-facing template gallery — premium design with realistic previews.
- *
- * Server-indexed for SEO (the server component in page.tsx sets all metadata).
- * Interactive bits (filters, hover states, navigation) live here.
- */
+import { MarketingShell } from "@/components/site/MarketingShell";
 
 type FilterCategory = "all" | "minimal" | "professional" | "creative";
 
 const filterOptions: { label: string; value: FilterCategory }[] = [
-  { label: "All Templates", value: "all" },
+  { label: "All templates", value: "all" },
   { label: "Minimal", value: "minimal" },
   { label: "Professional", value: "professional" },
   { label: "Creative", value: "creative" },
 ];
 
-// Map template IDs to their static preview components
 function TemplatePreviewRenderer({ id }: { id: TemplateId }) {
   switch (id) {
     case "ats-minimal":
@@ -63,18 +55,16 @@ function TemplateCard({ template }: { template: TemplateDefinition }) {
   return (
     <button
       onClick={() => router.push("/builder/new")}
-      className="group relative bg-white rounded-2xl border border-gray-200 overflow-hidden transition-all duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 text-left focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2"
+      className="group relative overflow-hidden rounded-2xl border border-[#ddd5ca] bg-[#fffdf9] text-left transition-all duration-300 hover:-translate-y-1 hover:border-[#a5c9c2] hover:shadow-[0_30px_80px_-65px_rgba(16,24,40,0.8)] focus:outline-none focus:ring-2 focus:ring-[#0f766e]/30 focus:ring-offset-2"
     >
-      {/* Preview area — renders at card size directly, no transform scaling */}
       <div className="relative overflow-hidden bg-white" style={{ aspectRatio: "8.5 / 11", position: "relative" }}>
         <div style={{ position: "absolute", inset: 0 }}>
           <TemplatePreviewRenderer id={template.id} />
         </div>
 
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-8">
-          <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-            <span className="inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-2.5 rounded-full font-semibold text-sm shadow-lg">
+        <div className="absolute inset-0 flex flex-col items-center justify-end bg-gradient-to-t from-black/55 via-black/20 to-transparent pb-8 opacity-0 transition-all duration-300 group-hover:opacity-100">
+          <div className="translate-y-4 transform transition-transform duration-300 group-hover:translate-y-0">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 shadow-lg">
               <Sparkles className="h-4 w-4" />
               Use this template
             </span>
@@ -82,34 +72,31 @@ function TemplateCard({ template }: { template: TemplateDefinition }) {
         </div>
       </div>
 
-      {/* Card info */}
       <div className="p-5">
-        <div className="flex items-center gap-2 mb-2">
-          <h3 className="font-semibold text-gray-900 text-lg leading-tight">
-            {template.name}
-          </h3>
-          {template.atsFriendly && (
-            <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200/60">
+        <div className="mb-2 flex items-center gap-2">
+          <h3 className="text-lg font-semibold leading-tight text-[#111827]">{template.name}</h3>
+          {template.atsFriendly ? (
+            <span className="inline-flex items-center gap-1 rounded-full border border-[#8fd0c4] bg-[#daf5ee] px-2 py-0.5 text-xs font-medium text-[#0f766e]">
               <Check className="h-3 w-3" />
               ATS
             </span>
-          )}
+          ) : null}
         </div>
-        <p className="text-sm text-gray-500 leading-relaxed mb-3 line-clamp-2">
-          {template.description}
-        </p>
-        {template.features.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
+
+        <p className="line-clamp-2 text-sm leading-relaxed text-[#4f4b44]">{template.description}</p>
+
+        {template.features.length > 0 ? (
+          <div className="mt-3 flex flex-wrap gap-1.5">
             {template.features.map((f) => (
               <span
                 key={f}
-                className="text-xs px-2.5 py-0.5 bg-gray-50 text-gray-500 rounded-full border border-gray-100"
+                className="rounded-full border border-[#e4ddd2] bg-[#f8f4ee] px-2.5 py-0.5 text-xs text-[#655f55]"
               >
                 {f}
               </span>
             ))}
           </div>
-        )}
+        ) : null}
       </div>
     </button>
   );
@@ -118,117 +105,112 @@ function TemplateCard({ template }: { template: TemplateDefinition }) {
 export function TemplatesGallery() {
   const [activeFilter, setActiveFilter] = useState<FilterCategory>("all");
 
-  const enabled = templateDefinitions.filter((t) => t.isEnabled);
+  const enabled = useMemo(
+    () => templateDefinitions.filter((template) => template.isEnabled),
+    []
+  );
+
   const filtered =
     activeFilter === "all"
       ? enabled
-      : enabled.filter((t) => t.category === activeFilter);
+      : enabled.filter((template) => template.category === activeFilter);
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: enabled.map((template, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: template.name,
+      url: "https://www.resumeable.cv/templates",
+    })),
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/">
-                <Button variant="ghost" size="sm" className="gap-2 text-gray-600 hover:text-gray-900">
-                  <ArrowLeft className="h-4 w-4" />
-                  Home
-                </Button>
-              </Link>
-              <div className="h-6 w-px bg-gray-200" />
-              <div className="flex items-center gap-2">
-                <Logo className="h-6 w-6 text-primary" />
-                <h1 className="text-xl font-semibold text-gray-900">
-                  Templates
-                </h1>
-              </div>
-            </div>
-            <Link href="/builder/new">
-              <Button className="gap-2 shadow-sm">
-                Get Started
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+    <MarketingShell title="Templates">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
 
-      {/* Hero intro */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-2">
-        <div className="max-w-2xl">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-            Professional Resume Templates
-          </h2>
-          <p className="text-gray-600 text-lg leading-relaxed">
-            Every template is designed to be clean, readable, and compatible with
-            applicant tracking systems. Pick the layout that fits your style, then
-            customise colours, fonts, and spacing in the editor.
-          </p>
-        </div>
-      </div>
+      <section className="max-w-4xl">
+        <p className="inline-flex rounded-full border border-[#d8d1c7] bg-[#ede7de] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-[#4f4b44]">
+          Template library
+        </p>
+        <h1 className="mt-5 font-[family-name:var(--font-fraunces)] text-4xl font-semibold leading-[1.05] text-[#111827] sm:text-6xl">
+          ATS-safe templates with clear hierarchy.
+        </h1>
+        <p className="mt-5 max-w-2xl font-[family-name:var(--font-manrope)] text-lg leading-relaxed text-[#4f4b44] sm:text-xl">
+          Pick the structure that fits your career story. Every template is built for readability, recruiter scanning, and clean PDF export.
+        </p>
+      </section>
 
-      {/* Filters */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex flex-wrap gap-2">
-          {filterOptions.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setActiveFilter(opt.value)}
-              className={cn(
-                "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200",
-                activeFilter === opt.value
-                  ? "bg-gray-900 text-white shadow-sm"
-                  : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:text-gray-900"
-              )}
-            >
-              {opt.label}
-              {opt.value !== "all" && (
-                <span className="ml-1.5 text-xs opacity-70">
-                  ({enabled.filter((t) => t.category === opt.value).length})
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
+      <section className="mt-8 flex flex-wrap gap-2">
+        {filterOptions.map((option) => (
+          <button
+            key={option.value}
+            onClick={() => setActiveFilter(option.value)}
+            className={cn(
+              "rounded-full border px-4 py-2 text-sm font-semibold transition-all duration-200",
+              activeFilter === option.value
+                ? "border-[#0f766e] bg-[#daf5ee] text-[#0f766e]"
+                : "border-[#d9d1c6] bg-[#f8f5ef] text-[#5d584f] hover:border-[#c7bcaf] hover:text-[#111827]"
+            )}
+          >
+            {option.label}
+            {option.value !== "all" ? (
+              <span className="ml-1.5 text-xs opacity-70">
+                ({enabled.filter((template) => template.category === option.value).length})
+              </span>
+            ) : null}
+          </button>
+        ))}
+      </section>
 
-      {/* Template grid */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <section className="mt-8">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((template) => (
             <TemplateCard key={template.id} template={template} />
           ))}
         </div>
 
-        {filtered.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-gray-500 text-lg">
-              No templates in this category yet. More designs are coming soon!
-            </p>
+        {filtered.length === 0 ? (
+          <div className="rounded-2xl border border-[#ddd5ca] bg-[#fbf8f3] px-6 py-12 text-center">
+            <p className="text-lg text-[#5d584f]">No templates in this category yet. More are on the way.</p>
           </div>
-        )}
+        ) : null}
+      </section>
 
-        {/* Extra SEO content below the fold */}
-        <div className="mt-20 max-w-3xl mx-auto text-center">
-          <h3 className="text-xl font-semibold text-gray-900 mb-3">
-            What makes a good resume template?
-          </h3>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            The best resume templates balance visual appeal with readability.
-            Applicant tracking systems (ATS) parse resumes before a human ever
-            sees them, so clean structure matters more than flashy design. All
-            Resumeable templates are tested against common ATS parsers and
-            designed with recruiter feedback in mind.
+      <section className="mt-16 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+        <article className="rounded-3xl border border-[#ddd5ca] bg-[#fcfaf6] p-7">
+          <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-medium text-[#111827]">
+            Choosing the right template
+          </h2>
+          <ul className="mt-5 space-y-3 text-sm leading-relaxed text-[#4f4b44]">
+            <li>Use minimal layouts if your experience is linear and results-driven.</li>
+            <li>Use professional layouts when you need clean sections for mixed experience.</li>
+            <li>Use creative layouts for design-forward roles while keeping ATS-safe content order.</li>
+          </ul>
+          <Link href="/builder/new" className="mt-7 inline-block">
+            <Button className="rounded-full bg-[#0f766e] px-6 font-semibold text-white hover:bg-[#0b5f59]">
+              Start with this style
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </article>
+
+        <article className="rounded-3xl border border-[#c7ddd8] bg-[#eefaf7] p-7">
+          <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-medium text-[#0f172a]">
+            Why these templates rank well
+          </h2>
+          <p className="mt-4 text-sm leading-relaxed text-[#1d4f48]">
+            Search engines and users both reward pages that are specific and useful. These templates are paired with clear use cases, scannable copy, and direct action paths.
           </p>
-          <p className="text-gray-600 leading-relaxed">
-            Whether you&apos;re a recent graduate or a seasoned professional,
-            the right template puts your experience front and centre. Pick one
-            above and start building — it only takes a few minutes.
+          <p className="mt-4 text-sm leading-relaxed text-[#1d4f48]">
+            You can switch layouts later without rewriting your content, which supports iteration during active job searches.
           </p>
-        </div>
-      </main>
-    </div>
+        </article>
+      </section>
+    </MarketingShell>
   );
 }

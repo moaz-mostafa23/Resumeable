@@ -1,158 +1,123 @@
-import Link from "next/link";
 import type { Metadata } from "next";
+import { MarketingShell } from "@/components/site/MarketingShell";
+
+const LAST_UPDATED = "February 9, 2026";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - Resumeable",
-  description: "Privacy Policy for Resumeable",
+  title: "Privacy Policy",
+  description:
+    "Read how Resumeable collects, uses, and protects your data when you use our resume builder.",
+  alternates: {
+    canonical: "https://www.resumeable.cv/privacy",
+  },
+  openGraph: {
+    title: "Privacy Policy — Resumeable",
+    description:
+      "How Resumeable handles account data, resume content, and security practices.",
+    url: "https://www.resumeable.cv/privacy",
+  },
 };
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="max-w-3xl mx-auto px-4 py-16">
-        <Link
-          href="/"
-          className="text-sm text-muted-foreground hover:text-foreground mb-8 inline-block"
-        >
-          &larr; Back to Home
-        </Link>
+    <MarketingShell title="Privacy" backHref="/" backLabel="Home">
+      <article className="mx-auto max-w-3xl rounded-3xl border border-[#ddd5ca] bg-[#fffdf9] p-6 sm:p-8">
+        <header>
+          <h1 className="font-[family-name:var(--font-fraunces)] text-4xl font-semibold text-[#111827] sm:text-5xl">
+            Privacy Policy
+          </h1>
+          <p className="mt-2 text-sm font-semibold uppercase tracking-[0.1em] text-[#6b665d]">
+            Last updated: {LAST_UPDATED}
+          </p>
+        </header>
 
-        <h1 className="text-4xl font-bold mb-2">Privacy Policy</h1>
-        <p className="text-muted-foreground mb-10">
-          Last updated: {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
-        </p>
-
-        <div className="prose prose-neutral dark:prose-invert max-w-none space-y-8">
+        <div className="mt-8 space-y-8 text-sm leading-relaxed text-[#4f4b44] sm:text-base">
           <section>
-            <h2 className="text-2xl font-semibold mb-3">1. Introduction</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Welcome to Resumeable. We respect your privacy and are committed to
-              protecting the personal data you share with us. This Privacy Policy
-              explains how we collect, use, and safeguard your information when you
-              use our resume builder service.
+            <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827]">1. Introduction</h2>
+            <p className="mt-2">
+              Resumeable respects your privacy and is committed to protecting your personal data. This policy explains what we collect and how we use it.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-3">2. Information We Collect</h2>
-            <p className="text-muted-foreground leading-relaxed mb-3">
-              We collect the following types of information:
-            </p>
-            <ul className="list-disc pl-6 text-muted-foreground space-y-2">
+            <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827]">2. Information We Collect</h2>
+            <ul className="mt-2 list-disc space-y-2 pl-5">
               <li>
-                <strong className="text-foreground">Account Information:</strong> When
-                you sign in with Google, we receive your name, email address, and
-                profile picture from your Google account.
+                <strong className="text-[#111827]">Account data:</strong> Name, email, and profile info from Google authentication.
               </li>
               <li>
-                <strong className="text-foreground">Resume Data:</strong> The content
-                you enter into the resume builder, including personal details, work
-                experience, education, and skills.
+                <strong className="text-[#111827]">Resume data:</strong> Content you add to the editor, including experience, education, and skills.
               </li>
               <li>
-                <strong className="text-foreground">Usage Data:</strong> Information
-                about how you interact with our service, such as pages visited and
-                features used.
+                <strong className="text-[#111827]">Usage data:</strong> Product interaction and performance information used to improve reliability.
               </li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-3">3. How We Use Your Information</h2>
-            <ul className="list-disc pl-6 text-muted-foreground space-y-2">
-              <li>To provide and maintain our resume builder service</li>
-              <li>To authenticate your identity and manage your account</li>
-              <li>To save and sync your resumes across sessions</li>
-              <li>To improve and optimize our service</li>
-              <li>To communicate important updates about our service</li>
+            <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827]">3. How We Use Data</h2>
+            <ul className="mt-2 list-disc space-y-2 pl-5">
+              <li>Provide and maintain resume-building functionality</li>
+              <li>Authenticate users and secure accounts</li>
+              <li>Store and sync resumes for signed-in users</li>
+              <li>Improve product quality, speed, and reliability</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-3">4. Data Storage and Security</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Your data is stored securely using Supabase, which provides
-              enterprise-grade security measures including encryption at rest and in
-              transit. We implement appropriate technical and organizational measures
-              to protect your personal data against unauthorized access, alteration,
-              disclosure, or destruction.
+            <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827]">4. Storage and Security</h2>
+            <p className="mt-2">
+              Data is stored using Supabase infrastructure with transport encryption and access controls. We apply reasonable technical and organizational safeguards.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-3">5. Third-Party Services</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              We use the following third-party services:
-            </p>
-            <ul className="list-disc pl-6 text-muted-foreground space-y-2 mt-3">
-              <li>
-                <strong className="text-foreground">Google OAuth:</strong> For
-                authentication. Google&apos;s privacy policy applies to data collected
-                during the sign-in process.
-              </li>
-              <li>
-                <strong className="text-foreground">Supabase:</strong> For data
-                storage and authentication infrastructure.
-              </li>
+            <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827]">5. Third-Party Services</h2>
+            <ul className="mt-2 list-disc space-y-2 pl-5">
+              <li>Google OAuth for authentication</li>
+              <li>Supabase for storage and auth infrastructure</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-3">6. Data Sharing</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              We do not sell, trade, or rent your personal information to third
-              parties. We may share data only when required by law or to protect our
-              rights.
+            <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827]">6. Data Sharing</h2>
+            <p className="mt-2">
+              We do not sell personal data. We may disclose data only when legally required or to protect the service from abuse.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-3">7. Your Rights</h2>
-            <p className="text-muted-foreground leading-relaxed mb-3">
-              You have the right to:
-            </p>
-            <ul className="list-disc pl-6 text-muted-foreground space-y-2">
-              <li>Access the personal data we hold about you</li>
-              <li>Request correction of inaccurate data</li>
-              <li>Request deletion of your account and associated data</li>
-              <li>Export your resume data</li>
+            <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827]">7. Your Rights</h2>
+            <ul className="mt-2 list-disc space-y-2 pl-5">
+              <li>Access your data</li>
+              <li>Request corrections</li>
+              <li>Request deletion of account data</li>
+              <li>Export resume content</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-3">8. Cookies and Local Storage</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              We use browser local storage to save your work in progress for the
-              anonymous builder experience. Authentication tokens are managed via
-              secure cookies. We do not use third-party tracking cookies.
+            <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827]">8. Cookies and Local Storage</h2>
+            <p className="mt-2">
+              We use browser local storage for anonymous drafts and secure cookies for authentication. We do not rely on third-party ad tracking cookies.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-3">9. Changes to This Policy</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              We may update this Privacy Policy from time to time. We will notify you
-              of any changes by posting the new policy on this page and updating the
-              &quot;Last updated&quot; date.
+            <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827]">9. Policy Changes</h2>
+            <p className="mt-2">
+              We may update this policy as the product evolves. Significant changes will be reflected by an updated date on this page.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-3">10. Contact Us</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              If you have any questions about this Privacy Policy, please contact us
-              at{" "}
-              <a
-                href="mailto:support@resumeable.com"
-                className="text-primary hover:underline"
-              >
-                support@resumeable.com
-              </a>
-              .
+            <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827]">10. Contact</h2>
+            <p className="mt-2">
+              Questions about this policy can be sent to <a href="mailto:support@resumeable.com" className="text-[#0f766e] underline underline-offset-2">support@resumeable.com</a>.
             </p>
           </section>
         </div>
-      </div>
-    </div>
+      </article>
+    </MarketingShell>
   );
 }

@@ -41,8 +41,8 @@ export default function BuilderPage() {
   // Show loader while auth is loading
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="homepage-root flex min-h-screen items-center justify-center bg-[#f5f4ef]">
+        <Loader2 className="h-8 w-8 animate-spin text-[#0f766e]" />
       </div>
     );
   }
@@ -52,8 +52,8 @@ export default function BuilderPage() {
     // If publishing, show loader
     if (shouldPublish && user) {
       return (
-        <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="homepage-root flex min-h-screen items-center justify-center bg-[#f5f4ef]">
+          <Loader2 className="h-8 w-8 animate-spin text-[#0f766e]" />
         </div>
       );
     }
@@ -63,25 +63,35 @@ export default function BuilderPage() {
   // For remote resumes: require authentication
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <Card className="w-full max-w-md">
+      <div className="homepage-root min-h-screen bg-[#f5f4ef] px-4">
+        <div className="homepage-grid-bg pointer-events-none fixed inset-0 opacity-80" aria-hidden />
+        <div className="relative z-10 flex min-h-screen items-center justify-center">
+        <Card className="w-full max-w-md rounded-3xl border-[#ddd5ca] bg-[#fffdf9] shadow-[0_28px_80px_-62px_rgba(16,24,40,0.8)]">
           <CardHeader className="text-center">
-            <CardTitle>Sign in required</CardTitle>
-            <CardDescription>
+            <CardTitle className="font-[family-name:var(--font-fraunces)] text-3xl font-medium text-[#111827]">
+              Sign in required
+            </CardTitle>
+            <CardDescription className="text-[#4f4b44]">
               Please sign in to access this saved resume.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
             <Link href={`/login?next=/builder/${resumeId}`}>
-              <Button className="w-full">Sign in</Button>
+              <Button className="w-full rounded-full bg-[#0f766e] font-semibold text-white hover:bg-[#0b5f59]">
+                Sign in
+              </Button>
             </Link>
             <Link href="/builder/new">
-              <Button variant="outline" className="w-full">
+              <Button
+                variant="outline"
+                className="w-full rounded-full border-[#cbc2b7] bg-[#f8f5ef] font-semibold text-[#1f2937] hover:bg-[#ede5d9]"
+              >
                 Create a new resume
               </Button>
             </Link>
           </CardContent>
         </Card>
+        </div>
       </div>
     );
   }

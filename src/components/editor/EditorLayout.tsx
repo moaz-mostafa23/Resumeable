@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { CSSProperties, useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { useResumeStore } from "@/store/useResumeStore";
 import { useEditorStore } from "@/store/useEditorStore";
@@ -30,6 +30,7 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
   const [editorWidthPct, setEditorWidthPct] = useState(25);
   const contentRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   // Preview auto-fit
   const previewContainerRef = useRef<HTMLDivElement>(null);
@@ -60,6 +61,14 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
     }
     return () => observer.disconnect();
   }, [calculateScale]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px)");
+    const sync = () => setIsDesktop(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
 
   const handleMouseDown = useCallback(() => {
     isDragging.current = true;
@@ -144,8 +153,9 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
       </div>
 
       {/* Top bar */}
-      <div className="h-14 border-b flex items-center justify-between px-4 bg-white">
-        <div className="flex items-center gap-4">
+      <div className="border-b bg-white px-3 py-2 sm:px-4 sm:py-0">
+        <div className="flex min-h-14 flex-wrap items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <Link href={user ? "/dashboard" : "/"}>
             <Button variant="ghost" size="icon">
               <ArrowLeft className="h-5 w-5" />
@@ -157,10 +167,10 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
           <Input
             value={resume.name}
             onChange={(e) => setResumeName(e.target.value)}
-            className="w-64 font-medium"
+            className="h-10 min-w-0 w-[12rem] font-medium sm:w-64"
           />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
           {/* Sign in to save button for anonymous users */}
           {!user && isDraft && (
             <Link href={`/login?next=/builder/${resumeId}?publish=1`}>
@@ -185,25 +195,30 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
           </Button>
         </div>
       </div>
+      </div>
 
       {/* Main content */}
-      <div ref={contentRef} className="flex-1 flex overflow-hidden">
+      <div ref={contentRef} className="flex-1 overflow-hidden">
+        <div className="flex h-full flex-col overflow-hidden lg:flex-row">
         {/* Sidebar */}
         {sidebarOpen && (
-          <div className="w-64 border-r bg-gray-50 overflow-y-auto flex-shrink-0">
+          <div className="max-h-[34vh] overflow-y-auto border-b bg-gray-50 lg:max-h-none lg:w-64 lg:flex-shrink-0 lg:border-b-0 lg:border-r">
             <EditorSidebar />
           </div>
         )}
 
         {/* Editor panel */}
-        <div className="bg-white" style={{ width: `${editorWidthPct}%` }}>
+        <div
+          className="w-full bg-white lg:w-[var(--editor-width)]"
+          style={{ "--editor-width": `${editorWidthPct}%` } as CSSProperties}
+        >
           <EditorPanel />
         </div>
 
         {/* Draggable divider */}
         <div
-          className="w-2 flex-shrink-0 bg-gray-200 hover:bg-gray-300 cursor-col-resize flex items-center justify-center transition-colors"
-          onMouseDown={handleMouseDown}
+          className="hidden w-2 flex-shrink-0 cursor-col-resize items-center justify-center bg-gray-200 transition-colors hover:bg-gray-300 lg:flex"
+          onMouseDown={isDesktop ? handleMouseDown : undefined}
         >
           <GripVertical className="w-3 h-3 text-gray-400" />
         </div>
@@ -211,18 +226,21 @@ export function EditorLayout({ resumeId }: EditorLayoutProps) {
         {/* Preview panel */}
         <div
           ref={previewContainerRef}
-          className="flex-1 flex items-start justify-center overflow-y-auto bg-gray-100 p-4 cursor-pointer"
+          className="min-h-[45vh] flex-1 cursor-pointer overflow-y-auto bg-gray-100 p-4 lg:min-h-0"
           onClick={() => setPreviewModalOpen(true)}
         >
-          <div
-            id="preview-content"
-            style={{
-              transform: `scale(${previewScale})`,
-              transformOrigin: "top center",
-            }}
-          >
-            <TemplatePreview />
+          <div className="flex min-h-full w-full items-start justify-center">
+            <div
+              id="preview-content"
+              style={{
+                transform: `scale(${previewScale})`,
+                transformOrigin: "top center",
+              }}
+            >
+              <TemplatePreview />
+            </div>
           </div>
+        </div>
         </div>
       </div>
 

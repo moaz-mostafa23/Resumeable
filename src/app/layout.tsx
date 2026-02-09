@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Fraunces, Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
 const inter = Inter({ subsets: ["latin"] });
+const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
 
 const SITE_URL = "https://www.resumeable.cv";
 
@@ -77,7 +79,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} ${fraunces.variable} ${manrope.variable}`}>
         <JsonLd />
         <AuthProvider>{children}</AuthProvider>
       </body>

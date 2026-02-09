@@ -1,35 +1,30 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/Logo";
 import {
-  ArrowLeft,
-  Lightbulb,
-  CheckCircle2,
   AlertTriangle,
-  Zap,
-  Mail,
-  Phone,
-  MapPin,
   Briefcase,
+  CheckCircle2,
   GraduationCap,
+  Lightbulb,
+  Mail,
+  MapPin,
+  Phone,
+  Zap,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
-  resumeExamples,
   getExampleBySlug,
   getRelatedExamples,
+  resumeExamples,
 } from "@/data/resume-examples";
-
-// ── Static params ──────────────────────────────────────────────────────
+import { MarketingShell } from "@/components/site/MarketingShell";
 
 export function generateStaticParams() {
   return resumeExamples.map((example) => ({
     slug: example.slug,
   }));
 }
-
-// ── Metadata ───────────────────────────────────────────────────────────
 
 export async function generateMetadata({
   params,
@@ -38,7 +33,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const example = getExampleBySlug(slug);
-  if (!example) return {};
+
+  if (!example) {
+    return {};
+  }
 
   const title = `${example.jobTitle} Resume Example & Writing Guide (2026)`;
   const url = `https://www.resumeable.cv/resume-examples/${slug}`;
@@ -46,7 +44,9 @@ export async function generateMetadata({
   return {
     title,
     description: example.metaDescription,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+    },
     openGraph: {
       title,
       description: example.metaDescription,
@@ -54,8 +54,6 @@ export async function generateMetadata({
     },
   };
 }
-
-// ── JSON-LD ────────────────────────────────────────────────────────────
 
 function JsonLd({ title, slug }: { title: string; slug: string }) {
   const url = `https://www.resumeable.cv/resume-examples/${slug}`;
@@ -100,18 +98,16 @@ function JsonLd({ title, slug }: { title: string; slug: string }) {
 
   return (
     <>
-      {data.map((d, i) => (
+      {data.map((entry, index) => (
         <script
-          key={i}
+          key={index}
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(d) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
         />
       ))}
     </>
   );
 }
-
-// ── Page ────────────────────────────────────────────────────────────────
 
 export default async function ResumeExamplePage({
   params,
@@ -120,275 +116,206 @@ export default async function ResumeExamplePage({
 }) {
   const { slug } = await params;
   const example = getExampleBySlug(slug);
-  if (!example) notFound();
 
-  const { sampleResume: r } = example;
+  if (!example) {
+    notFound();
+  }
+
+  const relatedExamples = getRelatedExamples(slug, 3);
+  const sample = example.sampleResume;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <MarketingShell title="Resume Example" backHref="/resume-examples" backLabel="All examples">
       <JsonLd title={example.jobTitle} slug={slug} />
 
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/resume-examples">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <ArrowLeft className="h-4 w-4" />
-                All Examples
-              </Button>
-            </Link>
-            <div className="h-6 w-px bg-gray-200" />
-            <div className="flex items-center gap-2">
-              <Logo className="h-6 w-6 text-primary" />
-              <span className="font-semibold text-lg">Resumeable</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Breadcrumb */}
-        <nav className="text-sm text-gray-500 mb-6">
-          <Link href="/" className="hover:text-gray-700">
-            Home
-          </Link>
-          {" / "}
-          <Link href="/resume-examples" className="hover:text-gray-700">
-            Resume Examples
-          </Link>
-          {" / "}
-          <span className="text-gray-900">{example.jobTitle}</span>
-        </nav>
-
-        {/* H1 + Intro */}
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+      <section className="max-w-4xl">
+        <p className="inline-flex rounded-full border border-[#d8d1c7] bg-[#ede7de] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-[#4f4b44]">
+          {example.category}
+        </p>
+        <h1 className="mt-5 font-[family-name:var(--font-fraunces)] text-4xl font-semibold leading-[1.06] text-[#111827] sm:text-5xl">
           {example.jobTitle} Resume Example
         </h1>
-        <p className="text-lg text-gray-600 mb-10 leading-relaxed">
+        <p className="mt-4 max-w-3xl font-[family-name:var(--font-manrope)] text-lg leading-relaxed text-[#4f4b44]">
           {example.intro}
         </p>
+      </section>
 
-        {/* ── Sample Resume Card ────────────────────────────────────── */}
-        <section className="mb-12">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Sample {example.jobTitle} Resume
-          </h2>
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sm:p-8 space-y-6">
-            {/* Header */}
-            <div className="border-b border-gray-100 pb-5">
-              <h3 className="text-2xl font-bold text-gray-900">{r.name}</h3>
-              <p className="text-primary font-medium mt-1">{r.title}</p>
-              <div className="flex flex-wrap gap-4 mt-3 text-sm text-gray-500">
-                <span className="flex items-center gap-1">
-                  <Mail className="h-3.5 w-3.5" />
-                  {r.email}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Phone className="h-3.5 w-3.5" />
-                  {r.phone}
-                </span>
-                <span className="flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5" />
-                  {r.location}
-                </span>
-              </div>
+      <section className="mt-10 rounded-3xl border border-[#ddd5ca] bg-[#fffdf9] p-5 sm:p-7">
+        <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827] sm:text-3xl">
+          Sample {example.jobTitle} Resume
+        </h2>
+
+        <article className="mt-5 rounded-2xl border border-[#e1d9ce] bg-[#fefcf8] p-5 sm:p-6">
+          <header className="border-b border-[#e7dfd4] pb-4">
+            <h3 className="text-2xl font-semibold text-[#111827]">{sample.name}</h3>
+            <p className="mt-1 font-semibold text-[#0f766e]">{sample.title}</p>
+            <div className="mt-3 grid gap-2 text-sm text-[#5f5a51] sm:grid-cols-2">
+              <span className="inline-flex items-center gap-1.5">
+                <Mail className="h-3.5 w-3.5" />
+                {sample.email}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Phone className="h-3.5 w-3.5" />
+                {sample.phone}
+              </span>
+              <span className="inline-flex items-center gap-1.5 sm:col-span-2">
+                <MapPin className="h-3.5 w-3.5" />
+                {sample.location}
+              </span>
             </div>
+          </header>
 
-            {/* Summary */}
-            <div>
-              <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                Professional Summary
-              </h4>
-              <p className="text-gray-700 leading-relaxed">{r.summary}</p>
-            </div>
+          <section className="mt-5">
+            <h4 className="text-xs font-semibold uppercase tracking-[0.14em] text-[#8b857b]">
+              Professional summary
+            </h4>
+            <p className="mt-2 text-sm leading-relaxed text-[#4f4b44]">{sample.summary}</p>
+          </section>
 
-            {/* Experience */}
-            <div>
-              <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                <Briefcase className="h-3.5 w-3.5" />
-                Experience
-              </h4>
-              <div className="space-y-5">
-                {r.experience.map((exp, i) => (
-                  <div key={i}>
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1">
-                      <h5 className="font-semibold text-gray-900">
-                        {exp.title}
-                      </h5>
-                      <span className="text-sm text-gray-500">
-                        {exp.period}
-                      </span>
-                    </div>
-                    <p className="text-sm text-primary mb-2">{exp.company}</p>
-                    <ul className="space-y-1.5">
-                      {exp.bullets.map((bullet, j) => (
-                        <li
-                          key={j}
-                          className="text-sm text-gray-600 pl-4 relative before:content-['•'] before:absolute before:left-0 before:text-gray-400"
-                        >
-                          {bullet}
-                        </li>
-                      ))}
-                    </ul>
+          <section className="mt-6">
+            <h4 className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#8b857b]">
+              <Briefcase className="h-3.5 w-3.5" />
+              Experience
+            </h4>
+            <div className="mt-3 space-y-5">
+              {sample.experience.map((item, index) => (
+                <article key={index} className="rounded-xl border border-[#e6dfd4] bg-white p-4">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                    <h5 className="font-semibold text-[#111827]">{item.title}</h5>
+                    <span className="text-sm text-[#6e685f]">{item.period}</span>
                   </div>
-                ))}
-              </div>
+                  <p className="mt-1 text-sm font-medium text-[#0f766e]">{item.company}</p>
+                  <ul className="mt-2 space-y-1.5">
+                    {item.bullets.map((bullet, bulletIndex) => (
+                      <li key={bulletIndex} className="relative pl-4 text-sm leading-relaxed text-[#4f4b44]">
+                        <span className="absolute left-0 top-0 text-[#a39b8f]">•</span>
+                        {bullet}
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
             </div>
+          </section>
 
-            {/* Education */}
-            <div>
-              <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                <GraduationCap className="h-3.5 w-3.5" />
-                Education
-              </h4>
-              <div className="space-y-2">
-                {r.education.map((edu, i) => (
-                  <div
-                    key={i}
-                    className="flex flex-col sm:flex-row sm:justify-between"
-                  >
-                    <div>
-                      <p className="font-medium text-gray-900">{edu.degree}</p>
-                      <p className="text-sm text-gray-500">{edu.school}</p>
-                    </div>
-                    <span className="text-sm text-gray-500">{edu.year}</span>
-                  </div>
-                ))}
-              </div>
+          <section className="mt-6">
+            <h4 className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#8b857b]">
+              <GraduationCap className="h-3.5 w-3.5" />
+              Education
+            </h4>
+            <div className="mt-3 space-y-3">
+              {sample.education.map((item, index) => (
+                <div key={index} className="rounded-xl border border-[#e6dfd4] bg-white p-4">
+                  <p className="font-semibold text-[#111827]">{item.degree}</p>
+                  <p className="text-sm text-[#5e5a51]">{item.school}</p>
+                  <p className="mt-1 text-sm text-[#6e685f]">{item.year}</p>
+                </div>
+              ))}
             </div>
+          </section>
 
-            {/* Skills */}
-            <div>
-              <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                Skills
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {r.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
+          <section className="mt-6">
+            <h4 className="text-xs font-semibold uppercase tracking-[0.14em] text-[#8b857b]">Skills</h4>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {sample.skills.map((skill) => (
+                <span
+                  key={skill}
+                  className="rounded-full border border-[#e4ddd2] bg-[#f8f4ee] px-3 py-1 text-sm text-[#5f5a51]"
+                >
+                  {skill}
+                </span>
+              ))}
             </div>
-          </div>
-        </section>
+          </section>
+        </article>
+      </section>
 
-        {/* ── Writing Tips ──────────────────────────────────────────── */}
-        <section className="mb-12">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Lightbulb className="h-5 w-5 text-amber-500" />
-            How to Write a {example.jobTitle} Resume
+      <section className="mt-10 grid gap-6 lg:grid-cols-2">
+        <article className="rounded-3xl border border-[#ddd5ca] bg-[#fcfaf6] p-6">
+          <h2 className="inline-flex items-center gap-2 font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827]">
+            <Lightbulb className="h-5 w-5 text-[#b7791f]" />
+            How to write this resume
           </h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {example.writingTips.map((tip, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-xl border border-gray-200 p-5"
-              >
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  {tip.title}
-                </h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  {tip.description}
-                </p>
+          <div className="mt-4 space-y-3">
+            {example.writingTips.map((tip, index) => (
+              <div key={index} className="rounded-xl border border-[#e3dbcf] bg-white p-4">
+                <h3 className="font-semibold text-[#111827]">{tip.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-[#4f4b44]">{tip.description}</p>
               </div>
             ))}
           </div>
-        </section>
+        </article>
 
-        {/* ── Key Skills ────────────────────────────────────────────── */}
-        <section className="mb-12">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 text-green-500" />
-            Key Skills for {example.jobTitle} Resumes
-          </h2>
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <ul className="grid sm:grid-cols-2 gap-2">
+        <article className="space-y-6">
+          <div className="rounded-3xl border border-[#c7ddd8] bg-[#eefaf7] p-6">
+            <h2 className="inline-flex items-center gap-2 font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#0f172a]">
+              <CheckCircle2 className="h-5 w-5 text-[#0f766e]" />
+              Key skills to include
+            </h2>
+            <ul className="mt-4 grid gap-2 sm:grid-cols-2">
               {example.keySkills.map((skill) => (
-                <li
-                  key={skill}
-                  className="flex items-start gap-2 text-sm text-gray-700"
-                >
-                  <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                <li key={skill} className="rounded-xl border border-[#d4ebe5] bg-[#f7fffc] px-3 py-2 text-sm text-[#12453f]">
                   {skill}
                 </li>
               ))}
             </ul>
           </div>
-        </section>
 
-        {/* ── Common Mistakes ───────────────────────────────────────── */}
-        <section className="mb-12">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-red-500" />
-            Common Mistakes to Avoid
-          </h2>
-          <div className="bg-red-50 rounded-xl border border-red-100 p-5">
-            <ul className="space-y-3">
+          <div className="rounded-3xl border border-[#efcfcf] bg-[#fff1f1] p-6">
+            <h2 className="inline-flex items-center gap-2 font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#5b1b1b]">
+              <AlertTriangle className="h-5 w-5 text-[#c24141]" />
+              Common mistakes
+            </h2>
+            <ul className="mt-4 space-y-2">
               {example.commonMistakes.map((mistake) => (
                 <li
                   key={mistake}
-                  className="flex items-start gap-2 text-sm text-red-800"
+                  className="rounded-xl border border-[#f4d7d7] bg-white px-3 py-2 text-sm text-[#6c2c2c]"
                 >
-                  <AlertTriangle className="h-4 w-4 text-red-400 mt-0.5 shrink-0" />
                   {mistake}
                 </li>
               ))}
             </ul>
           </div>
-        </section>
+        </article>
+      </section>
 
-        {/* ── Related Examples ──────────────────────────────────────── */}
-        {(() => {
-          const related = getRelatedExamples(slug, 3);
-          if (related.length === 0) return null;
-          return (
-            <section className="mb-12">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Related Resume Examples
-              </h2>
-              <div className="grid sm:grid-cols-3 gap-4">
-                {related.map((rel) => (
-                  <Link
-                    key={rel.slug}
-                    href={`/resume-examples/${rel.slug}`}
-                    className="group bg-white rounded-xl border border-gray-200 p-5 hover:border-primary hover:shadow-md transition-all"
-                  >
-                    <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
-                      {rel.jobTitle}
-                    </h3>
-                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                      {rel.metaDescription}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          );
-        })()}
-
-        {/* ── CTA ───────────────────────────────────────────────────── */}
-        <section className="bg-primary/5 rounded-2xl border border-primary/10 p-8 text-center">
-          <Zap className="h-8 w-8 text-primary mx-auto mb-3" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Build Your {example.jobTitle} Resume Now
+      {relatedExamples.length > 0 ? (
+        <section className="mt-10">
+          <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827] sm:text-3xl">
+            Related examples
           </h2>
-          <p className="text-gray-600 mb-6 max-w-md mx-auto">
-            Use this example as inspiration. Pick a template, fill in your
-            details, and download your resume — completely free.
-          </p>
-          <Link href="/builder/new">
-            <Button size="lg">
-              <Zap className="h-4 w-4 mr-2" />
-              Create Your Resume
-            </Button>
-          </Link>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {relatedExamples.map((related) => (
+              <Link
+                key={related.slug}
+                href={`/resume-examples/${related.slug}`}
+                className="group rounded-2xl border border-[#ddd5ca] bg-[#fffdf9] p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#a5c9c2]"
+              >
+                <h3 className="font-semibold text-[#111827] group-hover:text-[#0f766e]">{related.jobTitle}</h3>
+                <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-[#4f4b44]">
+                  {related.metaDescription}
+                </p>
+              </Link>
+            ))}
+          </div>
         </section>
-      </div>
-    </div>
+      ) : null}
+
+      <section className="mt-10 rounded-3xl border border-[#c7ddd8] bg-[#eaf7f4] p-7 text-center sm:p-10">
+        <Zap className="mx-auto h-8 w-8 text-[#0f766e]" />
+        <h2 className="mt-3 font-[family-name:var(--font-fraunces)] text-3xl font-semibold text-[#0f172a]">
+          Build your {example.jobTitle} resume now
+        </h2>
+        <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-[#1d4f48] sm:text-base">
+          Use this example as a framework, then tailor each bullet to your own outcomes.
+        </p>
+        <Link href="/builder/new" className="mt-6 inline-block">
+          <Button className="rounded-full bg-[#0f766e] px-7 font-semibold text-white hover:bg-[#0b5f59]">
+            Create your resume
+          </Button>
+        </Link>
+      </section>
+    </MarketingShell>
   );
 }

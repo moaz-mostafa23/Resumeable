@@ -2,20 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Check, Loader2, Sparkles, X, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/Logo";
-import {
-  Check,
-  X,
-  ArrowLeft,
-  Sparkles,
-  Zap,
-  Loader2,
-} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSubscription } from "@/hooks/useSubscription";
-
-// ── Plan data ───────────────────────────────────────────────────────────
+import { MarketingShell } from "@/components/site/MarketingShell";
 
 interface PlanFeature {
   text: string;
@@ -47,32 +38,28 @@ const proPlanFeatures: PlanFeature[] = [
   { text: "Cover letter builder (coming soon)", included: true },
 ];
 
-// ── FAQ data ────────────────────────────────────────────────────────────
-
 const faqs = [
   {
     q: "Is the free plan actually free?",
-    a: "Yes — no trial period, no credit card required. You can build and download resumes right now without paying anything. The free plan includes our core templates and full editor.",
+    a: "Yes. No trial, no credit card, and no hidden gate after you finish your resume.",
   },
   {
     q: "What do I get with Pro?",
-    a: "Pro unlocks all premium templates, removes the small 'Built with Resumeable' footer from PDFs, gives you AI-powered bullet-point suggestions, and lets you save unlimited resumes to your account.",
+    a: "Pro unlocks premium templates, AI bullet suggestions, clean PDF exports, and unlimited saved resumes.",
   },
   {
     q: "Can I cancel anytime?",
-    a: "Absolutely. Cancel from your account settings and you won't be charged again. Your resumes stay accessible on the free plan.",
+    a: "Yes. Cancel from your billing settings and you will not be charged again.",
   },
   {
-    q: "Do you offer a one-time purchase?",
-    a: "We're working on a one-time download pass for people who just need a single clean PDF. Stay tuned!",
+    q: "Do you offer one-time purchase options?",
+    a: "Not yet. A one-time export pass is on the roadmap for users who only need one final PDF.",
   },
   {
     q: "Is my data safe?",
-    a: "Your resume data is stored securely on Supabase with row-level security. We don't sell or share your information with anyone. Anonymous drafts are stored locally in your browser.",
+    a: "Resume data is stored securely with Supabase and protected by row-level access controls.",
   },
 ];
-
-// ── Component ───────────────────────────────────────────────────────────
 
 export function PricingPage() {
   const { isPro, startCheckout, loading: subLoading } = useSubscription();
@@ -101,179 +88,161 @@ export function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <MarketingShell title="Pricing">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  Home
-                </Button>
-              </Link>
-              <div className="h-6 w-px bg-gray-200" />
-              <div className="flex items-center gap-2">
-                <Logo className="h-6 w-6 text-primary" />
-                <span className="font-semibold text-lg">Resumeable</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
 
-      {/* Hero */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8 text-center">
-        <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-          Simple, honest pricing
-        </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Build your resume for free. Upgrade if you want the extras.
-          No surprises, no hidden fees.
+      <section className="mx-auto max-w-4xl text-center">
+        <p className="inline-flex rounded-full border border-[#d8d1c7] bg-[#ede7de] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-[#4f4b44]">
+          Transparent plans
         </p>
-      </div>
+        <h1 className="mt-5 font-[family-name:var(--font-fraunces)] text-4xl font-semibold leading-[1.05] text-[#111827] sm:text-6xl">
+          Pay only for power features.
+        </h1>
+        <p className="mx-auto mt-5 max-w-2xl font-[family-name:var(--font-manrope)] text-lg leading-relaxed text-[#4f4b44] sm:text-xl">
+          Start free, ship your resume fast, and upgrade only when you need deeper customization.
+        </p>
+      </section>
 
-      {/* Plans */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-          {/* Free Plan */}
-          <div className="relative rounded-2xl border-2 border-gray-200 bg-white p-8 flex flex-col">
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-1">Free</h2>
-              <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-4xl font-bold text-gray-900">$0</span>
-                <span className="text-gray-500">forever</span>
-              </div>
-              <p className="text-gray-600 text-sm">
-                Everything you need to build a great resume. No strings attached.
-              </p>
-            </div>
+      <section className="mx-auto mt-12 grid max-w-5xl gap-6 lg:grid-cols-2">
+        <article className="rounded-3xl border border-[#ddd5ca] bg-[#fdfaf5] p-7 shadow-[0_24px_80px_-62px_rgba(16,24,40,0.6)]">
+          <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-medium text-[#111827]">
+            Free
+          </h2>
+          <div className="mt-2 flex items-end gap-2">
+            <span className="text-5xl font-semibold text-[#111827]">$0</span>
+            <span className="pb-1 text-sm font-semibold uppercase tracking-[0.08em] text-[#6a665e]">
+              forever
+            </span>
+          </div>
+          <p className="mt-3 text-sm leading-relaxed text-[#4f4b44]">
+            Perfect for first drafts, quick applications, and early career updates.
+          </p>
 
-            <ul className="space-y-3 mb-8 flex-1">
-              {freePlanFeatures.map((feature) => (
-                <li key={feature.text} className="flex items-start gap-3">
-                  {feature.included ? (
-                    <Check className="h-5 w-5 mt-0.5 shrink-0 text-green-500" />
-                  ) : (
-                    <X className="h-5 w-5 mt-0.5 shrink-0 text-gray-300" />
+          <ul className="mt-6 space-y-3">
+            {freePlanFeatures.map((feature) => (
+              <li key={feature.text} className="flex items-start gap-2.5 text-sm">
+                {feature.included ? (
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#0f766e]" />
+                ) : (
+                  <X className="mt-0.5 h-4 w-4 shrink-0 text-[#bbb4a9]" />
+                )}
+                <span className={cn(feature.included ? "text-[#3f3c36]" : "text-[#9f988d]")}>{feature.text}</span>
+              </li>
+            ))}
+          </ul>
+
+          <Link href="/builder/new" className="mt-7 block">
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full rounded-full border-[#cbc2b7] bg-[#f8f5ef] text-base font-semibold text-[#1f2937] hover:bg-[#ede5d9]"
+            >
+              Start free
+            </Button>
+          </Link>
+        </article>
+
+        <article className="relative rounded-3xl border border-[#a6cbc3] bg-[#eefaf7] p-7 shadow-[0_30px_90px_-60px_rgba(15,118,110,0.7)]">
+          <div className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full border border-[#8ecfc1] bg-[#daf5ee] px-3 py-1 text-xs font-semibold uppercase tracking-[0.1em] text-[#0f766e]">
+            <Sparkles className="h-3.5 w-3.5" />
+            Most popular
+          </div>
+
+          <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-medium text-[#0f172a]">
+            Pro
+          </h2>
+          <div className="mt-2 flex items-end gap-2">
+            <span className="text-5xl font-semibold text-[#0f172a]">$5</span>
+            <span className="pb-1 text-sm font-semibold uppercase tracking-[0.08em] text-[#1d4f48]">
+              / month
+            </span>
+          </div>
+          <p className="mt-3 text-sm leading-relaxed text-[#1d4f48]">
+            For active job searches that need higher velocity and cleaner output.
+          </p>
+
+          <ul className="mt-6 space-y-3">
+            {proPlanFeatures.map((feature) => (
+              <li key={feature.text} className="flex items-start gap-2.5 text-sm text-[#103b37]">
+                <Check
+                  className={cn(
+                    "mt-0.5 h-4 w-4 shrink-0",
+                    feature.highlight ? "text-[#0f766e]" : "text-[#0f766e]/80"
                   )}
-                  <span
-                    className={cn(
-                      "text-sm",
-                      feature.included ? "text-gray-700" : "text-gray-400"
-                    )}
-                  >
-                    {feature.text}
-                  </span>
-                </li>
-              ))}
-            </ul>
+                />
+                <span className={cn(feature.highlight ? "font-semibold" : "")}>{feature.text}</span>
+              </li>
+            ))}
+          </ul>
 
-            <Link href="/builder/new">
+          {isPro ? (
+            <Link href="/dashboard" className="mt-7 block">
               <Button
-                className="w-full bg-white text-gray-900 border border-gray-300 hover:bg-gray-50"
                 size="lg"
+                className="w-full rounded-full bg-[#0f766e] text-base font-semibold text-white hover:bg-[#0b5f59]"
               >
-                Start Building
+                <Check className="mr-2 h-4 w-4" />
+                You&apos;re on Pro
               </Button>
             </Link>
-          </div>
+          ) : (
+            <Button
+              size="lg"
+              onClick={handleUpgrade}
+              disabled={checkoutLoading || subLoading}
+              className="mt-7 w-full rounded-full bg-[#0f766e] text-base font-semibold text-white hover:bg-[#0b5f59]"
+            >
+              {checkoutLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Zap className="mr-2 h-4 w-4" />
+              )}
+              {checkoutLoading ? "Redirecting..." : "Upgrade to Pro"}
+            </Button>
+          )}
+        </article>
+      </section>
 
-          {/* Pro Plan */}
-          <div className="relative rounded-2xl border-2 border-primary shadow-xl shadow-primary/10 bg-white p-8 flex flex-col">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-              <span className="inline-flex items-center gap-1 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
-                <Sparkles className="h-3 w-3" />
-                Most Popular
-              </span>
-            </div>
-
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-1">Pro</h2>
-              <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-4xl font-bold text-gray-900">$5</span>
-                <span className="text-gray-500">/month</span>
-              </div>
-              <p className="text-gray-600 text-sm">
-                Premium templates, AI writing help, and unlimited everything.
-              </p>
-            </div>
-
-            <ul className="space-y-3 mb-8 flex-1">
-              {proPlanFeatures.map((feature) => (
-                <li key={feature.text} className="flex items-start gap-3">
-                  <Check
-                    className={cn(
-                      "h-5 w-5 mt-0.5 shrink-0",
-                      feature.highlight ? "text-primary" : "text-green-500"
-                    )}
-                  />
-                  <span className="text-sm text-gray-700">{feature.text}</span>
-                </li>
-              ))}
-            </ul>
-
-            {isPro ? (
-              <Link href="/dashboard">
-                <Button className="w-full" size="lg">
-                  <Check className="h-4 w-4 mr-2" />
-                  You&apos;re on Pro
-                </Button>
-              </Link>
-            ) : (
-              <Button
-                className="w-full"
-                size="lg"
-                onClick={handleUpgrade}
-                disabled={checkoutLoading || subLoading}
-              >
-                {checkoutLoading ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <Zap className="h-4 w-4 mr-2" />
-                )}
-                {checkoutLoading ? "Redirecting…" : "Upgrade to Pro"}
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* FAQ */}
-      <div className="border-t border-gray-200 bg-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">
-            Frequently asked questions
+      <section className="mx-auto mt-16 grid max-w-5xl gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <article className="rounded-3xl border border-[#ddd5ca] bg-[#fcfaf6] p-7">
+          <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-medium text-[#111827]">
+            Plan guidance
           </h2>
-          <div className="space-y-8">
+          <div className="mt-5 space-y-4 text-sm leading-relaxed text-[#4f4b44]">
+            <p>
+              Choose <strong className="text-[#111827]">Free</strong> if you need one polished resume quickly.
+            </p>
+            <p>
+              Choose <strong className="text-[#111827]">Pro</strong> if you are applying to multiple roles and want AI-assisted iterations.
+            </p>
+            <p>
+              Both plans keep the editor experience fast and ATS-conscious by default.
+            </p>
+          </div>
+          <Link href="/builder/new" className="mt-6 inline-block">
+            <Button className="rounded-full bg-[#0f766e] px-6 font-semibold text-white hover:bg-[#0b5f59]">
+              Build a free draft first
+            </Button>
+          </Link>
+        </article>
+
+        <article className="rounded-3xl border border-[#dfd7cc] bg-[#fbf8f3] p-7">
+          <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-medium text-[#111827]">
+            FAQs
+          </h2>
+          <div className="mt-5 space-y-4">
             {faqs.map((faq) => (
-              <div key={faq.q}>
-                <h3 className="text-base font-semibold text-gray-900 mb-2">
-                  {faq.q}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">{faq.a}</p>
+              <div key={faq.q} className="rounded-xl border border-[#e1d8cd] bg-[#fffdf9] p-4">
+                <h3 className="font-semibold text-[#111827]">{faq.q}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-[#4f4b44]">{faq.a}</p>
               </div>
             ))}
           </div>
-        </div>
-      </div>
-
-      {/* Footer CTA */}
-      <div className="border-t border-gray-200 bg-gray-50">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-          <p className="text-gray-600 mb-4">
-            Still not sure? Try the free plan first — no account needed.
-          </p>
-          <Link href="/builder/new">
-            <Button size="lg">Create Your Resume</Button>
-          </Link>
-        </div>
-      </div>
-    </div>
+        </article>
+      </section>
+    </MarketingShell>
   );
 }

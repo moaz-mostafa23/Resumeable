@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArrowRight, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/Logo";
-import { ArrowLeft, ArrowRight, FileText } from "lucide-react";
 import { resumeExamples, categories } from "@/data/resume-examples";
+import { MarketingShell } from "@/components/site/MarketingShell";
 
 export const metadata: Metadata = {
   title: "Resume Examples for Every Job Title (2026)",
   description:
-    "Browse 30+ free resume examples organized by industry. Each includes a full sample resume, writing tips, and key skills to help you build a job-winning resume.",
+    "Browse 30+ free resume examples by industry and role. Each example includes sample content, writing guidance, and key skills to improve your resume.",
   alternates: {
     canonical: "https://www.resumeable.cv/resume-examples",
   },
   openGraph: {
     title: "Resume Examples for Every Job Title — Resumeable",
     description:
-      "Browse 30+ free resume examples organized by industry. Real samples with writing tips and skills for every career level.",
+      "Explore 30+ resume examples with practical writing guidance and role-specific skills.",
     url: "https://www.resumeable.cv/resume-examples",
   },
 };
@@ -40,112 +40,119 @@ function JsonLd() {
     ],
   };
 
+  const itemList = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: resumeExamples.map((example, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: `https://www.resumeable.cv/resume-examples/${example.slug}`,
+      name: `${example.jobTitle} resume example`,
+    })),
+  };
+
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
+      />
+    </>
   );
 }
 
 export default function ResumeExamplesPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <MarketingShell title="Resume Examples">
       <JsonLd />
 
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <ArrowLeft className="h-4 w-4" />
-                Home
-              </Button>
-            </Link>
-            <div className="h-6 w-px bg-gray-200" />
-            <div className="flex items-center gap-2">
-              <Logo className="h-6 w-6 text-primary" />
-              <span className="font-semibold text-lg">Resumeable</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8 text-center">
-        <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-          Resume Examples for Every Job
+      <section className="mx-auto max-w-4xl text-center">
+        <p className="inline-flex rounded-full border border-[#d8d1c7] bg-[#ede7de] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-[#4f4b44]">
+          Writing references
+        </p>
+        <h1 className="mt-5 font-[family-name:var(--font-fraunces)] text-4xl font-semibold leading-[1.06] text-[#111827] sm:text-6xl">
+          Real resume examples, role by role.
         </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-6">
-          Browse real resume samples organized by industry and role. Each
-          example includes a complete sample resume, specific writing tips, key
-          skills, and common mistakes to avoid.
+        <p className="mx-auto mt-5 max-w-2xl font-[family-name:var(--font-manrope)] text-lg leading-relaxed text-[#4f4b44] sm:text-xl">
+          Use these examples to improve structure, phrasing, and impact bullets before you edit your own resume.
         </p>
-        <p className="text-gray-500 max-w-xl mx-auto">
-          Whether you&apos;re a software engineer, nurse, teacher, or career
-          changer — find the example that fits your situation and use it as a
-          starting point for your own resume.
-        </p>
-      </div>
+      </section>
 
-      {/* Categories */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="space-y-12">
-          {categories.map((category) => {
-            const examples = resumeExamples.filter(
-              (e) => e.category === category
-            );
-            if (examples.length === 0) return null;
+      <section className="mx-auto mt-12 max-w-6xl space-y-10">
+        {categories.map((category) => {
+          const examples = resumeExamples.filter((example) => example.category === category);
+          if (examples.length === 0) {
+            return null;
+          }
 
-            return (
-              <section key={category}>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-                  <FileText className="h-6 w-6 text-primary" />
-                  {category}
-                </h2>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {examples.map((example) => (
-                    <Link
-                      key={example.slug}
-                      href={`/resume-examples/${example.slug}`}
-                      className="group bg-white rounded-xl border border-gray-200 p-5 hover:border-primary hover:shadow-md transition-all"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
-                            {example.jobTitle}
-                          </h3>
-                          <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                            {example.metaDescription}
-                          </p>
-                        </div>
-                        <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-primary shrink-0 ml-3 transition-colors" />
+          return (
+            <section key={category}>
+              <h2 className="mb-4 flex items-center gap-2.5 font-[family-name:var(--font-fraunces)] text-2xl font-medium text-[#111827] sm:text-3xl">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#e4ddd2] text-[#0f766e]">
+                  <FileText className="h-4 w-4" />
+                </span>
+                {category}
+              </h2>
+
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {examples.map((example) => (
+                  <Link
+                    key={example.slug}
+                    href={`/resume-examples/${example.slug}`}
+                    className="group rounded-2xl border border-[#ddd5ca] bg-[#fffdf9] p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#a5c9c2] hover:shadow-[0_20px_55px_-45px_rgba(16,24,40,0.9)]"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-[#111827] group-hover:text-[#0f766e]">
+                          {example.jobTitle}
+                        </h3>
+                        <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-[#4f4b44]">
+                          {example.metaDescription}
+                        </p>
                       </div>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            );
-          })}
-        </div>
-      </div>
+                      <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-[#7a746a] group-hover:text-[#0f766e]" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          );
+        })}
+      </section>
 
-      {/* CTA */}
-      <div className="border-t border-gray-200 bg-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
-            Ready to build your resume?
+      <section className="mx-auto mt-14 grid max-w-5xl gap-6 lg:grid-cols-[1.08fr_0.92fr]">
+        <article className="rounded-3xl border border-[#ddd5ca] bg-[#fcfaf6] p-7">
+          <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-medium text-[#111827]">
+            How to use these examples
           </h2>
-          <p className="text-gray-600 mb-6">
-            Pick a template, fill in your details, and download — completely
-            free.
-          </p>
-          <Link href="/builder/new">
-            <Button size="lg">Create Your Resume</Button>
+          <ol className="mt-5 space-y-3 text-sm leading-relaxed text-[#4f4b44]">
+            <li>1. Pick the closest role and seniority level.</li>
+            <li>2. Borrow structure and bullet style, not exact wording.</li>
+            <li>3. Rewrite each point with your own impact metrics.</li>
+          </ol>
+          <Link href="/builder/new" className="mt-7 inline-block">
+            <Button className="rounded-full bg-[#0f766e] px-6 font-semibold text-white hover:bg-[#0b5f59]">
+              Build from an example
+            </Button>
           </Link>
-        </div>
-      </div>
-    </div>
+        </article>
+
+        <article className="rounded-3xl border border-[#c7ddd8] bg-[#eefaf7] p-7">
+          <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-medium text-[#0f172a]">
+            What hiring teams scan first
+          </h2>
+          <p className="mt-4 text-sm leading-relaxed text-[#1d4f48]">
+            Clear titles, recent experience, and concise, measurable bullets. Keep each section skimmable on both desktop and mobile.
+          </p>
+          <p className="mt-4 text-sm leading-relaxed text-[#1d4f48]">
+            This page groups examples by role so users on small screens can find relevant samples quickly.
+          </p>
+        </article>
+      </section>
+    </MarketingShell>
   );
 }

@@ -197,3 +197,43 @@
 .pulse-glow {
   animation: pulse-glow 2.5s ease-in-out infinite;
 }
+
+/* Homepage redesign system */
+@keyframes homepage-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.homepage-root {
+  background-image: radial-gradient(
+      circle at 12% 15%,
+      rgba(15, 118, 110, 0.08),
+      transparent 34%
+    ),
+    radial-gradient(circle at 85% 12%, rgba(29, 78, 216, 0.07), transparent 32%);
+}
+
+.homepage-grid-bg {
+  background-image: linear-gradient(to right, rgba(39, 37, 31, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(39, 37, 31, 0.04) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black 45%, transparent 100%);
+}
+
+.homepage-panel {
+  backdrop-filter: blur(10px);
+}
+
+.homepage-float {
+  animation: homepage-float 5.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .homepage-float {
+    animation: none !important;
+  }
+}

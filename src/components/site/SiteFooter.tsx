@@ -6,7 +6,7 @@ export function SiteFooter() {
     <footer className="relative z-10 border-t border-[#d8d1c7] px-4 py-9">
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-4 text-sm text-[#615d55] sm:flex-row">
         <div className="flex items-center gap-2.5">
-          <Logo className="h-6 w-6 text-[#0f766e]" />
+          <Logo className="h-8 w-8 text-[#0f766e]" />
           <span className="font-[family-name:var(--font-fraunces)] text-xl font-semibold tracking-tight">
             Resumeable
           </span>

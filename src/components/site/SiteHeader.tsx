@@ -50,7 +50,7 @@ export function SiteHeader({
           ) : null}
 
           <Link href="/" className="flex items-center gap-2.5">
-            <Logo className="h-8 w-8 text-[#0f766e]" />
+            <Logo className="h-10 w-10 text-[#0f766e]" />
             <span className="font-[family-name:var(--font-fraunces)] text-2xl font-semibold tracking-tight text-[#111827]">
               Resumeable
             </span>

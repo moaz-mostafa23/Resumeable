@@ -13,6 +13,11 @@ const SITE_URL = "https://www.resumeable.cv";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    shortcut: [{ url: "/favicon.ico", type: "image/x-icon" }],
+    apple: [{ url: "/icon.svg", type: "image/svg+xml" }],
+  },
   title: {
     default: "Resumeable — Free Resume Builder | Create ATS-Friendly Resumes",
     template: "%s | Resumeable",

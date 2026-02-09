@@ -277,13 +277,13 @@ export function TemplatesGallery() {
 
         <article className="rounded-3xl border border-[#c7ddd8] bg-[#eefaf7] p-7">
           <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-medium text-[#0f172a]">
-            Optimized for better UX and SEO
+            Pick the right template faster
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-[#1d4f48]">
-            This page uses category filtering, structured data, and immediate action paths so users and search engines can discover templates faster.
+            Filter by style, compare real full-page previews, and choose the layout that matches your target role.
           </p>
           <p className="mt-4 text-sm leading-relaxed text-[#1d4f48]">
-            Template previews now render the actual resume layouts with full-page starter content for accurate expectation setting.
+            When you click a template, you go straight into the editor with quality starter content already filled in so you can edit immediately.
           </p>
         </article>
       </section>

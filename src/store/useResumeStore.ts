@@ -38,6 +38,7 @@ import {
   createDefaultResume,
 } from "@/types/resume";
 import { generateId } from "@/lib/utils";
+import { createTemplateSeedResume } from "@/data/template-seeds";
 
 interface ResumeState {
   resume: ResumeDocument | null;
@@ -49,11 +50,13 @@ interface ResumeState {
   // Resume actions
   loadResume: (id: string) => Promise<void>;
   createResume: (userId: string, name?: string, templateId?: TemplateId) => Promise<string | null>;
+  createResumeFromTemplate: (userId: string, templateId: TemplateId, name?: string) => Promise<string | null>;
   saveResume: () => Promise<void>;
   setResumeName: (name: string) => void;
 
   // Draft actions (for anonymous users)
   createDraftResume: (templateId?: TemplateId) => string;
+  createDraftResumeFromTemplate: (templateId: TemplateId, name?: string) => string;
   loadDraftResume: (draftId: string) => void;
   publishDraftToAccount: (userId: string) => Promise<string | null>;
   clearResume: () => void;
@@ -277,6 +280,57 @@ export const useResumeStore = create<ResumeState>()(
       }
     },
 
+    createResumeFromTemplate: async (userId: string, templateId: TemplateId, name?: string) => {
+      set((state) => {
+        state.loading = true;
+        state.error = null;
+      });
+
+      try {
+        const supabase = createClient();
+        const seededResume = createTemplateSeedResume(userId, templateId, { name });
+
+        const { data, error } = await supabase
+          .from("resumes")
+          .insert({
+            user_id: userId,
+            name: seededResume.name,
+            template_id: seededResume.templateId,
+            sections: seededResume.sections,
+            section_data: seededResume.sectionData,
+            theme: seededResume.theme,
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        set((state) => {
+          state.resume = {
+            id: data.id,
+            name: data.name,
+            userId: data.user_id,
+            templateId: data.template_id ?? DEFAULT_TEMPLATE_ID,
+            sections: data.sections,
+            sectionData: data.section_data,
+            theme: data.theme,
+            createdAt: data.created_at,
+            updatedAt: data.updated_at,
+          };
+          state.resumeSource = "remote";
+          state.loading = false;
+        });
+
+        return data.id;
+      } catch (error) {
+        set((state) => {
+          state.error = (error as Error).message;
+          state.loading = false;
+        });
+        return null;
+      }
+    },
+
     saveResume: async () => {
       const { resume, resumeSource } = get();
       if (!resume) return;
@@ -353,6 +407,32 @@ export const useResumeStore = create<ResumeState>()(
       // Persist to localStorage
       try {
         localStorage.setItem(DRAFT_STORAGE_KEY + draftId, JSON.stringify(newResume));
+      } catch (error) {
+        console.error("Failed to save draft to localStorage:", error);
+      }
+
+      return draftId;
+    },
+
+    createDraftResumeFromTemplate: (templateId: TemplateId, name?: string) => {
+      const draftId = `draft-${generateId()}`;
+      const seededResume = createTemplateSeedResume("", templateId, {
+        id: draftId,
+        name,
+      });
+
+      set((state) => {
+        state.resume = seededResume;
+        state.resumeSource = "local";
+        state.loading = false;
+        state.error = null;
+      });
+
+      try {
+        localStorage.setItem(
+          DRAFT_STORAGE_KEY + draftId,
+          JSON.stringify(seededResume)
+        );
       } catch (error) {
         console.error("Failed to save draft to localStorage:", error);
       }

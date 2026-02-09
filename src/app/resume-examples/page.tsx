@@ -134,7 +134,7 @@ export default function ResumeExamplesPage() {
             <li>2. Borrow structure and bullet style, not exact wording.</li>
             <li>3. Rewrite each point with your own impact metrics.</li>
           </ol>
-          <Link href="/builder/new" className="mt-7 inline-block">
+          <Link href="/templates" className="mt-7 inline-block">
             <Button className="rounded-full bg-[#0f766e] px-6 font-semibold text-white hover:bg-[#0b5f59]">
               Build from an example
             </Button>

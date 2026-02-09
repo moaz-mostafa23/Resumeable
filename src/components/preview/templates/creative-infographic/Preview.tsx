@@ -80,6 +80,12 @@ export function CreativeInfographicPreview() {
 
   const renderHeader = () => {
     const data = sectionData.header as HeaderData;
+    const initials = data.fullName
+      .split(" ")
+      .map((chunk) => chunk[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
     return (
       <div 
         className="relative overflow-hidden"
@@ -99,18 +105,39 @@ export function CreativeInfographicPreview() {
         />
         
         <div className="relative z-10">
-          <h1
-            className="font-bold text-white mb-2"
-            style={{ fontSize: theme.nameFontSize + 4 }}
-          >
-            {data.fullName}
-          </h1>
-          <p 
-            className="text-white/90 mb-4 font-medium"
-            style={{ fontSize: theme.titleFontSize + 2 }}
-          >
-            {data.title}
-          </p>
+          <div className="mb-4 flex items-center gap-4">
+            {data.photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={data.photoUrl}
+                alt={data.fullName}
+                className="h-24 w-24 rounded-full object-cover"
+                style={{ border: "3px solid rgba(255,255,255,0.85)" }}
+              />
+            ) : (
+              <div
+                className="flex h-24 w-24 items-center justify-center rounded-full text-3xl font-semibold text-white/60"
+                style={{ backgroundColor: "rgba(255,255,255,0.22)" }}
+              >
+                {initials}
+              </div>
+            )}
+
+            <div>
+              <h1
+                className="font-bold text-white mb-2"
+                style={{ fontSize: theme.nameFontSize + 4 }}
+              >
+                {data.fullName}
+              </h1>
+              <p 
+                className="text-white/90 font-medium"
+                style={{ fontSize: theme.titleFontSize + 2 }}
+              >
+                {data.title}
+              </p>
+            </div>
+          </div>
           <div className="flex flex-wrap gap-x-5 gap-y-2 text-white/90" style={{ fontSize: theme.fontSize }}>
             {data.email && (
               <span className="flex items-center gap-2">

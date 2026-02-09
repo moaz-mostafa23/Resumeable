@@ -310,7 +310,7 @@ export default async function ResumeExamplePage({
         <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-[#1d4f48] sm:text-base">
           Use this example as a framework, then tailor each bullet to your own outcomes.
         </p>
-        <Link href="/builder/new" className="mt-6 inline-block">
+        <Link href="/templates" className="mt-6 inline-block">
           <Button className="rounded-full bg-[#0f766e] px-7 font-semibold text-white hover:bg-[#0b5f59]">
             Create your resume
           </Button>

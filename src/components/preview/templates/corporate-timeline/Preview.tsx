@@ -78,15 +78,28 @@ export function CorporateTimelinePreview() {
         className="mb-6 pb-4"
         style={{ borderBottom: `3px solid ${theme.primaryColor}` }}
       >
-        <h1
-          className="font-bold mb-1"
-          style={{ fontSize: theme.nameFontSize, color: theme.primaryColor }}
-        >
-          {data.fullName}
-        </h1>
-        <p className="mb-3 font-medium" style={{ fontSize: theme.titleFontSize, color: theme.textColor, opacity: 0.75 }}>
-          {data.title}
-        </p>
+        <div className="mb-3 flex items-center gap-4">
+          {data.photoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={data.photoUrl}
+              alt={data.fullName}
+              className="h-20 w-20 rounded-full object-cover"
+              style={{ border: `2px solid ${theme.primaryColor}30` }}
+            />
+          ) : null}
+          <div>
+            <h1
+              className="font-bold mb-1"
+              style={{ fontSize: theme.nameFontSize, color: theme.primaryColor }}
+            >
+              {data.fullName}
+            </h1>
+            <p className="font-medium" style={{ fontSize: theme.titleFontSize, color: theme.textColor, opacity: 0.75 }}>
+              {data.title}
+            </p>
+          </div>
+        </div>
         <div className="flex flex-wrap gap-x-5 gap-y-1" style={{ fontSize: theme.fontSize - 1, color: theme.textColor, opacity: 0.75 }}>
           {data.email && (
             <span className="flex items-center gap-1.5">

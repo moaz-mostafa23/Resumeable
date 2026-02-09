@@ -72,6 +72,15 @@ export function ATSMinimalPreview() {
 
     return (
       <div className="text-center mb-4">
+        {data.photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={data.photoUrl}
+            alt={data.fullName}
+            className="mx-auto mb-3 h-20 w-20 rounded-full object-cover"
+            style={{ border: `2px solid ${theme.primaryColor}30` }}
+          />
+        ) : null}
         <h1
           className="font-bold mb-1"
           style={{ fontSize: theme.nameFontSize, color: theme.primaryColor }}

@@ -5,3 +5,4 @@ export { StaticCorporateTimeline } from "./StaticCorporateTimeline";
 export { StaticCreativeInfographic } from "./StaticCreativeInfographic";
 export { StaticElegantPhoto } from "./StaticElegantPhoto";
 export { StaticBoldHeader } from "./StaticBoldHeader";
+export { TemplateCardPreview } from "./TemplateCardPreview";

@@ -26,7 +26,7 @@ export default function NotFound() {
               Go home
             </Button>
           </Link>
-          <Link href="/builder/new" className="flex-1 sm:flex-initial">
+          <Link href="/templates" className="flex-1 sm:flex-initial">
             <Button className="w-full rounded-full bg-[#0f766e] px-7 font-semibold text-white hover:bg-[#0b5f59]">
               Create a resume
               <ArrowRight className="ml-2 h-4 w-4" />

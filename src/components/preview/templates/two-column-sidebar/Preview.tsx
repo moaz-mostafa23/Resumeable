@@ -68,8 +68,32 @@ export function TwoColumnSidebarPreview() {
 
   const renderSidebarHeader = () => {
     const data = sectionData.header as HeaderData;
+    const initials = data.fullName
+      .split(" ")
+      .map((chunk) => chunk[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
     return (
       <div className="mb-6">
+        <div className="mb-3">
+          {data.photoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={data.photoUrl}
+              alt={data.fullName}
+              className="h-20 w-20 rounded-full object-cover"
+              style={{ border: "2px solid rgba(255,255,255,0.4)" }}
+            />
+          ) : (
+            <div
+              className="flex h-20 w-20 items-center justify-center rounded-full font-semibold text-white/60"
+              style={{ backgroundColor: "rgba(255,255,255,0.18)" }}
+            >
+              {initials}
+            </div>
+          )}
+        </div>
         <h1
           className="font-bold mb-2"
           style={{ fontSize: theme.nameFontSize - 4, color: 'white' }}

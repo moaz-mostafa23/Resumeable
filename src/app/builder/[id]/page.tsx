@@ -81,7 +81,7 @@ export default function BuilderPage() {
                 Sign in
               </Button>
             </Link>
-            <Link href="/builder/new">
+            <Link href="/templates">
               <Button
                 variant="outline"
                 className="w-full rounded-full border-[#cbc2b7] bg-[#f8f5ef] font-semibold text-[#1f2937] hover:bg-[#ede5d9]"

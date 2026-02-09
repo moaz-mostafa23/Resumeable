@@ -244,7 +244,7 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <Link href="/builder/new" className="w-full sm:w-auto">
+          <Link href="/templates" className="w-full sm:w-auto">
             <Button className="w-full rounded-full bg-[#0f766e] px-7 font-semibold text-white hover:bg-[#0b5f59] sm:w-auto">
               <Plus className="mr-2 h-4 w-4" />
               New resume
@@ -261,7 +261,7 @@ export default function DashboardPage() {
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[#4f4b44] sm:text-base">
               Create your first resume and it will appear here for quick editing and duplication.
             </p>
-            <Link href="/builder/new" className="mt-6 inline-block">
+            <Link href="/templates" className="mt-6 inline-block">
               <Button className="rounded-full bg-[#0f766e] px-7 font-semibold text-white hover:bg-[#0b5f59]">
                 <Plus className="mr-2 h-4 w-4" />
                 Create resume

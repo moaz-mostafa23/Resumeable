@@ -107,9 +107,9 @@ export function SiteHeader({
                   Sign in
                 </Button>
               </Link>
-              <Link href="/builder/new">
+              <Link href="/templates">
                 <Button className="rounded-full bg-[#0f766e] px-5 text-sm font-semibold text-white hover:bg-[#0b5f59]">
-                  Start free
+                  Choose template
                 </Button>
               </Link>
             </>
@@ -124,7 +124,7 @@ export function SiteHeader({
               </Button>
             </Link>
           ) : (
-            <Link href="/builder/new">
+            <Link href="/templates">
               <Button className="rounded-full bg-[#0f766e] px-4 text-sm font-semibold text-white hover:bg-[#0b5f59]">
                 Start
               </Button>

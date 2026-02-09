@@ -1,23 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { ArrowRight, Check, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, Check, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { templateDefinitions, TemplateDefinition } from "@/lib/template-registry";
-import { TemplateId } from "@/types/resume";
-import {
-  StaticATSMinimal,
-  StaticBoldHeader,
-  StaticCorporateTimeline,
-  StaticCreativeInfographic,
-  StaticElegantPhoto,
-  StaticModernMinimal,
-  StaticTwoColumnSidebar,
-} from "@/components/templates/previews";
 import { MarketingShell } from "@/components/site/MarketingShell";
+import { useAuthContext } from "@/components/auth/AuthProvider";
+import { useResumeStore } from "@/store/useResumeStore";
+import { TemplateCardPreview } from "@/components/templates/previews";
 
 type FilterCategory = "all" | "minimal" | "professional" | "creative";
 
@@ -28,45 +20,40 @@ const filterOptions: { label: string; value: FilterCategory }[] = [
   { label: "Creative", value: "creative" },
 ];
 
-function TemplatePreviewRenderer({ id }: { id: TemplateId }) {
-  switch (id) {
-    case "ats-minimal":
-      return <StaticATSMinimal />;
-    case "modern-minimal":
-      return <StaticModernMinimal />;
-    case "two-column-sidebar":
-      return <StaticTwoColumnSidebar />;
-    case "corporate-timeline":
-      return <StaticCorporateTimeline />;
-    case "creative-infographic":
-      return <StaticCreativeInfographic />;
-    case "elegant-photo":
-      return <StaticElegantPhoto />;
-    case "bold-header":
-      return <StaticBoldHeader />;
-    default:
-      return null;
-  }
-}
-
-function TemplateCard({ template }: { template: TemplateDefinition }) {
-  const router = useRouter();
-
+function TemplateCard({
+  template,
+  disabled,
+  isCreating,
+  onCreate,
+}: {
+  template: TemplateDefinition;
+  disabled: boolean;
+  isCreating: boolean;
+  onCreate: (template: TemplateDefinition) => void;
+}) {
   return (
     <button
-      onClick={() => router.push("/builder/new")}
-      className="group relative overflow-hidden rounded-2xl border border-[#ddd5ca] bg-[#fffdf9] text-left transition-all duration-300 hover:-translate-y-1 hover:border-[#a5c9c2] hover:shadow-[0_30px_80px_-65px_rgba(16,24,40,0.8)] focus:outline-none focus:ring-2 focus:ring-[#0f766e]/30 focus:ring-offset-2"
+      id={template.id}
+      onClick={() => onCreate(template)}
+      disabled={disabled}
+      aria-busy={isCreating}
+      className="group relative overflow-hidden rounded-2xl border border-[#ddd5ca] bg-[#fffdf9] text-left transition-all duration-300 hover:-translate-y-1 hover:border-[#a5c9c2] hover:shadow-[0_30px_80px_-65px_rgba(16,24,40,0.8)] focus:outline-none focus:ring-2 focus:ring-[#0f766e]/30 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+      aria-label={`Use ${template.name} template`}
     >
       <div className="relative overflow-hidden bg-white" style={{ aspectRatio: "8.5 / 11", position: "relative" }}>
         <div style={{ position: "absolute", inset: 0 }}>
-          <TemplatePreviewRenderer id={template.id} />
+          <TemplateCardPreview templateId={template.id} />
         </div>
 
         <div className="absolute inset-0 flex flex-col items-center justify-end bg-gradient-to-t from-black/55 via-black/20 to-transparent pb-8 opacity-0 transition-all duration-300 group-hover:opacity-100">
           <div className="translate-y-4 transform transition-transform duration-300 group-hover:translate-y-0">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 shadow-lg">
-              <Sparkles className="h-4 w-4" />
-              Use this template
+            <span className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#111827] shadow-lg">
+              {isCreating ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+              {isCreating ? "Preparing..." : "Use this template"}
             </span>
           </div>
         </div>
@@ -87,12 +74,12 @@ function TemplateCard({ template }: { template: TemplateDefinition }) {
 
         {template.features.length > 0 ? (
           <div className="mt-3 flex flex-wrap gap-1.5">
-            {template.features.map((f) => (
+            {template.features.map((feature) => (
               <span
-                key={f}
+                key={feature}
                 className="rounded-full border border-[#e4ddd2] bg-[#f8f4ee] px-2.5 py-0.5 text-xs text-[#655f55]"
               >
-                {f}
+                {feature}
               </span>
             ))}
           </div>
@@ -103,7 +90,11 @@ function TemplateCard({ template }: { template: TemplateDefinition }) {
 }
 
 export function TemplatesGallery() {
+  const router = useRouter();
+  const { user } = useAuthContext();
+  const { createResumeFromTemplate, createDraftResumeFromTemplate } = useResumeStore();
   const [activeFilter, setActiveFilter] = useState<FilterCategory>("all");
+  const [creatingTemplateId, setCreatingTemplateId] = useState<string | null>(null);
 
   const enabled = useMemo(
     () => templateDefinitions.filter((template) => template.isEnabled),
@@ -115,6 +106,43 @@ export function TemplatesGallery() {
       ? enabled
       : enabled.filter((template) => template.category === activeFilter);
 
+  const handleCreateFromTemplate = async (template: TemplateDefinition) => {
+    if (creatingTemplateId) return;
+
+    setCreatingTemplateId(template.id);
+    try {
+      if (user) {
+        const resumeId = await createResumeFromTemplate(
+          user.id,
+          template.id,
+          `${template.name} Resume`
+        );
+
+        if (resumeId) {
+          router.push(`/builder/${resumeId}`);
+          return;
+        }
+
+        // Fallback to a local draft if network or DB write fails.
+        const fallbackDraftId = createDraftResumeFromTemplate(
+          template.id,
+          `${template.name} Resume`
+        );
+        router.push(`/builder/${fallbackDraftId}`);
+        return;
+      } else {
+        const draftId = createDraftResumeFromTemplate(
+          template.id,
+          `${template.name} Resume`
+        );
+        router.push(`/builder/${draftId}`);
+        return;
+      }
+    } finally {
+      setCreatingTemplateId(null);
+    }
+  };
+
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -122,8 +150,40 @@ export function TemplatesGallery() {
       "@type": "ListItem",
       position: index + 1,
       name: template.name,
-      url: "https://www.resumeable.cv/templates",
+      url: `https://www.resumeable.cv/templates#${template.id}`,
+      description: template.description,
     })),
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "Do templates open directly in the editor?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. Selecting a template now creates a resume instantly and opens the editor with prefilled starter content.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I upload a headshot?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. You can upload a photo in the Header section editor, and photo-enabled templates will display it immediately.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Are these templates ATS-friendly?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "ATS-labeled templates use simplified structure and predictable section hierarchy designed for parser compatibility.",
+        },
+      },
+    ],
   };
 
   return (
@@ -132,16 +192,20 @@ export function TemplatesGallery() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
 
       <section className="max-w-4xl">
         <p className="inline-flex rounded-full border border-[#d8d1c7] bg-[#ede7de] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-[#4f4b44]">
           Template library
         </p>
         <h1 className="mt-5 font-[family-name:var(--font-fraunces)] text-4xl font-semibold leading-[1.05] text-[#111827] sm:text-6xl">
-          ATS-safe templates with clear hierarchy.
+          Choose a proven layout and start editing instantly.
         </h1>
         <p className="mt-5 max-w-2xl font-[family-name:var(--font-manrope)] text-lg leading-relaxed text-[#4f4b44] sm:text-xl">
-          Pick the structure that fits your career story. Every template is built for readability, recruiter scanning, and clean PDF export.
+          Every template opens directly in the editor with high-quality mock content, so you can replace text instead of starting from a blank page.
         </p>
       </section>
 
@@ -170,7 +234,13 @@ export function TemplatesGallery() {
       <section className="mt-8">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((template) => (
-            <TemplateCard key={template.id} template={template} />
+            <TemplateCard
+              key={template.id}
+              template={template}
+              disabled={creatingTemplateId !== null}
+              isCreating={creatingTemplateId === template.id}
+              onCreate={handleCreateFromTemplate}
+            />
           ))}
         </div>
 
@@ -184,30 +254,36 @@ export function TemplatesGallery() {
       <section className="mt-16 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
         <article className="rounded-3xl border border-[#ddd5ca] bg-[#fcfaf6] p-7">
           <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-medium text-[#111827]">
-            Choosing the right template
+            Template selection guidance
           </h2>
           <ul className="mt-5 space-y-3 text-sm leading-relaxed text-[#4f4b44]">
-            <li>Use minimal layouts if your experience is linear and results-driven.</li>
-            <li>Use professional layouts when you need clean sections for mixed experience.</li>
-            <li>Use creative layouts for design-forward roles while keeping ATS-safe content order.</li>
+            <li>Use ATS Classic or Modern Professional for strict parser compatibility.</li>
+            <li>Use Specialist Sidebar when skill taxonomy needs visual emphasis.</li>
+            <li>Use profile-photo templates for portfolio, consulting, and client-facing applications.</li>
           </ul>
-          <Link href="/builder/new" className="mt-7 inline-block">
-            <Button className="rounded-full bg-[#0f766e] px-6 font-semibold text-white hover:bg-[#0b5f59]">
-              Start with this style
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
+          <Button
+            className="mt-7 rounded-full bg-[#0f766e] px-6 font-semibold text-white hover:bg-[#0b5f59]"
+            onClick={() => {
+              if (enabled.length > 0) {
+                handleCreateFromTemplate(enabled[0]);
+              }
+            }}
+            disabled={!!creatingTemplateId}
+          >
+            {creatingTemplateId ? "Preparing editor..." : "Start with recommended"}
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
         </article>
 
         <article className="rounded-3xl border border-[#c7ddd8] bg-[#eefaf7] p-7">
           <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-medium text-[#0f172a]">
-            Why these templates rank well
+            Optimized for better UX and SEO
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-[#1d4f48]">
-            Search engines and users both reward pages that are specific and useful. These templates are paired with clear use cases, scannable copy, and direct action paths.
+            This page uses category filtering, structured data, and immediate action paths so users and search engines can discover templates faster.
           </p>
           <p className="mt-4 text-sm leading-relaxed text-[#1d4f48]">
-            You can switch layouts later without rewriting your content, which supports iteration during active job searches.
+            Template previews now render the actual resume layouts with full-page starter content for accurate expectation setting.
           </p>
         </article>
       </section>

@@ -71,6 +71,17 @@ export function ModernMinimalPreview() {
     const data = sectionData.header as HeaderData;
     return (
       <div className={`${alignClass} mb-6`}>
+        {data.photoUrl ? (
+          <div className={`mb-3 ${isCentered ? "flex justify-center" : theme.textAlign === "right" ? "flex justify-end" : "flex justify-start"}`}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={data.photoUrl}
+              alt={data.fullName}
+              className="h-20 w-20 rounded-full object-cover"
+              style={{ border: `2px solid ${theme.primaryColor}30` }}
+            />
+          </div>
+        ) : null}
         {isCentered ? (
           <>
             <h1

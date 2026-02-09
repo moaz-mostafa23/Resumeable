@@ -186,7 +186,7 @@ export default function HomePage() {
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2.5">
             <Logo className="h-8 w-8 text-[#0f766e]" />
-            <span className="font-[family-name:var(--font-manrope)] text-lg font-extrabold tracking-tight">
+            <span className="font-[family-name:var(--font-fraunces)] text-2xl font-semibold tracking-tight">
               Resumeable
             </span>
           </Link>
@@ -531,7 +531,9 @@ export default function HomePage() {
         <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-4 text-sm text-[#615d55] sm:flex-row">
           <div className="flex items-center gap-2.5">
             <Logo className="h-6 w-6 text-[#0f766e]" />
-            <span className="font-semibold">Resumeable</span>
+            <span className="font-[family-name:var(--font-fraunces)] text-xl font-semibold tracking-tight">
+              Resumeable
+            </span>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4">

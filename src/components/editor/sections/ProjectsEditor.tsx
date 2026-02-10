@@ -16,7 +16,7 @@ import {
   ChevronUp,
   X,
 } from "lucide-react";
-import { SortableBulletList } from "../dnd/SortableBulletList";
+import { RichTextBulletEditor } from "../RichTextBulletEditor";
 
 export function ProjectsEditor() {
   const {
@@ -24,9 +24,6 @@ export function ProjectsEditor() {
     addProjectItem,
     updateProjectItem,
     deleteProjectItem,
-    addProjectBullet,
-    updateProjectBullet,
-    deleteProjectBullet,
     addProjectTechnology,
     removeProjectTechnology,
   } = useResumeStore();
@@ -186,26 +183,13 @@ export function ProjectsEditor() {
               </div>
 
               <div>
-                <Label className="mb-2 block">Description / Bullet Points</Label>
-                <SortableBulletList
+                <Label className="mb-2 block">Description</Label>
+                <RichTextBulletEditor
                   bullets={item.bullets}
-                  onUpdate={(bulletId, content) =>
-                    updateProjectBullet(item.id, bulletId, content)
-                  }
-                  onDelete={(bulletId) =>
-                    deleteProjectBullet(item.id, bulletId)
-                  }
-                  onReorder={() => {}}
+                  idPrefix="pbullet"
+                  placeholder="Add project outcomes, scope, and technologies used..."
+                  onChange={(bullets) => updateProjectItem(item.id, { bullets })}
                 />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-2"
-                  onClick={() => addProjectBullet(item.id)}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Bullet
-                </Button>
               </div>
             </CardContent>
           )}

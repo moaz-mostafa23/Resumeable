@@ -1,6 +1,7 @@
 "use client";
 
 import { useResume } from "@/hooks/useResume";
+import { RichTextInline } from "@/components/preview/RichTextInline";
 import {
   HeaderData,
   SummaryData,
@@ -280,14 +281,14 @@ export function CreativeInfographicPreview() {
                     {item.startDate} - {item.current ? "Present" : item.endDate}
                   </div>
                 </div>
-                <ul className="mt-3 space-y-2 text-gray-700">
+                <ul className="preview-rich-bullets mt-3 space-y-2 text-gray-700">
                   {item.bullets.map((bullet) => (
                     <li key={bullet.id} className="flex items-start gap-2">
                       <span 
                         className="w-2 h-2 rounded-full mt-2 flex-shrink-0"
                         style={{ backgroundColor: theme.primaryColor }}
                       />
-                      {bullet.content}
+                      <RichTextInline html={bullet.content} />
                     </li>
                   ))}
                 </ul>
@@ -429,14 +430,14 @@ export function CreativeInfographicPreview() {
                   ))}
                 </div>
               )}
-              <ul className="mt-2 space-y-1 text-gray-700 text-sm">
+              <ul className="preview-rich-bullets mt-2 space-y-1 text-gray-700 text-sm">
                 {item.bullets.slice(0, 2).map((bullet) => (
                   <li key={bullet.id} className="flex items-start gap-1.5">
                     <span 
                       className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0"
                       style={{ backgroundColor: theme.primaryColor }}
                     />
-                    {bullet.content}
+                    <RichTextInline html={bullet.content} />
                   </li>
                 ))}
               </ul>
@@ -575,11 +576,11 @@ export function CreativeInfographicPreview() {
                 <span className="text-gray-500 text-sm">{item.startDate} - {item.current ? "Present" : item.endDate}</span>
               </div>
               {item.bullets.length > 0 && (
-                <ul className="mt-2 space-y-1 text-gray-700">
+                <ul className="preview-rich-bullets mt-2 space-y-1 text-gray-700">
                   {item.bullets.map((bullet) => (
                     <li key={bullet.id} className="flex items-start gap-2">
                       <span className="w-1.5 h-1.5 rounded-full mt-2" style={{ backgroundColor: theme.primaryColor }} />
-                      {bullet.content}
+                      <RichTextInline html={bullet.content} />
                     </li>
                   ))}
                 </ul>
@@ -692,11 +693,11 @@ export function CreativeInfographicPreview() {
               </div>
               {item.description && <p className="text-gray-700 mt-1">{item.description}</p>}
               {item.bullets.length > 0 && (
-                <ul className="mt-2 space-y-1 text-gray-700">
+                <ul className="preview-rich-bullets mt-2 space-y-1 text-gray-700">
                   {item.bullets.map((bullet) => (
                     <li key={bullet.id} className="flex items-start gap-2">
                       <span className="w-1.5 h-1.5 rounded-full mt-2" style={{ backgroundColor: theme.primaryColor }} />
-                      {bullet.content}
+                      <RichTextInline html={bullet.content} />
                     </li>
                   ))}
                 </ul>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useResume } from "@/hooks/useResume";
+import { RichTextInline } from "@/components/preview/RichTextInline";
 import {
   HeaderData,
   SummaryData,
@@ -298,9 +299,9 @@ export function TwoColumnSidebarPreview() {
                   {item.startDate} - {item.current ? "Present" : item.endDate}
                 </p>
               </div>
-              <ul className="list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
+              <ul className="preview-rich-bullets list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
                 {item.bullets.map((bullet) => (
-                  <li key={bullet.id}>{bullet.content}</li>
+                  <li key={bullet.id}><RichTextInline html={bullet.content} /></li>
                 ))}
               </ul>
             </div>
@@ -351,9 +352,9 @@ export function TwoColumnSidebarPreview() {
               {item.technologies.length > 0 && (
                 <p className="text-sm" style={{ color: theme.textColor, opacity: 0.75 }}>{item.technologies.join(" • ")}</p>
               )}
-              <ul className="list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
+              <ul className="preview-rich-bullets list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
                 {item.bullets.map((bullet) => (
-                  <li key={bullet.id}>{bullet.content}</li>
+                  <li key={bullet.id}><RichTextInline html={bullet.content} /></li>
                 ))}
               </ul>
             </div>
@@ -403,8 +404,8 @@ export function TwoColumnSidebarPreview() {
                 </p>
               </div>
               {item.bullets.length > 0 && (
-                <ul className="list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
-                  {item.bullets.map((bullet) => (<li key={bullet.id}>{bullet.content}</li>))}
+                <ul className="preview-rich-bullets list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
+                  {item.bullets.map((bullet) => (<li key={bullet.id}><RichTextInline html={bullet.content} /></li>))}
                 </ul>
               )}
             </div>
@@ -473,8 +474,8 @@ export function TwoColumnSidebarPreview() {
               </div>
               {item.description && <p className="mt-1" style={{ color: theme.textColor }}>{item.description}</p>}
               {item.bullets.length > 0 && (
-                <ul className="list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
-                  {item.bullets.map((bullet) => (<li key={bullet.id}>{bullet.content}</li>))}
+                <ul className="preview-rich-bullets list-disc list-inside mt-2 space-y-1" style={{ color: theme.textColor }}>
+                  {item.bullets.map((bullet) => (<li key={bullet.id}><RichTextInline html={bullet.content} /></li>))}
                 </ul>
               )}
             </div>

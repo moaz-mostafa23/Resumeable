@@ -15,7 +15,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { useState } from "react";
-import { SortableBulletList } from "../dnd/SortableBulletList";
+import { RichTextBulletEditor } from "../RichTextBulletEditor";
 
 export function ExperienceEditor() {
   const {
@@ -23,10 +23,6 @@ export function ExperienceEditor() {
     addExperienceItem,
     updateExperienceItem,
     deleteExperienceItem,
-    addExperienceBullet,
-    updateExperienceBullet,
-    deleteExperienceBullet,
-    reorderExperienceBullets,
   } = useResumeStore();
 
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
@@ -57,7 +53,7 @@ export function ExperienceEditor() {
 
   return (
     <div className="space-y-4">
-      {data.items.map((item, index) => (
+      {data.items.map((item) => (
         <Card key={item.id} className="relative">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
@@ -165,28 +161,15 @@ export function ExperienceEditor() {
               </div>
 
               <div>
-                <Label className="mb-2 block">Bullet Points</Label>
-                <SortableBulletList
+                <Label className="mb-2 block">Description</Label>
+                <RichTextBulletEditor
                   bullets={item.bullets}
-                  onUpdate={(bulletId, content) =>
-                    updateExperienceBullet(item.id, bulletId, content)
-                  }
-                  onDelete={(bulletId) =>
-                    deleteExperienceBullet(item.id, bulletId)
-                  }
-                  onReorder={(startIndex, endIndex) =>
-                    reorderExperienceBullets(item.id, startIndex, endIndex)
+                  idPrefix="bullet"
+                  placeholder="Add responsibilities and measurable impact..."
+                  onChange={(bullets) =>
+                    updateExperienceItem(item.id, { bullets })
                   }
                 />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-2"
-                  onClick={() => addExperienceBullet(item.id)}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Bullet
-                </Button>
               </div>
             </CardContent>
           )}

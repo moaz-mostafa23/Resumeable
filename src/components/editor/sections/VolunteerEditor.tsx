@@ -15,7 +15,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { useState } from "react";
-import { SortableBulletList } from "../dnd/SortableBulletList";
+import { RichTextBulletEditor } from "../RichTextBulletEditor";
 
 export function VolunteerEditor() {
   const {
@@ -23,10 +23,6 @@ export function VolunteerEditor() {
     addVolunteerItem,
     updateVolunteerItem,
     deleteVolunteerItem,
-    addVolunteerBullet,
-    updateVolunteerBullet,
-    deleteVolunteerBullet,
-    reorderVolunteerBullets,
   } = useResumeStore();
 
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
@@ -168,28 +164,15 @@ export function VolunteerEditor() {
               </div>
 
               <div>
-                <Label className="mb-2 block">Bullet Points</Label>
-                <SortableBulletList
+                <Label className="mb-2 block">Description</Label>
+                <RichTextBulletEditor
                   bullets={item.bullets}
-                  onUpdate={(bulletId, content) =>
-                    updateVolunteerBullet(item.id, bulletId, content)
-                  }
-                  onDelete={(bulletId) =>
-                    deleteVolunteerBullet(item.id, bulletId)
-                  }
-                  onReorder={(startIndex, endIndex) =>
-                    reorderVolunteerBullets(item.id, startIndex, endIndex)
+                  idPrefix="vbullet"
+                  placeholder="Describe volunteer impact, initiatives, and outcomes..."
+                  onChange={(bullets) =>
+                    updateVolunteerItem(item.id, { bullets })
                   }
                 />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-2"
-                  onClick={() => addVolunteerBullet(item.id)}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Bullet
-                </Button>
               </div>
             </CardContent>
           )}

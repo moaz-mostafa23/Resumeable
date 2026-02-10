@@ -1,6 +1,7 @@
 "use client";
 
 import { useResume } from "@/hooks/useResume";
+import { RichTextInline } from "@/components/preview/RichTextInline";
 import {
   HeaderData,
   SummaryData,
@@ -200,14 +201,14 @@ export function ModernMinimalPreview() {
                   {item.startDate} - {item.current ? "Present" : item.endDate}
                 </p>
               </div>
-              <ul className="mt-2 space-y-1.5" style={{ color: theme.textColor }}>
+              <ul className="preview-rich-bullets mt-2 space-y-1.5" style={{ color: theme.textColor }}>
                 {item.bullets.map((bullet) => (
                   <li key={bullet.id} className="flex items-start gap-2">
                     <span 
                       className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
                       style={{ backgroundColor: theme.primaryColor }}
                     />
-                    {bullet.content}
+                    <RichTextInline html={bullet.content} />
                   </li>
                 ))}
               </ul>
@@ -309,14 +310,14 @@ export function ModernMinimalPreview() {
                   </div>
                 )}
               </div>
-              <ul className="mt-2 space-y-1" style={{ color: theme.textColor }}>
+              <ul className="preview-rich-bullets mt-2 space-y-1" style={{ color: theme.textColor }}>
                 {item.bullets.map((bullet) => (
                   <li key={bullet.id} className="flex items-start gap-2">
                     <span 
                       className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
                       style={{ backgroundColor: theme.primaryColor }}
                     />
-                    {bullet.content}
+                    <RichTextInline html={bullet.content} />
                   </li>
                 ))}
               </ul>
@@ -436,14 +437,14 @@ export function ModernMinimalPreview() {
                 </p>
               </div>
               {item.bullets.length > 0 && (
-                <ul className="mt-2 space-y-1" style={{ color: theme.textColor }}>
+                <ul className="preview-rich-bullets mt-2 space-y-1" style={{ color: theme.textColor }}>
                   {item.bullets.map((bullet) => (
                     <li key={bullet.id} className="flex items-start gap-2">
                       <span 
                         className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
                         style={{ backgroundColor: theme.primaryColor }}
                       />
-                      {bullet.content}
+                      <RichTextInline html={bullet.content} />
                     </li>
                   ))}
                 </ul>
@@ -538,14 +539,14 @@ export function ModernMinimalPreview() {
               </div>
               {item.description && <p className="mt-1" style={{ color: theme.textColor }}>{item.description}</p>}
               {item.bullets.length > 0 && (
-                <ul className="mt-2 space-y-1" style={{ color: theme.textColor }}>
+                <ul className="preview-rich-bullets mt-2 space-y-1" style={{ color: theme.textColor }}>
                   {item.bullets.map((bullet) => (
                     <li key={bullet.id} className="flex items-start gap-2">
                       <span 
                         className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
                         style={{ backgroundColor: theme.primaryColor }}
                       />
-                      {bullet.content}
+                      <RichTextInline html={bullet.content} />
                     </li>
                   ))}
                 </ul>

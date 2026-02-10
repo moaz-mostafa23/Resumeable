@@ -237,3 +237,50 @@
     animation: none !important;
   }
 }
+
+/* Rich text bullet editor */
+.rte-editor p {
+  margin: 0;
+}
+
+.rte-editor ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.rte-editor li + li {
+  margin-top: 0.35rem;
+}
+
+.rte-editor p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #8d90a4;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Resume preview rich text bullets */
+.rich-text-inline {
+  display: inline;
+}
+
+.rich-text-inline[data-bullet-mode="block"] {
+  display: block;
+}
+
+.rich-text-inline p {
+  margin: 0;
+}
+
+.rich-text-inline p + p {
+  margin-top: 0.2rem;
+}
+
+.preview-rich-bullets > li:has(> .rich-text-inline[data-bullet-mode="block"]) {
+  list-style: none;
+}
+
+.preview-rich-bullets > li:has(> .rich-text-inline[data-bullet-mode="block"]) > span:first-child {
+  display: none;
+}

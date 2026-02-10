@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import {
+  extractSubscriptionIdFromWebhook,
+  getSubscription,
   verifyWebhookSignature,
+  type LemonSqueezySubscription,
   type LemonSqueezyWebhookEvent,
 } from "@/lib/lemonsqueezy";
 
@@ -11,6 +14,75 @@ function createServiceClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
+}
+
+function normalizeSubscriptionRow(subscription: LemonSqueezySubscription) {
+  return {
+    lemonsqueezy_subscription_id: subscription.id,
+    lemonsqueezy_customer_id: String(subscription.attributes.customer_id),
+    lemonsqueezy_variant_id: String(subscription.attributes.variant_id),
+    status: subscription.attributes.status,
+    current_period_end:
+      subscription.attributes.renews_at ?? subscription.attributes.ends_at,
+    cancel_at_period_end: subscription.attributes.status === "cancelled",
+  };
+}
+
+async function syncSubscriptionToDatabase(params: {
+  userId?: string;
+  subscription: LemonSqueezySubscription;
+}) {
+  const { userId, subscription } = params;
+  const supabase = createServiceClient();
+  const payload = normalizeSubscriptionRow(subscription);
+
+  // Preferred path: upsert by user_id when custom_data.user_id is present.
+  if (userId) {
+    const { error } = await supabase.from("subscriptions").upsert(
+      {
+        user_id: userId,
+        ...payload,
+      },
+      { onConflict: "user_id" }
+    );
+    return { error, mapped: true };
+  }
+
+  // Fallback path: update the existing row by Lemon Squeezy subscription id.
+  const { data: updatedRows, error: updateError } = await supabase
+    .from("subscriptions")
+    .update(payload)
+    .eq("lemonsqueezy_subscription_id", subscription.id)
+    .select("id");
+
+  if (updateError) {
+    return { error: updateError, mapped: false };
+  }
+
+  if (updatedRows && updatedRows.length > 0) {
+    return { error: null, mapped: true };
+  }
+
+  // Last fallback: recover mapping by customer id (covers a few edge cases).
+  const { data: existingCustomerRow, error: customerLookupError } = await supabase
+    .from("subscriptions")
+    .select("user_id")
+    .eq("lemonsqueezy_customer_id", payload.lemonsqueezy_customer_id)
+    .maybeSingle();
+
+  if (customerLookupError || !existingCustomerRow?.user_id) {
+    return { error: customerLookupError, mapped: false };
+  }
+
+  const { error: recoveredUpsertError } = await supabase.from("subscriptions").upsert(
+    {
+      user_id: existingCustomerRow.user_id,
+      ...payload,
+    },
+    { onConflict: "user_id" }
+  );
+
+  return { error: recoveredUpsertError, mapped: recoveredUpsertError == null };
 }
 
 export async function POST(request: NextRequest) {
@@ -25,113 +97,37 @@ export async function POST(request: NextRequest) {
     }
 
     const event: LemonSqueezyWebhookEvent = JSON.parse(rawBody);
-    const eventName = event.meta.event_name;
-    const subscription = event.data;
-    const attrs = subscription.attributes;
-    const userId = event.meta.custom_data?.user_id;
+    const eventName =
+      event.meta?.event_name ?? request.headers.get("x-event-name") ?? "unknown_event";
+    const userId = event.meta?.custom_data?.user_id;
+    const subscriptionId = extractSubscriptionIdFromWebhook(event);
 
-    console.log(`[LS Webhook] ${eventName} — sub ${subscription.id}, user ${userId}`);
+    // Ignore non-subscription webhooks if they are sent to this endpoint.
+    if (!subscriptionId) {
+      console.log(`[LS Webhook] Ignored ${eventName}: no subscription id in payload`);
+      return NextResponse.json({ received: true });
+    }
 
-    const supabase = createServiceClient();
+    const subscription = await getSubscription(subscriptionId);
+    console.log(
+      `[LS Webhook] ${eventName} — sub ${subscription.id}, user ${userId ?? "unknown"}`
+    );
 
-    switch (eventName) {
-      case "subscription_created": {
-        if (!userId) {
-          console.error("No user_id in custom_data for subscription_created");
-          return NextResponse.json({ error: "Missing user_id" }, { status: 400 });
-        }
+    const { error, mapped } = await syncSubscriptionToDatabase({
+      userId,
+      subscription,
+    });
 
-        const { error } = await supabase.from("subscriptions").upsert(
-          {
-            user_id: userId,
-            lemonsqueezy_subscription_id: subscription.id,
-            lemonsqueezy_customer_id: String(attrs.customer_id),
-            lemonsqueezy_variant_id: String(attrs.variant_id),
-            status: attrs.status,
-            current_period_end: attrs.renews_at,
-            cancel_at_period_end: false,
-          },
-          { onConflict: "user_id" }
-        );
+    if (error) {
+      console.error("Error syncing subscription:", error);
+      return NextResponse.json({ error: "DB sync error" }, { status: 500 });
+    }
 
-        if (error) {
-          console.error("Error upserting subscription:", error);
-          return NextResponse.json({ error: "DB error" }, { status: 500 });
-        }
-        break;
-      }
-
-      case "subscription_updated": {
-        const { error } = await supabase
-          .from("subscriptions")
-          .update({
-            status: attrs.status,
-            current_period_end: attrs.renews_at ?? attrs.ends_at,
-            lemonsqueezy_variant_id: String(attrs.variant_id),
-            cancel_at_period_end: attrs.status === "cancelled",
-          })
-          .eq("lemonsqueezy_subscription_id", subscription.id);
-
-        if (error) console.error("Error updating subscription:", error);
-        break;
-      }
-
-      case "subscription_cancelled": {
-        // LS sends "cancelled" — the sub stays active until period end
-        const { error } = await supabase
-          .from("subscriptions")
-          .update({
-            status: "cancelled",
-            cancel_at_period_end: true,
-            current_period_end: attrs.ends_at,
-          })
-          .eq("lemonsqueezy_subscription_id", subscription.id);
-
-        if (error) console.error("Error cancelling subscription:", error);
-        break;
-      }
-
-      case "subscription_expired": {
-        const { error } = await supabase
-          .from("subscriptions")
-          .update({
-            status: "expired",
-            cancel_at_period_end: false,
-          })
-          .eq("lemonsqueezy_subscription_id", subscription.id);
-
-        if (error) console.error("Error expiring subscription:", error);
-        break;
-      }
-
-      case "subscription_payment_success": {
-        // Renew: update period end and ensure status is active
-        const { error } = await supabase
-          .from("subscriptions")
-          .update({
-            status: "active",
-            current_period_end: attrs.renews_at,
-          })
-          .eq("lemonsqueezy_subscription_id", subscription.id);
-
-        if (error) console.error("Error on payment success:", error);
-        break;
-      }
-
-      case "subscription_payment_failed": {
-        const { error } = await supabase
-          .from("subscriptions")
-          .update({
-            status: "past_due",
-          })
-          .eq("lemonsqueezy_subscription_id", subscription.id);
-
-        if (error) console.error("Error on payment failed:", error);
-        break;
-      }
-
-      default:
-        console.log(`[LS Webhook] Unhandled event: ${eventName}`);
+    if (!mapped) {
+      console.warn(
+        `[LS Webhook] Could not map subscription ${subscription.id} to a user. ` +
+          "Ensure checkout_data.custom.user_id is sent during checkout creation."
+      );
     }
 
     return NextResponse.json({ received: true });

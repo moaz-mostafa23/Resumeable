@@ -62,8 +62,9 @@ const faqs = [
 ];
 
 export function PricingPage() {
-  const { isPro, startCheckout, loading: subLoading } = useSubscription();
+  const { isPro, startCheckout, manageBilling, loading: subLoading } = useSubscription();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [billingLoading, setBillingLoading] = useState(false);
 
   const handleUpgrade = async () => {
     setCheckoutLoading(true);
@@ -71,6 +72,15 @@ export function PricingPage() {
       await startCheckout();
     } finally {
       setCheckoutLoading(false);
+    }
+  };
+
+  const handleManageBilling = async () => {
+    setBillingLoading(true);
+    try {
+      await manageBilling();
+    } finally {
+      setBillingLoading(false);
     }
   };
 
@@ -179,15 +189,29 @@ export function PricingPage() {
           </ul>
 
           {isPro ? (
-            <Link href="/dashboard" className="mt-7 block">
+            <div className="mt-7 space-y-3">
+              <Link href="/dashboard" className="block">
+                <Button
+                  size="lg"
+                  className="w-full rounded-full bg-[#0f766e] text-base font-semibold text-white hover:bg-[#0b5f59]"
+                >
+                  <Check className="mr-2 h-4 w-4" />
+                  You&apos;re on Pro
+                </Button>
+              </Link>
               <Button
                 size="lg"
-                className="w-full rounded-full bg-[#0f766e] text-base font-semibold text-white hover:bg-[#0b5f59]"
+                variant="outline"
+                onClick={handleManageBilling}
+                disabled={billingLoading}
+                className="w-full rounded-full border-[#8ecfc1] bg-[#daf5ee] text-base font-semibold text-[#0f766e] hover:bg-[#c7ede3]"
               >
-                <Check className="mr-2 h-4 w-4" />
-                You&apos;re on Pro
+                {billingLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                Manage billing
               </Button>
-            </Link>
+            </div>
           ) : (
             <Button
               size="lg"

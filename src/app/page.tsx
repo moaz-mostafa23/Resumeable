@@ -283,7 +283,7 @@ export default function HomePage() {
                 {user ? (
                   <Link href="/dashboard">
                     <Button className="rounded-full bg-[#0f766e] px-7 py-6 text-base font-semibold text-white hover:bg-[#0b5f59]">
-                      Go to dashboard
+                      Build your resume
                     </Button>
                   </Link>
                 ) : (

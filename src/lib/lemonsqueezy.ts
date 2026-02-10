@@ -1,9 +1,10 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 // ── Types ──────────────────────────────────────────────────────────────
 
 export interface LemonSqueezySubscription {
   id: string;
+  type: "subscriptions";
   attributes: {
     store_id: number;
     customer_id: number;
@@ -21,13 +22,59 @@ export interface LemonSqueezySubscription {
 }
 
 export interface LemonSqueezyWebhookEvent {
-  meta: {
-    event_name: string;
+  meta?: {
+    event_name?: string;
     custom_data?: {
       user_id?: string;
     };
   };
-  data: LemonSqueezySubscription;
+  data: {
+    id: string;
+    type: string;
+    attributes?: Record<string, unknown>;
+    relationships?: Record<string, unknown>;
+  };
+}
+
+// ── Constants ──────────────────────────────────────────────────────────
+
+const LS_API_BASE = "https://api.lemonsqueezy.com/v1";
+
+// ── Helpers ────────────────────────────────────────────────────────────
+
+function requiredEnv(key: string): string {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Missing required env var: ${key}`);
+  }
+  return value;
+}
+
+function lsHeaders() {
+  return {
+    Accept: "application/vnd.api+json",
+    "Content-Type": "application/vnd.api+json",
+    Authorization: `Bearer ${requiredEnv("LEMONSQUEEZY_API_KEY")}`,
+  };
+}
+
+function parseBooleanEnv(value: string | undefined): boolean | undefined {
+  if (!value) return undefined;
+  const normalized = value.trim().toLowerCase();
+  if (["1", "true", "yes", "on"].includes(normalized)) return true;
+  if (["0", "false", "no", "off"].includes(normalized)) return false;
+  return undefined;
+}
+
+function asObject(value: unknown): Record<string, unknown> | null {
+  return typeof value === "object" && value !== null
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function asStringOrNumber(value: unknown): string | number | null {
+  if (typeof value === "string" || typeof value === "number") return value;
+  return null;
 }
 
 // ── Verification ───────────────────────────────────────────────────────
@@ -36,23 +83,20 @@ export function verifyWebhookSignature(
   payload: string,
   signature: string
 ): boolean {
-  const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET!;
-  const hmac = crypto.createHmac("sha256", secret);
-  const digest = hmac.update(payload).digest("hex");
-  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(digest));
+  const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
+  if (!secret || !signature) return false;
+
+  const normalizedSignature = signature.replace(/^sha256=/i, "").trim();
+  const digest = crypto.createHmac("sha256", secret).update(payload).digest("hex");
+
+  const digestBuffer = Buffer.from(digest, "utf8");
+  const signatureBuffer = Buffer.from(normalizedSignature, "utf8");
+  if (digestBuffer.length !== signatureBuffer.length) return false;
+
+  return crypto.timingSafeEqual(digestBuffer, signatureBuffer);
 }
 
 // ── API helpers ────────────────────────────────────────────────────────
-
-const LS_API_BASE = "https://api.lemonsqueezy.com/v1";
-
-function lsHeaders() {
-  return {
-    Accept: "application/vnd.api+json",
-    "Content-Type": "application/vnd.api+json",
-    Authorization: `Bearer ${process.env.LEMONSQUEEZY_API_KEY}`,
-  };
-}
 
 /**
  * Create a checkout URL for a given variant, passing the Supabase user_id
@@ -61,9 +105,30 @@ function lsHeaders() {
 export async function createCheckout(
   variantId: string,
   userId: string,
-  userEmail: string
+  userEmail?: string | null
 ): Promise<string> {
-  const storeId = process.env.LEMONSQUEEZY_STORE_ID!;
+  const storeId = requiredEnv("LEMONSQUEEZY_STORE_ID");
+  const siteUrl = requiredEnv("NEXT_PUBLIC_SITE_URL");
+  const checkoutTestMode = parseBooleanEnv(process.env.LEMONSQUEEZY_CHECKOUT_TEST_MODE);
+
+  const attributes: Record<string, unknown> = {
+    checkout_data: {
+      custom: {
+        user_id: userId,
+      },
+    },
+    product_options: {
+      redirect_url: `${siteUrl}/dashboard?upgraded=true`,
+    },
+  };
+
+  if (userEmail) {
+    (attributes.checkout_data as { email?: string }).email = userEmail;
+  }
+
+  if (typeof checkoutTestMode === "boolean") {
+    attributes.test_mode = checkoutTestMode;
+  }
 
   const res = await fetch(`${LS_API_BASE}/checkouts`, {
     method: "POST",
@@ -71,17 +136,7 @@ export async function createCheckout(
     body: JSON.stringify({
       data: {
         type: "checkouts",
-        attributes: {
-          checkout_data: {
-            custom: {
-              user_id: userId,
-            },
-            email: userEmail,
-          },
-          product_options: {
-            redirect_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard?upgraded=true`,
-          },
-        },
+        attributes,
         relationships: {
           store: {
             data: {
@@ -110,7 +165,7 @@ export async function createCheckout(
 }
 
 /**
- * Get a customer portal URL for managing their subscription.
+ * Get a subscription object from the Lemon Squeezy API.
  */
 export async function getSubscription(
   subscriptionId: string
@@ -120,9 +175,38 @@ export async function getSubscription(
   });
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch subscription: ${res.statusText}`);
+    const err = await res.text();
+    throw new Error(`Failed to fetch subscription: ${res.status} ${err}`);
   }
 
   const json = await res.json();
-  return json.data;
+  return json.data as LemonSqueezySubscription;
+}
+
+/**
+ * Extract the subscription ID from either a Subscription webhook payload
+ * or a Subscription Invoice webhook payload.
+ */
+export function extractSubscriptionIdFromWebhook(
+  event: LemonSqueezyWebhookEvent
+): string | null {
+  if (event.data.type === "subscriptions") {
+    return event.data.id;
+  }
+
+  if (event.data.type !== "subscription-invoices") {
+    return null;
+  }
+
+  const attributes = asObject(event.data.attributes);
+  const fromAttributes = asStringOrNumber(attributes?.subscription_id);
+  if (fromAttributes !== null) return String(fromAttributes);
+
+  const relationships = asObject(event.data.relationships);
+  const subscriptionRel = asObject(relationships?.subscription);
+  const relData = asObject(subscriptionRel?.data);
+  const fromRelationships = asStringOrNumber(relData?.id);
+  if (fromRelationships !== null) return String(fromRelationships);
+
+  return null;
 }

@@ -13,8 +13,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const variantId = process.env.LEMONSQUEEZY_VARIANT_ID!;
-    const checkoutUrl = await createCheckout(variantId, user.id, user.email!);
+    const variantId = process.env.LEMONSQUEEZY_VARIANT_ID;
+    if (!variantId) {
+      return NextResponse.json(
+        { error: "Billing is not configured yet" },
+        { status: 500 }
+      );
+    }
+
+    const checkoutUrl = await createCheckout(variantId, user.id, user.email);
 
     return NextResponse.json({ url: checkoutUrl });
   } catch (err) {

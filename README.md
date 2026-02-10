@@ -41,7 +41,7 @@ npm install
 ### 2. Set up Supabase
 
 1. Create a new project at [supabase.com](https://supabase.com)
-2. Go to Project Settings > API to get your URL and anon key
+2. Go to Project Settings > API to get your URL, anon key, and service role key
 3. Copy `.env.local.example` to `.env.local` and fill in your credentials:
 
 ```bash
@@ -50,19 +50,68 @@ cp .env.local.example .env.local
 
 Edit `.env.local`:
 ```
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 ```
 
 ### 3. Set up the Database
 
-Go to Supabase SQL Editor and run the schema from `supabase/schema.sql`:
+Go to Supabase SQL Editor and run:
+
+1. `supabase/schema.sql`
+2. `supabase/subscriptions.sql`
 
 ```sql
--- This creates the resumes table with Row Level Security
+-- These create resumes + subscriptions tables with Row Level Security
 ```
 
-### 4. Run the Development Server
+### 4. Set up Lemon Squeezy (Complete)
+
+After your Lemon Squeezy account is verified:
+
+1. Create a Store (or use your existing store).
+2. Create a Product named something like `Resumeable Pro`.
+3. Create at least one Subscription Variant (example: monthly `$5`).
+4. Copy your Store ID and Variant ID.
+5. Create a Lemon Squeezy API key with write access.
+6. In Lemon Squeezy, create a webhook endpoint:
+   - URL: `https://your-domain.com/api/webhooks/lemonsqueezy`
+   - Select subscription lifecycle events:
+     - `subscription_created`
+     - `subscription_updated`
+     - `subscription_cancelled`
+     - `subscription_resumed`
+     - `subscription_expired`
+     - `subscription_paused`
+     - `subscription_unpaused`
+     - `subscription_plan_changed`
+     - `subscription_payment_success`
+     - `subscription_payment_failed`
+     - `subscription_payment_recovered`
+     - `subscription_payment_refunded`
+7. Copy the webhook signing secret.
+8. Add Lemon Squeezy env vars to `.env.local` (dev) and your deployment env (prod):
+
+```env
+LEMONSQUEEZY_API_KEY=your_lemonsqueezy_api_key
+LEMONSQUEEZY_WEBHOOK_SECRET=your_lemonsqueezy_webhook_secret
+LEMONSQUEEZY_STORE_ID=your_lemonsqueezy_store_id
+LEMONSQUEEZY_VARIANT_ID=your_lemonsqueezy_variant_id
+LEMONSQUEEZY_CHECKOUT_TEST_MODE=false
+```
+
+9. Redeploy after setting production env vars.
+10. Test end-to-end:
+   - Sign in to the app.
+   - Go to `/pricing` and click `Upgrade to Pro`.
+   - Complete checkout in Lemon Squeezy.
+   - Confirm webhook delivery is `200` in Lemon Squeezy.
+   - Confirm a row appears in Supabase `subscriptions` table.
+   - Return to `/pricing` and use `Manage billing` to open customer portal.
+
+### 5. Run the Development Server
 
 ```bash
 npm run dev

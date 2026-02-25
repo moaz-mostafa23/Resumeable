@@ -1,0 +1,39 @@
+@page {
+  size: Letter;
+  margin: 0;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+}
+
+.print-canvas {
+  width: 816px;
+  margin: 0 auto;
+  background: #ffffff;
+}
+
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-canvas {
+    width: 816px;
+    margin: 0;
+  }
+
+  .print-canvas .pdf-page {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .print-canvas .pdf-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}

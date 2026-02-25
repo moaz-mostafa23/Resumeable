@@ -29,7 +29,11 @@ const PAGE_HEIGHT_PX = 1056;
 // Reduced to ensure no content is cut off
 const MIN_OVERFLOW_FOR_NEW_PAGE = 1;
 
-export function TemplatePreview() {
+interface TemplatePreviewProps {
+  pageGap?: number;
+}
+
+export function TemplatePreview({ pageGap = 24 }: TemplatePreviewProps) {
   const contextResume = useResumePreview();
   const { resume: storeResume } = useResumeStore();
   const resume = contextResume || storeResume;
@@ -54,12 +58,27 @@ export function TemplatePreview() {
           const calculatedPages = fullPages + (needsExtraPage ? 1 : 0);
           const newPageCount = Math.max(1, Math.ceil(h / PAGE_HEIGHT_PX));
           
-          setPageCount(newPageCount);
+          setPageCount(Math.max(newPageCount, calculatedPages));
         });
       });
     };
 
     measure();
+
+    let isUnmounted = false;
+    if (typeof document !== "undefined" && "fonts" in document) {
+      document.fonts.ready
+        .then(() => {
+          if (!isUnmounted) {
+            setTimeout(measure, 100);
+          }
+        })
+        .catch(() => {
+          if (!isUnmounted) {
+            setTimeout(measure, 100);
+          }
+        });
+    }
     
     const observer = new ResizeObserver(() => {
       setTimeout(measure, 100);
@@ -89,6 +108,7 @@ export function TemplatePreview() {
     }
     
     return () => {
+      isUnmounted = true;
       observer.disconnect();
       images.forEach((img) => {
         img.removeEventListener("load", onImageLoad);
@@ -117,7 +137,7 @@ export function TemplatePreview() {
       >
         <PreviewComponent />
       </div>
-      <div className="flex flex-col" style={{ gap: "24px" }}>
+      <div className="flex flex-col" style={{ gap: `${pageGap}px` }}>
         {Array.from({ length: pageCount }).map((_, i) => (
           <div
             key={i}

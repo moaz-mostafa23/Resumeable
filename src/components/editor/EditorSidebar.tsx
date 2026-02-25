@@ -6,7 +6,7 @@ import { useEditorStore } from "@/store/useEditorStore";
 import { SortableSectionList } from "./dnd/SortableSectionList";
 import { AddSectionPicker } from "./AddSectionPicker";
 import { Button } from "@/components/ui/button";
-import { Plus, Palette } from "lucide-react";
+import { Plus, Palette, Sparkles } from "lucide-react";
 
 export function EditorSidebar() {
   const { resume } = useResumeStore();
@@ -42,6 +42,14 @@ export function EditorSidebar() {
       )}
 
       <div className="border-t mt-6 pt-6">
+        <Button
+          variant={activeSection === "ai-assistant" ? "secondary" : "ghost"}
+          className="w-full justify-start"
+          onClick={() => setActiveSection("ai-assistant")}
+        >
+          <Sparkles className="h-4 w-4 mr-2" />
+          AI Assistant
+        </Button>
         <Button
           variant={activeSection === "theme" ? "secondary" : "ghost"}
           className="w-full justify-start"

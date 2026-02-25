@@ -19,6 +19,7 @@ import { PublicationsEditor } from "./sections/PublicationsEditor";
 import { ReferencesEditor } from "./sections/ReferencesEditor";
 import { CustomSectionEditor } from "./sections/CustomSectionEditor";
 import { ThemeEditor } from "./sections/ThemeEditor";
+import { AIAssistantEditor } from "./sections/AIAssistantEditor";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Download } from "lucide-react";
 
@@ -41,6 +42,7 @@ export function EditorPanel() {
       .filter((s) => s.visible)
       .sort((a, b) => a.order - b.order)
       .map((s) => s.id),
+    "ai-assistant",
     "theme",
   ];
 
@@ -60,6 +62,21 @@ export function EditorPanel() {
       <div className="h-full flex flex-col">
         <div className="flex-1 overflow-y-auto">
           <ThemeEditor />
+        </div>
+        <BottomButton
+          isLastSection={isLastSection}
+          isGenerating={isGenerating}
+          onClick={handleNextSection}
+        />
+      </div>
+    );
+  }
+
+  if (activeSection === "ai-assistant") {
+    return (
+      <div className="h-full flex flex-col">
+        <div className="flex-1 overflow-y-auto p-6">
+          <AIAssistantEditor />
         </div>
         <BottomButton
           isLastSection={isLastSection}

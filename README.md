@@ -9,6 +9,11 @@ A FlowCV-style resume builder web application with drag-and-drop customization, 
 - **PDF Export**: Download ATS-friendly PDF resumes
 - **Theme Customization**: Change colors, fonts, spacing, and margins
 - **Custom Sections**: Add your own sections beyond the defaults
+- **AI Assistant (Anthropic)**:
+  - Tailor professional summary to a job description
+  - Rewrite experience bullets for stronger impact
+  - Suggest missing, job-aligned skills
+  - Run an ATS-style keyword match check
 - **Auto-save**: Changes are automatically saved to the database
 - **Authentication**: Secure user accounts with Supabase Auth
 
@@ -54,6 +59,9 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+ANTHROPIC_API_KEY=your_anthropic_api_key
+# Optional model override (defaults to claude-3-5-sonnet-latest)
+ANTHROPIC_MODEL=claude-3-5-sonnet-latest
 ```
 
 ### 3. Set up the Database

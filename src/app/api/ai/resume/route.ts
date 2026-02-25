@@ -459,9 +459,25 @@ function sanitizeSkillsResponse(value: unknown): SuggestSkillsResponse {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    let user = null;
+
+    const authHeader = request.headers.get("authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.slice("Bearer ".length).trim();
+      if (token) {
+        const {
+          data: { user: bearerUser },
+        } = await supabase.auth.getUser(token);
+        user = bearerUser;
+      }
+    }
+
+    if (!user) {
+      const {
+        data: { user: cookieUser },
+      } = await supabase.auth.getUser();
+      user = cookieUser;
+    }
 
     if (!user) {
       return NextResponse.json(

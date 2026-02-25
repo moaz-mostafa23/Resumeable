@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useAuthContext } from "@/components/auth/AuthProvider";
 import { useResumeStore } from "@/store/useResumeStore";
+import { createClient } from "@/lib/supabase/client";
 import {
   ExperienceData,
   SkillsData,
@@ -264,10 +265,18 @@ export function AIAssistantEditor() {
     setNotice(null);
 
     try {
+      const supabase = createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       const response = await fetch("/api/ai/resume", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(session?.access_token
+            ? { Authorization: `Bearer ${session.access_token}` }
+            : {}),
         },
         body: JSON.stringify({
           action,

@@ -109,7 +109,9 @@ function classifyPdfError(error: unknown): PdfReasonCode {
     lowerMessage.includes("executable doesn't exist") ||
     lowerMessage.includes("please run the following command to download new browsers") ||
     lowerMessage.includes("failed to launch browser process") ||
-    lowerMessage.includes("browser was not found")
+    lowerMessage.includes("browser was not found") ||
+    lowerMessage.includes("input directory") ||
+    lowerMessage.includes("brotli files")
   ) {
     return "BROWSER_LAUNCH_FAILED";
   }

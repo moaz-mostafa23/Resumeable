@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { chromium, type Page } from "playwright";
+import { chromium as playwrightChromium, type Browser, type Page } from "playwright";
 import { ResumeDocument } from "@/types/resume";
 
 export const runtime = "nodejs";
@@ -10,11 +10,25 @@ interface PDFRequestBody {
   resume?: ResumeDocument;
 }
 
+interface BrowserLaunchResult {
+  browser: Browser;
+  mode: "serverless-chromium" | "playwright-default";
+  executablePath?: string;
+}
+
 interface SerializableError {
   name?: string;
   message: string;
   stack?: string;
 }
+
+type PdfReasonCode =
+  | "BROWSER_LAUNCH_FAILED"
+  | "PRINT_PAGE_NAVIGATION_FAILED"
+  | "PRINT_PAGE_TIMEOUT"
+  | "PRINT_READY_TIMEOUT"
+  | "PDF_RENDER_FAILED"
+  | "INTERNAL_ERROR";
 
 function sanitizeFileName(name: string): string {
   const normalized = name.trim().replace(/\s+/g, "_");
@@ -87,9 +101,78 @@ function serializeError(error: unknown): SerializableError {
   };
 }
 
+function classifyPdfError(error: unknown): PdfReasonCode {
+  const message = error instanceof Error ? error.message : String(error);
+  const lowerMessage = message.toLowerCase();
+
+  if (
+    lowerMessage.includes("executable doesn't exist") ||
+    lowerMessage.includes("please run the following command to download new browsers") ||
+    lowerMessage.includes("failed to launch browser process") ||
+    lowerMessage.includes("browser was not found")
+  ) {
+    return "BROWSER_LAUNCH_FAILED";
+  }
+
+  if (message.includes("net::ERR_")) {
+    return "PRINT_PAGE_NAVIGATION_FAILED";
+  }
+
+  if (lowerMessage.includes("timeout") && lowerMessage.includes("page.goto")) {
+    return "PRINT_PAGE_TIMEOUT";
+  }
+
+  if (message.includes("Print page never became ready")) {
+    return "PRINT_READY_TIMEOUT";
+  }
+
+  if (lowerMessage.includes("page.pdf")) {
+    return "PDF_RENDER_FAILED";
+  }
+
+  return "INTERNAL_ERROR";
+}
+
 function addLogLine(bucket: string[], line: string, maxEntries = 20) {
   if (bucket.length >= maxEntries) return;
   bucket.push(line);
+}
+
+const PDF_BROWSER_ARGS = [
+  "--no-sandbox",
+  "--disable-setuid-sandbox",
+  "--disable-dev-shm-usage",
+];
+
+function isServerlessRuntime(): boolean {
+  return Boolean(
+    process.env.VERCEL ||
+      process.env.AWS_REGION ||
+      process.env.AWS_EXECUTION_ENV ||
+      process.env.LAMBDA_TASK_ROOT
+  );
+}
+
+async function launchPdfBrowser(): Promise<BrowserLaunchResult> {
+  if (isServerlessRuntime()) {
+    const chromium = (await import("@sparticuz/chromium")).default;
+    const executablePath = await chromium.executablePath();
+
+    const browser = await playwrightChromium.launch({
+      headless: true,
+      executablePath,
+      args: Array.from(new Set([...chromium.args, ...PDF_BROWSER_ARGS])),
+    });
+
+    return { browser, mode: "serverless-chromium", executablePath };
+  }
+
+  const browser = await playwrightChromium.launch({
+    headless: true,
+    args: PDF_BROWSER_ARGS,
+  });
+
+  return { browser, mode: "playwright-default" };
 }
 
 function getBaseUrl(request: NextRequest): string {
@@ -131,12 +214,14 @@ export async function POST(request: NextRequest) {
     requestFailures: [] as string[],
   };
 
-  let browser: Awaited<ReturnType<typeof chromium.launch>> | null = null;
+  let browser: Browser | null = null;
   let page: Page | null = null;
   let step = "request:received";
   let baseUrl = "";
   let printUrl = "";
   let resumeSummary: ReturnType<typeof summarizeResume> | null = null;
+  let browserMode: BrowserLaunchResult["mode"] | null = null;
+  let browserExecutablePath: string | null = null;
 
   try {
     step = "request:parse-body";
@@ -169,10 +254,10 @@ export async function POST(request: NextRequest) {
     });
 
     step = "browser:launch";
-    browser = await chromium.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
-    });
+    const launchResult = await launchPdfBrowser();
+    browser = launchResult.browser;
+    browserMode = launchResult.mode;
+    browserExecutablePath = launchResult.executablePath ?? null;
 
     step = "browser:new-context";
     const context = await browser.newContext({
@@ -276,6 +361,7 @@ export async function POST(request: NextRequest) {
       durationMs: Date.now() - startedAt,
       pdfBytes: pdfBytes.byteLength,
       printUrl,
+      browserMode,
     });
 
     return new NextResponse(pdfBytes, {
@@ -289,6 +375,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     let pageSnapshot: Record<string, unknown> | null = null;
+    const reasonCode = classifyPdfError(error);
 
     if (page) {
       try {
@@ -313,10 +400,13 @@ export async function POST(request: NextRequest) {
 
     console.error("[pdf] generation failed", {
       requestId,
+      reasonCode,
       step,
       durationMs: Date.now() - startedAt,
       baseUrl,
       printUrl,
+      browserMode,
+      browserExecutablePath,
       headers: headersSummary,
       resume: resumeSummary,
       diagnostics,
@@ -325,8 +415,15 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      { error: "Failed to generate PDF.", requestId },
-      { status: 500, headers: { "x-request-id": requestId, "Cache-Control": "no-store" } }
+      { error: "Failed to generate PDF.", requestId, reasonCode, step },
+      {
+        status: 500,
+        headers: {
+          "x-request-id": requestId,
+          "x-error-code": reasonCode,
+          "Cache-Control": "no-store",
+        },
+      }
     );
   } finally {
     if (browser) {

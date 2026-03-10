@@ -29,25 +29,37 @@ export function usePDFDownload() {
 
       if (!response.ok) {
         const responseRequestId = response.headers.get("x-request-id");
+        const responseReasonCode = response.headers.get("x-error-code");
         let serverMessage = "";
         let bodyRequestId = "";
+        let bodyReasonCode = "";
 
         try {
-          const data = (await response.json()) as { error?: string; requestId?: string };
+          const data = (await response.json()) as {
+            error?: string;
+            requestId?: string;
+            reasonCode?: string;
+            step?: string;
+          };
           if (typeof data.error === "string") {
             serverMessage = data.error;
           }
           if (typeof data.requestId === "string") {
             bodyRequestId = data.requestId;
           }
+          if (typeof data.reasonCode === "string") {
+            bodyReasonCode = data.reasonCode;
+          }
         } catch {
           // Ignore JSON parse failures for non-JSON error responses.
         }
 
         const requestId = responseRequestId || bodyRequestId;
+        const reasonCode = responseReasonCode || bodyReasonCode;
         const details = [
           `status=${response.status}`,
           requestId ? `requestId=${requestId}` : "",
+          reasonCode ? `reasonCode=${reasonCode}` : "",
           serverMessage ? `message=${serverMessage}` : "",
         ]
           .filter(Boolean)

@@ -28,7 +28,32 @@ export function usePDFDownload() {
       });
 
       if (!response.ok) {
-        throw new Error(`PDF generation failed (${response.status})`);
+        const responseRequestId = response.headers.get("x-request-id");
+        let serverMessage = "";
+        let bodyRequestId = "";
+
+        try {
+          const data = (await response.json()) as { error?: string; requestId?: string };
+          if (typeof data.error === "string") {
+            serverMessage = data.error;
+          }
+          if (typeof data.requestId === "string") {
+            bodyRequestId = data.requestId;
+          }
+        } catch {
+          // Ignore JSON parse failures for non-JSON error responses.
+        }
+
+        const requestId = responseRequestId || bodyRequestId;
+        const details = [
+          `status=${response.status}`,
+          requestId ? `requestId=${requestId}` : "",
+          serverMessage ? `message=${serverMessage}` : "",
+        ]
+          .filter(Boolean)
+          .join(" ");
+
+        throw new Error(`PDF generation failed (${details})`);
       }
 
       const blob = await response.blob();

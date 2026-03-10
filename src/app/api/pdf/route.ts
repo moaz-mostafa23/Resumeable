@@ -35,6 +35,12 @@ function isResumeDocument(value: unknown): value is ResumeDocument {
   );
 }
 
+function firstHeaderValue(value: string | null): string | null {
+  if (!value) return null;
+  const first = value.split(",")[0]?.trim();
+  return first || null;
+}
+
 function getBaseUrl(request: NextRequest): string {
   const explicitBase = process.env.PDF_RENDER_BASE_URL;
 
@@ -42,19 +48,26 @@ function getBaseUrl(request: NextRequest): string {
     return explicitBase.replace(/\/$/, "");
   }
 
-  const forwardedHost = request.headers.get("x-forwarded-host");
-  const host = forwardedHost || request.headers.get("host");
+  const forwardedHost = firstHeaderValue(request.headers.get("x-forwarded-host"));
+  const host = forwardedHost || firstHeaderValue(request.headers.get("host"));
 
-  if (!host) {
-    throw new Error("Missing request host header.");
+  const forwardedProto = firstHeaderValue(request.headers.get("x-forwarded-proto"));
+
+  if (host) {
+    const isLocalHost = host.includes("localhost") || host.startsWith("127.");
+    const protocol = (
+      isLocalHost ? "http" : forwardedProto || "https"
+    ).replace(/:$/, "");
+
+    return `${protocol}://${host}`;
   }
 
-  const forwardedProto = request.headers.get("x-forwarded-proto");
-  const protocol =
-    forwardedProto ||
-    (host.includes("localhost") || host.startsWith("127.") ? "http" : "https");
+  const requestOrigin = request.nextUrl.origin;
+  if (requestOrigin && requestOrigin !== "null") {
+    return requestOrigin.replace(/\/$/, "");
+  }
 
-  return `${protocol}://${host}`;
+  throw new Error("Missing request host header.");
 }
 
 export async function POST(request: NextRequest) {
